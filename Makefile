@@ -6,8 +6,8 @@ DEPS = main.c
 
 mainmake: $(DEPS)
 	@$(CC) $(CFLAGS) -c -o main.o main.c
-	@$(CC) $(CFLAGS) -o main.gb main.o
-	@$(GB) $(GFLAGS) main.gb
+	@$(CC) $(CFLAGS) -o Pirates\ Folly.gb main.o
+	@$(GB) $(GFLAGS) Pirates\ Folly.gb
 
 clean:
-	@rm main.gb main.asm main.ihx main.lst main.map main.noi main.o main.sym
+	@rm main.asm main.ihx main.lst main.map main.noi main.o main.sym
