@@ -34,6 +34,10 @@ Changes:
 
 This game uses Perlin noise to generate its landscapes. The algorithm is based on [Hugo Elias'](https://web.archive.org/web/20160303203643/http://freespace.virgin.net/hugo.elias/models/m_perlin.htm) tutorial.
 
+Here is an example of the map array generated:
+
+https://replit.com/@splch/gb-procedural-generation#main.c
+
 Using unsigned 32-bit integers, (x, y), as seeds means that there are 2^32 x 2^32 pixels of landscape possible. This means that there are over 1,116 square kilometers of land to cover. Walking from one end of the world to the other would take around 20 years straight (you travel a pixel every 150 ms).
 
 I'm using a global seed found in `main.h`, so much like No Man's Sky, everyone can see the same world; however, the starting positions can be varied.
