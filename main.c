@@ -53,23 +53,20 @@ void init() {
   p.steps = p.gold = p.maps = 0;
   p.weapons[0] = p.weapons[1] = -1;
   // Generate terrain
-  printf("loading ");
   generate_map();
-  printf("finished\n");
   load_map();
 }
 
 void updateSwitches() {
   HIDE_WIN;
   SHOW_SPRITES;
+  SHOW_BKG;
 }
 
 void checkInput() {
   if (joypad()) {
     update_position();
-    printf("updating ");
     generate_map();
-    printf("ready\n");
     load_map();
   }
 }

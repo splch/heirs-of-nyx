@@ -5,20 +5,19 @@
 void update_position() {
   UINT8 _x = p.x[0];
   UINT8 _y = p.y[0];
-  if (joypad() & J_UP)
-    _y--;
-  if (joypad() & J_DOWN)
-    _y++;
-  if (joypad() & J_LEFT)
-    _x--;
   if (joypad() & J_RIGHT)
     _x++;
+  else if (joypad() & J_UP)
+    _y--;
+  else if (joypad() & J_LEFT)
+    _x--;
+  else if (joypad() & J_DOWN)
+    _y++;
   if (_x != p.x[0]) {
     p.x[1] = p.x[0];
     p.x[0] = _x;
     p.steps++;
-  }
-  if (_y != p.y[0]) {
+  } else if (_y != p.y[0]) {
     p.y[1] = p.y[0];
     p.y[0] = _y;
     p.steps++;
@@ -55,7 +54,6 @@ UINT8 interpolate(UINT8 v1, UINT8 v2) {
 }
 
 UINT8 interpolate_noise(UINT8 x, UINT8 y) {
-
   // gets expected noise
   UINT8 v1 = smooth_noise(x, y);
   UINT8 v2 = smooth_noise(x + 1, y);
@@ -69,13 +67,13 @@ UINT8 interpolate_noise(UINT8 x, UINT8 y) {
 // TODO: fix generator
 unsigned char closest(UINT8 value) {
   if (value < 110)
-    return 0; // water
+    return 0x01; // water
   else if (value < 150)
-    return 1; // grass
+    return 0x02; // grass
   else if (value < 160)
-    return 2; // trees
+    return 0x03; // trees
   else
-    return 3; // mountains
+    return 0x04; // mountains
 }
 
 unsigned char terrain(UINT8 x, UINT8 y) {
@@ -109,51 +107,57 @@ void shift_down(const UINT8 pixel_x, const UINT8 pixel_y) {
       map[x][y] = map[x][y - 1];
 }
 
-void generate_border(const UINT8 pixel_x, const UINT8 pixel_y) {
-  for (int y = 0; y < pixel_y; y++) {
-    // generate left and right edges of terrain
-    map[0][y] = terrain(p.x[0], y + p.y[0]);
-    map[pixel_x - 1][y] = terrain(pixel_x - 1 + p.x[0], y + p.y[0]);
-  }
-  for (int x = 0; x < pixel_x; x++) {
-    // generate top and bottom edges of terrain
-    map[x][0] = terrain(x + p.x[0], p.y[0]);
-    map[x][pixel_y - 1] = terrain(x + p.x[0], pixel_y - 1 + p.y[0]);
+void generate_side(const char side, const UINT8 pixel_x, const UINT8 pixel_y) {
+  // t - top, r - right, b - bottom, l - left
+  switch (side) {
+  case 't':
+    for (int x = 0; x < pixel_x; x++)
+      map[x][0] = terrain(x + p.x[0], p.y[0]);
+  case 'r':
+    for (int y = 0; y < pixel_y; y++)
+      map[pixel_x - 1][y] = terrain(pixel_x - 1 + p.x[0], y + p.y[0]);
+  case 'b':
+    for (int x = 0; x < pixel_x; x++)
+      map[x][pixel_y - 1] = terrain(x + p.x[0], pixel_y - 1 + p.y[0]);
+  case 'l':
+    for (int y = 0; y < pixel_y; y++)
+      map[0][y] = terrain(p.x[0], y + p.y[0]);
   }
 }
 
 void generate_map() {
   const UINT8 pixel_x = screen_x / sprite_size;
   const UINT8 pixel_y = screen_y / sprite_size;
-  const int8_t diff_x = p.x[1] - p.x[0];
-  const int8_t diff_y = p.y[1] - p.y[0];
+  const INT8 diff_x = p.x[1] - p.x[0];
+  const INT8 diff_y = p.y[1] - p.y[0];
   if (p.steps > 0) {
     if (diff_x < 0) {
       // moved right
       shift_left(pixel_x, pixel_y);
+      generate_side('r', pixel_x, pixel_y);
     } else if (diff_x > 0) {
       // moved left
       shift_right(pixel_x, pixel_y);
+      generate_side('l', pixel_x, pixel_y);
     }
     if (diff_y < 0) {
       // moved down
       shift_up(pixel_x, pixel_y);
-
+      generate_side('b', pixel_x, pixel_y);
     } else if (diff_y > 0) {
       // moved up
       shift_down(pixel_x, pixel_y);
+      generate_side('t', pixel_x, pixel_y);
     }
-    generate_border(pixel_x, pixel_y);
     p.x[1] = p.x[0];
     p.y[1] = p.y[0];
   } else
-    for (int x = 0; x < pixel_x; x++)
-      for (int y = 0; y < pixel_y; y++) {
+    for (UINT8 x = 0; x < pixel_x; x++)
+      for (UINT8 y = 0; y < pixel_y; y++)
         map[x][y] = terrain(x + p.x[0], y + p.y[0]);
-      }
 }
 
 void load_map() {
   for (UINT8 i = 0; i < 20; i++)
-    set_bkg_tiles(i, 0, 20, 18, map[i]);
+    set_bkg_tiles(0, 0, 20, 18, map[i]);
 }

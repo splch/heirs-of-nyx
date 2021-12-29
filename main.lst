@@ -1,0 +1,2090 @@
+                                      1 ;--------------------------------------------------------
+                                      2 ; File Created by SDCC : free open source ANSI-C Compiler
+                                      3 ; Version 4.1.6 #12539 (Linux)
+                                      4 ;--------------------------------------------------------
+                                      5 	.module main
+                                      6 	.optsdcc -mgbz80
+                                      7 	
+                                      8 ;--------------------------------------------------------
+                                      9 ; Public variables in this module
+                                     10 ;--------------------------------------------------------
+                                     11 	.globl _main
+                                     12 	.globl _time
+                                     13 	.globl _font_set
+                                     14 	.globl _font_load
+                                     15 	.globl _font_init
+                                     16 	.globl _load_map
+                                     17 	.globl _generate_map
+                                     18 	.globl _generate_side
+                                     19 	.globl _shift_down
+                                     20 	.globl _shift_up
+                                     21 	.globl _shift_right
+                                     22 	.globl _shift_left
+                                     23 	.globl _terrain
+                                     24 	.globl _closest
+                                     25 	.globl _interpolate_noise
+                                     26 	.globl _interpolate
+                                     27 	.globl _smooth_noise
+                                     28 	.globl _noise
+                                     29 	.globl _update_position
+                                     30 	.globl _rand
+                                     31 	.globl _initrand
+                                     32 	.globl _set_sprite_data
+                                     33 	.globl _set_bkg_tiles
+                                     34 	.globl _set_bkg_data
+                                     35 	.globl _wait_vbl_done
+                                     36 	.globl _joypad
+                                     37 	.globl _start_position
+                                     38 	.globl _SEED
+                                     39 	.globl _start_time
+                                     40 	.globl _p
+                                     41 	.globl _map
+                                     42 	.globl _landscape
+                                     43 	.globl _player_sprite
+                                     44 	.globl _scale
+                                     45 	.globl _screen_y
+                                     46 	.globl _screen_x
+                                     47 	.globl _sprite_size
+                                     48 	.globl _init
+                                     49 	.globl _updateSwitches
+                                     50 	.globl _checkInput
+                                     51 ;--------------------------------------------------------
+                                     52 ; special function registers
+                                     53 ;--------------------------------------------------------
+                                     54 ;--------------------------------------------------------
+                                     55 ; ram data
+                                     56 ;--------------------------------------------------------
+                                     57 	.area _DATA
+      000000                         58 _map::
+      000000                         59 	.ds 360
+      000168                         60 _p::
+      000168                         61 	.ds 9
+      000171                         62 _start_time::
+      000171                         63 	.ds 2
+                                     64 ;--------------------------------------------------------
+                                     65 ; ram data
+                                     66 ;--------------------------------------------------------
+                                     67 	.area _INITIALIZED
+      000000                         68 _SEED::
+      000000                         69 	.ds 1
+      000001                         70 _start_position::
+      000001                         71 	.ds 1
+                                     72 ;--------------------------------------------------------
+                                     73 ; absolute external ram data
+                                     74 ;--------------------------------------------------------
+                                     75 	.area _DABS (ABS)
+                                     76 ;--------------------------------------------------------
+                                     77 ; global & static initialisations
+                                     78 ;--------------------------------------------------------
+                                     79 	.area _HOME
+                                     80 	.area _GSINIT
+                                     81 	.area _GSFINAL
+                                     82 	.area _GSINIT
+                                     83 ;--------------------------------------------------------
+                                     84 ; Home
+                                     85 ;--------------------------------------------------------
+                                     86 	.area _HOME
+                                     87 	.area _HOME
+                                     88 ;--------------------------------------------------------
+                                     89 ; code
+                                     90 ;--------------------------------------------------------
+                                     91 	.area _CODE
+                                     92 ;utils.c:5: void update_position() {
+                                     93 ;	---------------------------------
+                                     94 ; Function update_position
+                                     95 ; ---------------------------------
+      000000                         96 _update_position::
+      000000 3B                      97 	dec	sp
+                                     98 ;utils.c:6: UINT8 _x = p.x[0];
+      000001 21r68r01                99 	ld	hl, #_p
+      000004 4E                     100 	ld	c, (hl)
+                                    101 ;utils.c:7: UINT8 _y = p.y[0];
+      000005 FAr6Ar01               102 	ld	a, (#(_p + 2) + 0)
+      000008 F8 00                  103 	ldhl	sp,	#0
+      00000A 77                     104 	ld	(hl), a
+                                    105 ;utils.c:8: if (joypad() & J_RIGHT)
+      00000B CDr00r00               106 	call	_joypad
+      00000E 7B                     107 	ld	a, e
+      00000F 0F                     108 	rrca
+      000010 30 03                  109 	jr	NC, 00110$
+                                    110 ;utils.c:9: _x++;
+      000012 0C                     111 	inc	c
+      000013 18 20                  112 	jr	00111$
+      000015                        113 00110$:
+                                    114 ;utils.c:10: else if (joypad() & J_UP)
+      000015 CDr00r00               115 	call	_joypad
+      000018 CB 53                  116 	bit	2, e
+      00001A 28 05                  117 	jr	Z, 00107$
+                                    118 ;utils.c:11: _y--;
+      00001C F8 00                  119 	ldhl	sp,	#0
+      00001E 35                     120 	dec	(hl)
+      00001F 18 14                  121 	jr	00111$
+      000021                        122 00107$:
+                                    123 ;utils.c:12: else if (joypad() & J_LEFT)
+      000021 CDr00r00               124 	call	_joypad
+      000024 CB 4B                  125 	bit	1, e
+      000026 28 03                  126 	jr	Z, 00104$
+                                    127 ;utils.c:13: _x--;
+      000028 0D                     128 	dec	c
+      000029 18 0A                  129 	jr	00111$
+      00002B                        130 00104$:
+                                    131 ;utils.c:14: else if (joypad() & J_DOWN)
+      00002B CDr00r00               132 	call	_joypad
+      00002E CB 5B                  133 	bit	3, e
+      000030 28 03                  134 	jr	Z, 00111$
+                                    135 ;utils.c:15: _y++;
+      000032 F8 00                  136 	ldhl	sp,	#0
+      000034 34                     137 	inc	(hl)
+      000035                        138 00111$:
+                                    139 ;utils.c:16: if (_x != p.x[0]) {
+      000035 21r68r01               140 	ld	hl, #_p
+      000038 46                     141 	ld	b, (hl)
+                                    142 ;utils.c:19: p.steps++;
+                                    143 ;utils.c:16: if (_x != p.x[0]) {
+      000039 79                     144 	ld	a, c
+      00003A 90                     145 	sub	a, b
+      00003B 28 11                  146 	jr	Z, 00115$
+                                    147 ;utils.c:17: p.x[1] = p.x[0];
+      00003D 21r69r01               148 	ld	hl, #(_p + 1)
+      000040 70                     149 	ld	(hl), b
+                                    150 ;utils.c:18: p.x[0] = _x;
+      000041 21r68r01               151 	ld	hl, #_p
+      000044 71                     152 	ld	(hl), c
+                                    153 ;utils.c:19: p.steps++;
+      000045 FAr6Cr01               154 	ld	a, (#(_p + 4) + 0)
+      000048 3C                     155 	inc	a
+      000049 EAr6Cr01               156 	ld	(#(_p + 4)),a
+      00004C 18 1C                  157 	jr	00117$
+      00004E                        158 00115$:
+                                    159 ;utils.c:20: } else if (_y != p.y[0]) {
+      00004E 21r6Ar01               160 	ld	hl, #(_p + 2)
+      000051 4E                     161 	ld	c, (hl)
+      000052 F8 00                  162 	ldhl	sp,	#0
+      000054 7E                     163 	ld	a, (hl)
+      000055 91                     164 	sub	a, c
+      000056 28 12                  165 	jr	Z, 00117$
+                                    166 ;utils.c:21: p.y[1] = p.y[0];
+      000058 21r6Br01               167 	ld	hl, #(_p + 3)
+      00005B 71                     168 	ld	(hl), c
+                                    169 ;utils.c:22: p.y[0] = _y;
+      00005C 11r6Ar01               170 	ld	de, #(_p + 2)
+      00005F F8 00                  171 	ldhl	sp,	#0
+      000061 7E                     172 	ld	a, (hl)
+      000062 12                     173 	ld	(de), a
+                                    174 ;utils.c:23: p.steps++;
+      000063 FAr6Cr01               175 	ld	a, (#(_p + 4) + 0)
+      000066 3C                     176 	inc	a
+      000067 EAr6Cr01               177 	ld	(#(_p + 4)),a
+      00006A                        178 00117$:
+                                    179 ;utils.c:25: }
+      00006A 33                     180 	inc	sp
+      00006B C9                     181 	ret
+      00006C                        182 _sprite_size:
+      00006C 08                     183 	.db #0x08	; 8
+      00006D                        184 _screen_x:
+      00006D A0                     185 	.db #0xa0	; 160
+      00006E                        186 _screen_y:
+      00006E 90                     187 	.db #0x90	; 144
+      00006F                        188 _scale:
+      00006F 02                     189 	.db #0x02	; 2
+      000070                        190 _player_sprite:
+      000070 38                     191 	.db #0x38	; 56	'8'
+      000071 38                     192 	.db #0x38	; 56	'8'
+      000072 38                     193 	.db #0x38	; 56	'8'
+      000073 28                     194 	.db #0x28	; 40
+      000074 38                     195 	.db #0x38	; 56	'8'
+      000075 38                     196 	.db #0x38	; 56	'8'
+      000076 6C                     197 	.db #0x6c	; 108	'l'
+      000077 54                     198 	.db #0x54	; 84	'T'
+      000078 44                     199 	.db #0x44	; 68	'D'
+      000079 7C                     200 	.db #0x7c	; 124
+      00007A 44                     201 	.db #0x44	; 68	'D'
+      00007B 38                     202 	.db #0x38	; 56	'8'
+      00007C 28                     203 	.db #0x28	; 40
+      00007D 28                     204 	.db #0x28	; 40
+      00007E 28                     205 	.db #0x28	; 40
+      00007F 00                     206 	.db #0x00	; 0
+      000080                        207 _landscape:
+      000080 00                     208 	.db #0x00	; 0
+      000081 00                     209 	.db #0x00	; 0
+      000082 00                     210 	.db #0x00	; 0
+      000083 00                     211 	.db #0x00	; 0
+      000084 50                     212 	.db #0x50	; 80	'P'
+      000085 00                     213 	.db #0x00	; 0
+      000086 50                     214 	.db #0x50	; 80	'P'
+      000087 00                     215 	.db #0x00	; 0
+      000088 00                     216 	.db #0x00	; 0
+      000089 00                     217 	.db #0x00	; 0
+      00008A 0A                     218 	.db #0x0a	; 10
+      00008B 00                     219 	.db #0x00	; 0
+      00008C AA                     220 	.db #0xaa	; 170
+      00008D 00                     221 	.db #0x00	; 0
+      00008E A0                     222 	.db #0xa0	; 160
+      00008F 00                     223 	.db #0x00	; 0
+      000090 E1                     224 	.db #0xe1	; 225
+      000091 1E                     225 	.db #0x1e	; 30
+      000092 30                     226 	.db #0x30	; 48	'0'
+      000093 CF                     227 	.db #0xcf	; 207
+      000094 1A                     228 	.db #0x1a	; 26
+      000095 E5                     229 	.db #0xe5	; 229
+      000096 18                     230 	.db #0x18	; 24
+      000097 E7                     231 	.db #0xe7	; 231
+      000098 19                     232 	.db #0x19	; 25
+      000099 E6                     233 	.db #0xe6	; 230
+      00009A 98                     234 	.db #0x98	; 152
+      00009B 67                     235 	.db #0x67	; 103	'g'
+      00009C 0C                     236 	.db #0x0c	; 12
+      00009D F3                     237 	.db #0xf3	; 243
+      00009E 07                     238 	.db #0x07	; 7
+      00009F F8                     239 	.db #0xf8	; 248
+      0000A0 00                     240 	.db #0x00	; 0
+      0000A1 00                     241 	.db #0x00	; 0
+      0000A2 38                     242 	.db #0x38	; 56	'8'
+      0000A3 38                     243 	.db #0x38	; 56	'8'
+      0000A4 74                     244 	.db #0x74	; 116	't'
+      0000A5 4C                     245 	.db #0x4c	; 76	'L'
+      0000A6 C2                     246 	.db #0xc2	; 194
+      0000A7 BE                     247 	.db #0xbe	; 190
+      0000A8 82                     248 	.db #0x82	; 130
+      0000A9 FE                     249 	.db #0xfe	; 254
+      0000AA 8A                     250 	.db #0x8a	; 138
+      0000AB FE                     251 	.db #0xfe	; 254
+      0000AC 6C                     252 	.db #0x6c	; 108	'l'
+      0000AD 7C                     253 	.db #0x7c	; 124
+      0000AE 28                     254 	.db #0x28	; 40
+      0000AF 28                     255 	.db #0x28	; 40
+      0000B0 00                     256 	.db #0x00	; 0
+      0000B1 00                     257 	.db #0x00	; 0
+      0000B2 20                     258 	.db #0x20	; 32
+      0000B3 20                     259 	.db #0x20	; 32
+      0000B4 71                     260 	.db #0x71	; 113	'q'
+      0000B5 51                     261 	.db #0x51	; 81	'Q'
+      0000B6 8B                     262 	.db #0x8b	; 139
+      0000B7 FA                     263 	.db #0xfa	; 250
+      0000B8 5C                     264 	.db #0x5c	; 92
+      0000B9 F7                     265 	.db #0xf7	; 247
+      0000BA 3E                     266 	.db #0x3e	; 62
+      0000BB E3                     267 	.db #0xe3	; 227
+      0000BC 41                     268 	.db #0x41	; 65	'A'
+      0000BD FF                     269 	.db #0xff	; 255
+      0000BE 80                     270 	.db #0x80	; 128
+      0000BF FF                     271 	.db #0xff	; 255
+                                    272 ;utils.c:27: UINT8 noise(UINT8 x, UINT8 y) {
+                                    273 ;	---------------------------------
+                                    274 ; Function noise
+                                    275 ; ---------------------------------
+      0000C0                        276 _noise::
+                                    277 ;utils.c:29: initrand(x + y * SEED);
+      0000C0 F8 02                  278 	ldhl	sp,	#2
+      0000C2 4E                     279 	ld	c, (hl)
+      0000C3 06 00                  280 	ld	b, #0x00
+      0000C5 C5                     281 	push	bc
+      0000C6 FAr00r00               282 	ld	a, (#_SEED)
+      0000C9 F5                     283 	push	af
+      0000CA 33                     284 	inc	sp
+      0000CB F8 06                  285 	ldhl	sp,	#6
+      0000CD 7E                     286 	ld	a, (hl)
+      0000CE F5                     287 	push	af
+      0000CF 33                     288 	inc	sp
+      0000D0 CDr00r00               289 	call	__muluchar
+      0000D3 E1                     290 	pop	hl
+      0000D4 C1                     291 	pop	bc
+      0000D5 6B                     292 	ld	l, e
+      0000D6 62                     293 	ld	h, d
+      0000D7 09                     294 	add	hl, bc
+      0000D8 E5                     295 	push	hl
+      0000D9 CDr00r00               296 	call	_initrand
+      0000DC 33                     297 	inc	sp
+      0000DD 33                     298 	inc	sp
+                                    299 ;utils.c:30: return rand();
+                                    300 ;utils.c:34: }
+      0000DE C3r00r00               301 	jp	_rand
+                                    302 ;utils.c:36: UINT8 smooth_noise(UINT8 x, UINT8 y) {
+                                    303 ;	---------------------------------
+                                    304 ; Function smooth_noise
+                                    305 ; ---------------------------------
+      0000E1                        306 _smooth_noise::
+      0000E1 E8 FB                  307 	add	sp, #-5
+                                    308 ;utils.c:38: const UINT8 corners = (noise(x - 1, y - 1) + noise(x + 1, y - 1) +
+      0000E3 F8 08                  309 	ldhl	sp,	#8
+      0000E5 7E                     310 	ld	a, (hl)
+      0000E6 F8 04                  311 	ldhl	sp,	#4
+      0000E8 77                     312 	ld	(hl), a
+      0000E9 46                     313 	ld	b, (hl)
+      0000EA 05                     314 	dec	b
+      0000EB F8 07                  315 	ldhl	sp,	#7
+      0000ED 5E                     316 	ld	e, (hl)
+      0000EE 4B                     317 	ld	c, e
+      0000EF 0D                     318 	dec	c
+      0000F0 C5                     319 	push	bc
+      0000F1 D5                     320 	push	de
+      0000F2 C5                     321 	push	bc
+      0000F3 CDrC0r00               322 	call	_noise
+      0000F6 E1                     323 	pop	hl
+      0000F7 7B                     324 	ld	a, e
+      0000F8 D1                     325 	pop	de
+      0000F9 C1                     326 	pop	bc
+      0000FA F8 00                  327 	ldhl	sp,	#0
+      0000FC 22                     328 	ld	(hl+), a
+      0000FD AF                     329 	xor	a, a
+      0000FE 22                     330 	ld	(hl+), a
+      0000FF 7B                     331 	ld	a, e
+      000100 3C                     332 	inc	a
+      000101 77                     333 	ld	(hl), a
+      000102 C5                     334 	push	bc
+      000103 4E                     335 	ld	c, (hl)
+      000104 C5                     336 	push	bc
+      000105 CDrC0r00               337 	call	_noise
+      000108 E1                     338 	pop	hl
+      000109 C1                     339 	pop	bc
+      00010A 16 00                  340 	ld	d, #0x00
+      00010C E1                     341 	pop	hl
+      00010D E5                     342 	push	hl
+      00010E 19                     343 	add	hl, de
+      00010F 5D                     344 	ld	e, l
+      000110 54                     345 	ld	d, h
+      000111 F8 04                  346 	ldhl	sp,	#4
+      000113 3A                     347 	ld	a, (hl-)
+      000114 3C                     348 	inc	a
+      000115 77                     349 	ld	(hl), a
+      000116 C5                     350 	push	bc
+      000117 D5                     351 	push	de
+      000118 46                     352 	ld	b, (hl)
+      000119 C5                     353 	push	bc
+      00011A CDrC0r00               354 	call	_noise
+      00011D E1                     355 	pop	hl
+      00011E 6B                     356 	ld	l, e
+                                    357 ;	spillPairReg hl
+                                    358 ;	spillPairReg hl
+      00011F D1                     359 	pop	de
+      000120 C1                     360 	pop	bc
+      000121 26 00                  361 	ld	h, #0x00
+                                    362 ;	spillPairReg hl
+                                    363 ;	spillPairReg hl
+      000123 19                     364 	add	hl, de
+      000124 5D                     365 	ld	e, l
+      000125 54                     366 	ld	d, h
+      000126 C5                     367 	push	bc
+      000127 D5                     368 	push	de
+      000128 F8 07                  369 	ldhl	sp,	#7
+      00012A 3A                     370 	ld	a, (hl-)
+      00012B 57                     371 	ld	d, a
+      00012C 5E                     372 	ld	e, (hl)
+      00012D D5                     373 	push	de
+      00012E CDrC0r00               374 	call	_noise
+      000131 E1                     375 	pop	hl
+      000132 6B                     376 	ld	l, e
+                                    377 ;	spillPairReg hl
+                                    378 ;	spillPairReg hl
+      000133 D1                     379 	pop	de
+      000134 C1                     380 	pop	bc
+      000135 26 00                  381 	ld	h, #0x00
+                                    382 ;	spillPairReg hl
+                                    383 ;	spillPairReg hl
+      000137 19                     384 	add	hl, de
+      000138 5D                     385 	ld	e, l
+      000139 54                     386 	ld	d, h
+      00013A CB 2A                  387 	sra	d
+      00013C CB 1B                  388 	rr	e
+      00013E CB 2A                  389 	sra	d
+      000140 CB 1B                  390 	rr	e
+      000142 CB 2A                  391 	sra	d
+      000144 CB 1B                  392 	rr	e
+      000146 CB 2A                  393 	sra	d
+      000148 CB 1B                  394 	rr	e
+      00014A F8 04                  395 	ldhl	sp,	#4
+      00014C 73                     396 	ld	(hl), e
+                                    397 ;utils.c:41: const UINT8 sides =
+      00014D C5                     398 	push	bc
+      00014E F8 0A                  399 	ldhl	sp,	#10
+      000150 46                     400 	ld	b, (hl)
+      000151 C5                     401 	push	bc
+      000152 CDrC0r00               402 	call	_noise
+      000155 E1                     403 	pop	hl
+      000156 C1                     404 	pop	bc
+      000157 16 00                  405 	ld	d, #0x00
+      000159 C5                     406 	push	bc
+      00015A D5                     407 	push	de
+      00015B F8 0C                  408 	ldhl	sp,	#12
+      00015D 7E                     409 	ld	a, (hl)
+      00015E F5                     410 	push	af
+      00015F 33                     411 	inc	sp
+      000160 F8 07                  412 	ldhl	sp,	#7
+      000162 7E                     413 	ld	a, (hl)
+      000163 F5                     414 	push	af
+      000164 33                     415 	inc	sp
+      000165 CDrC0r00               416 	call	_noise
+      000168 E1                     417 	pop	hl
+      000169 6B                     418 	ld	l, e
+                                    419 ;	spillPairReg hl
+                                    420 ;	spillPairReg hl
+      00016A D1                     421 	pop	de
+      00016B C1                     422 	pop	bc
+      00016C 26 00                  423 	ld	h, #0x00
+                                    424 ;	spillPairReg hl
+                                    425 ;	spillPairReg hl
+      00016E 19                     426 	add	hl, de
+      00016F E5                     427 	push	hl
+      000170 C5                     428 	push	bc
+      000171 33                     429 	inc	sp
+      000172 F8 0A                  430 	ldhl	sp,	#10
+      000174 7E                     431 	ld	a, (hl)
+      000175 F5                     432 	push	af
+      000176 33                     433 	inc	sp
+      000177 CDrC0r00               434 	call	_noise
+      00017A E1                     435 	pop	hl
+      00017B 6B                     436 	ld	l, e
+                                    437 ;	spillPairReg hl
+                                    438 ;	spillPairReg hl
+      00017C D1                     439 	pop	de
+      00017D 26 00                  440 	ld	h, #0x00
+                                    441 ;	spillPairReg hl
+                                    442 ;	spillPairReg hl
+      00017F 19                     443 	add	hl, de
+      000180 E5                     444 	push	hl
+      000181 F8 05                  445 	ldhl	sp,	#5
+      000183 7E                     446 	ld	a, (hl)
+      000184 F5                     447 	push	af
+      000185 33                     448 	inc	sp
+      000186 F8 0A                  449 	ldhl	sp,	#10
+      000188 7E                     450 	ld	a, (hl)
+      000189 F5                     451 	push	af
+      00018A 33                     452 	inc	sp
+      00018B CDrC0r00               453 	call	_noise
+      00018E E1                     454 	pop	hl
+      00018F C1                     455 	pop	bc
+      000190 6B                     456 	ld	l, e
+                                    457 ;	spillPairReg hl
+                                    458 ;	spillPairReg hl
+      000191 26 00                  459 	ld	h, #0x00
+                                    460 ;	spillPairReg hl
+                                    461 ;	spillPairReg hl
+      000193 09                     462 	add	hl, bc
+      000194 4D                     463 	ld	c, l
+      000195 CB 2C                  464 	sra	h
+      000197 CB 19                  465 	rr	c
+      000199 CB 2C                  466 	sra	h
+      00019B CB 19                  467 	rr	c
+      00019D CB 2C                  468 	sra	h
+      00019F CB 19                  469 	rr	c
+                                    470 ;utils.c:44: const UINT8 center = noise(x, y) >> 2; // divide by 4
+      0001A1 C5                     471 	push	bc
+      0001A2 F8 0A                  472 	ldhl	sp,	#10
+      0001A4 3A                     473 	ld	a, (hl-)
+      0001A5 57                     474 	ld	d, a
+      0001A6 5E                     475 	ld	e, (hl)
+      0001A7 D5                     476 	push	de
+      0001A8 CDrC0r00               477 	call	_noise
+      0001AB E1                     478 	pop	hl
+      0001AC C1                     479 	pop	bc
+      0001AD CB 3B                  480 	srl	e
+      0001AF CB 3B                  481 	srl	e
+                                    482 ;utils.c:45: return corners + sides + center;
+      0001B1 F8 04                  483 	ldhl	sp,	#4
+      0001B3 7E                     484 	ld	a, (hl)
+      0001B4 81                     485 	add	a, c
+      0001B5 83                     486 	add	a, e
+      0001B6 5F                     487 	ld	e, a
+                                    488 ;utils.c:46: }
+      0001B7 E8 05                  489 	add	sp, #5
+      0001B9 C9                     490 	ret
+                                    491 ;utils.c:48: UINT8 interpolate(UINT8 v1, UINT8 v2) {
+                                    492 ;	---------------------------------
+                                    493 ; Function interpolate
+                                    494 ; ---------------------------------
+      0001BA                        495 _interpolate::
+                                    496 ;utils.c:50: return (v1 + v2) >> 1; // divide by 2
+      0001BA F8 02                  497 	ldhl	sp,	#2
+      0001BC 2A                     498 	ld	a, (hl+)
+      0001BD 4F                     499 	ld	c, a
+      0001BE 06 00                  500 	ld	b, #0x00
+      0001C0 6E                     501 	ld	l, (hl)
+      0001C1 26 00                  502 	ld	h, #0x00
+      0001C3 09                     503 	add	hl, bc
+      0001C4 CB 2C                  504 	sra	h
+      0001C6 CB 1D                  505 	rr	l
+      0001C8 5D                     506 	ld	e, l
+                                    507 ;utils.c:54: }
+      0001C9 C9                     508 	ret
+                                    509 ;utils.c:56: UINT8 interpolate_noise(UINT8 x, UINT8 y) {
+                                    510 ;	---------------------------------
+                                    511 ; Function interpolate_noise
+                                    512 ; ---------------------------------
+      0001CA                        513 _interpolate_noise::
+      0001CA 3B                     514 	dec	sp
+                                    515 ;utils.c:58: UINT8 v1 = smooth_noise(x, y);
+      0001CB F8 04                  516 	ldhl	sp,	#4
+      0001CD 3A                     517 	ld	a, (hl-)
+      0001CE 57                     518 	ld	d, a
+      0001CF 5E                     519 	ld	e, (hl)
+      0001D0 D5                     520 	push	de
+      0001D1 CDrE1r00               521 	call	_smooth_noise
+      0001D4 E1                     522 	pop	hl
+      0001D5 43                     523 	ld	b, e
+                                    524 ;utils.c:59: UINT8 v2 = smooth_noise(x + 1, y);
+      0001D6 F8 03                  525 	ldhl	sp,	#3
+      0001D8 2A                     526 	ld	a, (hl+)
+      0001D9 4F                     527 	ld	c, a
+      0001DA 0C                     528 	inc	c
+      0001DB C5                     529 	push	bc
+      0001DC 46                     530 	ld	b, (hl)
+      0001DD C5                     531 	push	bc
+      0001DE CDrE1r00               532 	call	_smooth_noise
+      0001E1 E1                     533 	pop	hl
+      0001E2 7B                     534 	ld	a, e
+      0001E3 C1                     535 	pop	bc
+                                    536 ;utils.c:60: const UINT8 i1 = interpolate(v1, v2);
+      0001E4 C5                     537 	push	bc
+      0001E5 F5                     538 	push	af
+      0001E6 33                     539 	inc	sp
+      0001E7 C5                     540 	push	bc
+      0001E8 33                     541 	inc	sp
+      0001E9 CDrBAr01               542 	call	_interpolate
+      0001EC E1                     543 	pop	hl
+      0001ED C1                     544 	pop	bc
+      0001EE F8 00                  545 	ldhl	sp,	#0
+      0001F0 73                     546 	ld	(hl), e
+                                    547 ;utils.c:61: v1 = smooth_noise(x, y + 1);
+      0001F1 F8 04                  548 	ldhl	sp,	#4
+      0001F3 3A                     549 	ld	a, (hl-)
+      0001F4 47                     550 	ld	b, a
+      0001F5 04                     551 	inc	b
+      0001F6 C5                     552 	push	bc
+      0001F7 4E                     553 	ld	c, (hl)
+      0001F8 C5                     554 	push	bc
+      0001F9 CDrE1r00               555 	call	_smooth_noise
+      0001FC E1                     556 	pop	hl
+      0001FD C1                     557 	pop	bc
+                                    558 ;utils.c:62: v2 = smooth_noise(x + 1, y + 1);
+      0001FE D5                     559 	push	de
+      0001FF C5                     560 	push	bc
+      000200 CDrE1r00               561 	call	_smooth_noise
+      000203 E1                     562 	pop	hl
+      000204 7B                     563 	ld	a, e
+      000205 D1                     564 	pop	de
+                                    565 ;utils.c:63: const UINT8 i2 = interpolate(v1, v2);
+      000206 57                     566 	ld	d,a
+      000207 D5                     567 	push	de
+      000208 CDrBAr01               568 	call	_interpolate
+      00020B E1                     569 	pop	hl
+      00020C 7B                     570 	ld	a, e
+                                    571 ;utils.c:64: return interpolate(i1, i2);
+      00020D F5                     572 	push	af
+      00020E 33                     573 	inc	sp
+      00020F F8 01                  574 	ldhl	sp,	#1
+      000211 7E                     575 	ld	a, (hl)
+      000212 F5                     576 	push	af
+      000213 33                     577 	inc	sp
+      000214 CDrBAr01               578 	call	_interpolate
+      000217 E1                     579 	pop	hl
+                                    580 ;utils.c:65: }
+      000218 33                     581 	inc	sp
+      000219 C9                     582 	ret
+                                    583 ;utils.c:68: unsigned char closest(UINT8 value) {
+                                    584 ;	---------------------------------
+                                    585 ; Function closest
+                                    586 ; ---------------------------------
+      00021A                        587 _closest::
+                                    588 ;utils.c:69: if (value < 110)
+      00021A F8 02                  589 	ldhl	sp,	#2
+      00021C 7E                     590 	ld	a, (hl)
+      00021D D6 6E                  591 	sub	a, #0x6e
+      00021F 30 03                  592 	jr	NC, 00108$
+                                    593 ;utils.c:70: return 0x01; // water
+      000221 1E 01                  594 	ld	e, #0x01
+      000223 C9                     595 	ret
+      000224                        596 00108$:
+                                    597 ;utils.c:71: else if (value < 150)
+      000224 F8 02                  598 	ldhl	sp,	#2
+      000226 7E                     599 	ld	a, (hl)
+      000227 D6 96                  600 	sub	a, #0x96
+      000229 30 03                  601 	jr	NC, 00105$
+                                    602 ;utils.c:72: return 0x02; // grass
+      00022B 1E 02                  603 	ld	e, #0x02
+      00022D C9                     604 	ret
+      00022E                        605 00105$:
+                                    606 ;utils.c:73: else if (value < 160)
+      00022E F8 02                  607 	ldhl	sp,	#2
+      000230 7E                     608 	ld	a, (hl)
+      000231 D6 A0                  609 	sub	a, #0xa0
+      000233 30 03                  610 	jr	NC, 00102$
+                                    611 ;utils.c:74: return 0x03; // trees
+      000235 1E 03                  612 	ld	e, #0x03
+      000237 C9                     613 	ret
+      000238                        614 00102$:
+                                    615 ;utils.c:76: return 0x04; // mountains
+      000238 1E 04                  616 	ld	e, #0x04
+                                    617 ;utils.c:77: }
+      00023A C9                     618 	ret
+                                    619 ;utils.c:79: unsigned char terrain(UINT8 x, UINT8 y) {
+                                    620 ;	---------------------------------
+                                    621 ; Function terrain
+                                    622 ; ---------------------------------
+      00023B                        623 _terrain::
+                                    624 ;utils.c:82: const UINT8 value = interpolate_noise(x / scale, y / scale);
+      00023B 3E 02                  625 	ld	a, #0x02
+      00023D F5                     626 	push	af
+      00023E 33                     627 	inc	sp
+      00023F F8 04                  628 	ldhl	sp,	#4
+      000241 7E                     629 	ld	a, (hl)
+      000242 F5                     630 	push	af
+      000243 33                     631 	inc	sp
+      000244 CDr00r00               632 	call	__divuchar
+      000247 E1                     633 	pop	hl
+      000248 43                     634 	ld	b, e
+      000249 C5                     635 	push	bc
+      00024A 3E 02                  636 	ld	a, #0x02
+      00024C F5                     637 	push	af
+      00024D 33                     638 	inc	sp
+      00024E F8 05                  639 	ldhl	sp,	#5
+      000250 7E                     640 	ld	a, (hl)
+      000251 F5                     641 	push	af
+      000252 33                     642 	inc	sp
+      000253 CDr00r00               643 	call	__divuchar
+      000256 E1                     644 	pop	hl
+      000257 7B                     645 	ld	a, e
+      000258 33                     646 	inc	sp
+      000259 F5                     647 	push	af
+      00025A 33                     648 	inc	sp
+      00025B CDrCAr01               649 	call	_interpolate_noise
+      00025E E1                     650 	pop	hl
+      00025F 7B                     651 	ld	a, e
+                                    652 ;utils.c:83: return closest(value);
+      000260 F5                     653 	push	af
+      000261 33                     654 	inc	sp
+      000262 CDr1Ar02               655 	call	_closest
+      000265 33                     656 	inc	sp
+                                    657 ;utils.c:84: }
+      000266 C9                     658 	ret
+                                    659 ;utils.c:86: void shift_left(const UINT8 pixel_x, const UINT8 pixel_y) {
+                                    660 ;	---------------------------------
+                                    661 ; Function shift_left
+                                    662 ; ---------------------------------
+      000267                        663 _shift_left::
+      000267 E8 F6                  664 	add	sp, #-10
+                                    665 ;utils.c:87: for (int x = 0; x < pixel_x - 1; x++)
+      000269 01 00 00               666 	ld	bc, #0x0000
+      00026C                        667 00107$:
+      00026C F8 0C                  668 	ldhl	sp,	#12
+      00026E 6E                     669 	ld	l, (hl)
+      00026F 26 00                  670 	ld	h, #0x00
+      000271 2B                     671 	dec	hl
+      000272 5C                     672 	ld	e, h
+      000273 50                     673 	ld	d, b
+      000274 79                     674 	ld	a, c
+      000275 95                     675 	sub	a, l
+      000276 78                     676 	ld	a, b
+      000277 9C                     677 	sbc	a, h
+      000278 CB 7B                  678 	bit	7, e
+      00027A 28 07                  679 	jr	Z, 00133$
+      00027C CB 7A                  680 	bit	7, d
+      00027E 20 08                  681 	jr	NZ, 00134$
+      000280 BF                     682 	cp	a, a
+      000281 18 05                  683 	jr	00134$
+      000283                        684 00133$:
+      000283 CB 7A                  685 	bit	7, d
+      000285 28 01                  686 	jr	Z, 00134$
+      000287 37                     687 	scf
+      000288                        688 00134$:
+      000288 D2r1Cr03               689 	jp	NC, 00109$
+                                    690 ;utils.c:88: for (int y = 0; y < pixel_y; y++)
+      00028B 69                     691 	ld	l, c
+      00028C 60                     692 	ld	h, b
+      00028D 29                     693 	add	hl, hl
+      00028E 29                     694 	add	hl, hl
+      00028F 29                     695 	add	hl, hl
+      000290 09                     696 	add	hl, bc
+      000291 29                     697 	add	hl, hl
+      000292 E5                     698 	push	hl
+      000293 7D                     699 	ld	a, l
+      000294 F8 0A                  700 	ldhl	sp,	#10
+      000296 77                     701 	ld	(hl), a
+      000297 E1                     702 	pop	hl
+      000298 7C                     703 	ld	a, h
+      000299 F8 09                  704 	ldhl	sp,	#9
+      00029B 32                     705 	ld	(hl-), a
+      00029C 2A                     706 	ld	a, (hl+)
+      00029D 5F                     707 	ld	e, a
+      00029E 56                     708 	ld	d, (hl)
+      00029F 21r00r00               709 	ld	hl, #_map
+      0002A2 19                     710 	add	hl, de
+      0002A3 33                     711 	inc	sp
+      0002A4 33                     712 	inc	sp
+      0002A5 E5                     713 	push	hl
+      0002A6 03                     714 	inc	bc
+      0002A7 F8 02                  715 	ldhl	sp,	#2
+      0002A9 79                     716 	ld	a, c
+      0002AA 22                     717 	ld	(hl+), a
+      0002AB 78                     718 	ld	a, b
+      0002AC 32                     719 	ld	(hl-), a
+      0002AD 2A                     720 	ld	a, (hl+)
+      0002AE 4F                     721 	ld	c, a
+      0002AF 46                     722 	ld	b, (hl)
+      0002B0 69                     723 	ld	l, c
+      0002B1 60                     724 	ld	h, b
+      0002B2 29                     725 	add	hl, hl
+      0002B3 29                     726 	add	hl, hl
+      0002B4 29                     727 	add	hl, hl
+      0002B5 09                     728 	add	hl, bc
+      0002B6 29                     729 	add	hl, hl
+      0002B7 01r00r00               730 	ld	bc,#_map
+      0002BA 09                     731 	add	hl,bc
+      0002BB E5                     732 	push	hl
+      0002BC 7D                     733 	ld	a, l
+      0002BD F8 06                  734 	ldhl	sp,	#6
+      0002BF 77                     735 	ld	(hl), a
+      0002C0 E1                     736 	pop	hl
+      0002C1 7C                     737 	ld	a, h
+      0002C2 F8 05                  738 	ldhl	sp,	#5
+      0002C4 77                     739 	ld	(hl), a
+      0002C5 AF                     740 	xor	a, a
+      0002C6 F8 08                  741 	ldhl	sp,	#8
+      0002C8 22                     742 	ld	(hl+), a
+      0002C9 77                     743 	ld	(hl), a
+      0002CA                        744 00104$:
+      0002CA F8 0D                  745 	ldhl	sp,	#13
+      0002CC 7E                     746 	ld	a, (hl)
+      0002CD F8 06                  747 	ldhl	sp,	#6
+      0002CF 22                     748 	ld	(hl+), a
+      0002D0 36 00                  749 	ld	(hl), #0x00
+      0002D2 F8 08                  750 	ldhl	sp,	#8
+      0002D4 5D                     751 	ld	e, l
+      0002D5 54                     752 	ld	d, h
+      0002D6 F8 06                  753 	ldhl	sp,	#6
+      0002D8 1A                     754 	ld	a, (de)
+      0002D9 13                     755 	inc	de
+      0002DA 96                     756 	sub	a, (hl)
+      0002DB 23                     757 	inc	hl
+      0002DC 1A                     758 	ld	a, (de)
+      0002DD 9E                     759 	sbc	a, (hl)
+      0002DE 1A                     760 	ld	a, (de)
+      0002DF 57                     761 	ld	d, a
+      0002E0 CB 7E                  762 	bit	7, (hl)
+      0002E2 28 07                  763 	jr	Z, 00135$
+      0002E4 CB 7A                  764 	bit	7, d
+      0002E6 20 08                  765 	jr	NZ, 00136$
+      0002E8 BF                     766 	cp	a, a
+      0002E9 18 05                  767 	jr	00136$
+      0002EB                        768 00135$:
+      0002EB CB 7A                  769 	bit	7, d
+      0002ED 28 01                  770 	jr	Z, 00136$
+      0002EF 37                     771 	scf
+      0002F0                        772 00136$:
+      0002F0 30 22                  773 	jr	NC, 00108$
+                                    774 ;utils.c:89: map[x][y] = map[x + 1][y];
+      0002F2 D1                     775 	pop	de
+      0002F3 D5                     776 	push	de
+      0002F4 F8 08                  777 	ldhl	sp,	#8
+      0002F6 2A                     778 	ld	a,	(hl+)
+      0002F7 66                     779 	ld	h, (hl)
+      0002F8 6F                     780 	ld	l, a
+      0002F9 19                     781 	add	hl, de
+      0002FA 4D                     782 	ld	c, l
+      0002FB 44                     783 	ld	b, h
+      0002FC F8 04                  784 	ldhl	sp,#4
+      0002FE 2A                     785 	ld	a, (hl+)
+      0002FF 5F                     786 	ld	e, a
+      000300 56                     787 	ld	d, (hl)
+      000301 F8 08                  788 	ldhl	sp,	#8
+      000303 2A                     789 	ld	a,	(hl+)
+      000304 66                     790 	ld	h, (hl)
+      000305 6F                     791 	ld	l, a
+      000306 19                     792 	add	hl, de
+      000307 5D                     793 	ld	e, l
+      000308 54                     794 	ld	d, h
+      000309 1A                     795 	ld	a, (de)
+      00030A 02                     796 	ld	(bc), a
+                                    797 ;utils.c:88: for (int y = 0; y < pixel_y; y++)
+      00030B F8 08                  798 	ldhl	sp,	#8
+      00030D 34                     799 	inc	(hl)
+      00030E 20 BA                  800 	jr	NZ, 00104$
+      000310 23                     801 	inc	hl
+      000311 34                     802 	inc	(hl)
+      000312 18 B6                  803 	jr	00104$
+      000314                        804 00108$:
+                                    805 ;utils.c:87: for (int x = 0; x < pixel_x - 1; x++)
+      000314 F8 02                  806 	ldhl	sp,	#2
+      000316 2A                     807 	ld	a, (hl+)
+      000317 4F                     808 	ld	c, a
+      000318 46                     809 	ld	b, (hl)
+      000319 C3r6Cr02               810 	jp	00107$
+      00031C                        811 00109$:
+                                    812 ;utils.c:90: }
+      00031C E8 0A                  813 	add	sp, #10
+      00031E C9                     814 	ret
+                                    815 ;utils.c:92: void shift_right(const UINT8 pixel_x, const UINT8 pixel_y) {
+                                    816 ;	---------------------------------
+                                    817 ; Function shift_right
+                                    818 ; ---------------------------------
+      00031F                        819 _shift_right::
+      00031F E8 F6                  820 	add	sp, #-10
+                                    821 ;utils.c:93: for (int x = pixel_x - 1; x > 0; x--)
+      000321 F8 0C                  822 	ldhl	sp,	#12
+      000323 4E                     823 	ld	c, (hl)
+      000324 06 00                  824 	ld	b, #0x00
+      000326 0B                     825 	dec	bc
+      000327                        826 00107$:
+      000327 58                     827 	ld	e, b
+      000328 AF                     828 	xor	a, a
+      000329 57                     829 	ld	d, a
+      00032A B9                     830 	cp	a, c
+      00032B 98                     831 	sbc	a, b
+      00032C CB 7B                  832 	bit	7, e
+      00032E 28 07                  833 	jr	Z, 00133$
+      000330 CB 7A                  834 	bit	7, d
+      000332 20 08                  835 	jr	NZ, 00134$
+      000334 BF                     836 	cp	a, a
+      000335 18 05                  837 	jr	00134$
+      000337                        838 00133$:
+      000337 CB 7A                  839 	bit	7, d
+      000339 28 01                  840 	jr	Z, 00134$
+      00033B 37                     841 	scf
+      00033C                        842 00134$:
+      00033C D2rD7r03               843 	jp	NC, 00109$
+                                    844 ;utils.c:94: for (int y = 0; y < pixel_y; y++)
+      00033F 69                     845 	ld	l, c
+      000340 60                     846 	ld	h, b
+      000341 29                     847 	add	hl, hl
+      000342 29                     848 	add	hl, hl
+      000343 29                     849 	add	hl, hl
+      000344 09                     850 	add	hl, bc
+      000345 29                     851 	add	hl, hl
+      000346 E5                     852 	push	hl
+      000347 7D                     853 	ld	a, l
+      000348 F8 0A                  854 	ldhl	sp,	#10
+      00034A 77                     855 	ld	(hl), a
+      00034B E1                     856 	pop	hl
+      00034C 7C                     857 	ld	a, h
+      00034D F8 09                  858 	ldhl	sp,	#9
+      00034F 32                     859 	ld	(hl-), a
+      000350 2A                     860 	ld	a, (hl+)
+      000351 5F                     861 	ld	e, a
+      000352 56                     862 	ld	d, (hl)
+      000353 21r00r00               863 	ld	hl, #_map
+      000356 19                     864 	add	hl, de
+      000357 33                     865 	inc	sp
+      000358 33                     866 	inc	sp
+      000359 E5                     867 	push	hl
+      00035A 11 01 00               868 	ld	de, #0x0001
+      00035D 79                     869 	ld	a, c
+      00035E 93                     870 	sub	a, e
+      00035F 5F                     871 	ld	e, a
+      000360 78                     872 	ld	a, b
+      000361 9A                     873 	sbc	a, d
+      000362 F8 03                  874 	ldhl	sp,	#3
+      000364 32                     875 	ld	(hl-), a
+      000365 7B                     876 	ld	a, e
+      000366 22                     877 	ld	(hl+), a
+      000367 2B                     878 	dec	hl
+      000368 2A                     879 	ld	a, (hl+)
+      000369 4F                     880 	ld	c, a
+      00036A 46                     881 	ld	b, (hl)
+      00036B 69                     882 	ld	l, c
+      00036C 60                     883 	ld	h, b
+      00036D 29                     884 	add	hl, hl
+      00036E 29                     885 	add	hl, hl
+      00036F 29                     886 	add	hl, hl
+      000370 09                     887 	add	hl, bc
+      000371 29                     888 	add	hl, hl
+      000372 01r00r00               889 	ld	bc,#_map
+      000375 09                     890 	add	hl,bc
+      000376 E5                     891 	push	hl
+      000377 7D                     892 	ld	a, l
+      000378 F8 06                  893 	ldhl	sp,	#6
+      00037A 77                     894 	ld	(hl), a
+      00037B E1                     895 	pop	hl
+      00037C 7C                     896 	ld	a, h
+      00037D F8 05                  897 	ldhl	sp,	#5
+      00037F 77                     898 	ld	(hl), a
+      000380 AF                     899 	xor	a, a
+      000381 F8 08                  900 	ldhl	sp,	#8
+      000383 22                     901 	ld	(hl+), a
+      000384 77                     902 	ld	(hl), a
+      000385                        903 00104$:
+      000385 F8 0D                  904 	ldhl	sp,	#13
+      000387 7E                     905 	ld	a, (hl)
+      000388 F8 06                  906 	ldhl	sp,	#6
+      00038A 22                     907 	ld	(hl+), a
+      00038B 36 00                  908 	ld	(hl), #0x00
+      00038D F8 08                  909 	ldhl	sp,	#8
+      00038F 5D                     910 	ld	e, l
+      000390 54                     911 	ld	d, h
+      000391 F8 06                  912 	ldhl	sp,	#6
+      000393 1A                     913 	ld	a, (de)
+      000394 13                     914 	inc	de
+      000395 96                     915 	sub	a, (hl)
+      000396 23                     916 	inc	hl
+      000397 1A                     917 	ld	a, (de)
+      000398 9E                     918 	sbc	a, (hl)
+      000399 1A                     919 	ld	a, (de)
+      00039A 57                     920 	ld	d, a
+      00039B CB 7E                  921 	bit	7, (hl)
+      00039D 28 07                  922 	jr	Z, 00135$
+      00039F CB 7A                  923 	bit	7, d
+      0003A1 20 08                  924 	jr	NZ, 00136$
+      0003A3 BF                     925 	cp	a, a
+      0003A4 18 05                  926 	jr	00136$
+      0003A6                        927 00135$:
+      0003A6 CB 7A                  928 	bit	7, d
+      0003A8 28 01                  929 	jr	Z, 00136$
+      0003AA 37                     930 	scf
+      0003AB                        931 00136$:
+      0003AB 30 22                  932 	jr	NC, 00108$
+                                    933 ;utils.c:95: map[x][y] = map[x - 1][y];
+      0003AD D1                     934 	pop	de
+      0003AE D5                     935 	push	de
+      0003AF F8 08                  936 	ldhl	sp,	#8
+      0003B1 2A                     937 	ld	a,	(hl+)
+      0003B2 66                     938 	ld	h, (hl)
+      0003B3 6F                     939 	ld	l, a
+      0003B4 19                     940 	add	hl, de
+      0003B5 4D                     941 	ld	c, l
+      0003B6 44                     942 	ld	b, h
+      0003B7 F8 04                  943 	ldhl	sp,#4
+      0003B9 2A                     944 	ld	a, (hl+)
+      0003BA 5F                     945 	ld	e, a
+      0003BB 56                     946 	ld	d, (hl)
+      0003BC F8 08                  947 	ldhl	sp,	#8
+      0003BE 2A                     948 	ld	a,	(hl+)
+      0003BF 66                     949 	ld	h, (hl)
+      0003C0 6F                     950 	ld	l, a
+      0003C1 19                     951 	add	hl, de
+      0003C2 5D                     952 	ld	e, l
+      0003C3 54                     953 	ld	d, h
+      0003C4 1A                     954 	ld	a, (de)
+      0003C5 02                     955 	ld	(bc), a
+                                    956 ;utils.c:94: for (int y = 0; y < pixel_y; y++)
+      0003C6 F8 08                  957 	ldhl	sp,	#8
+      0003C8 34                     958 	inc	(hl)
+      0003C9 20 BA                  959 	jr	NZ, 00104$
+      0003CB 23                     960 	inc	hl
+      0003CC 34                     961 	inc	(hl)
+      0003CD 18 B6                  962 	jr	00104$
+      0003CF                        963 00108$:
+                                    964 ;utils.c:93: for (int x = pixel_x - 1; x > 0; x--)
+      0003CF F8 02                  965 	ldhl	sp,	#2
+      0003D1 2A                     966 	ld	a, (hl+)
+      0003D2 4F                     967 	ld	c, a
+      0003D3 46                     968 	ld	b, (hl)
+      0003D4 C3r27r03               969 	jp	00107$
+      0003D7                        970 00109$:
+                                    971 ;utils.c:96: }
+      0003D7 E8 0A                  972 	add	sp, #10
+      0003D9 C9                     973 	ret
+                                    974 ;utils.c:98: void shift_up(const UINT8 pixel_x, const UINT8 pixel_y) {
+                                    975 ;	---------------------------------
+                                    976 ; Function shift_up
+                                    977 ; ---------------------------------
+      0003DA                        978 _shift_up::
+      0003DA E8 FC                  979 	add	sp, #-4
+                                    980 ;utils.c:99: for (int y = 0; y < pixel_y - 1; y++)
+      0003DC 01 00 00               981 	ld	bc, #0x0000
+      0003DF                        982 00107$:
+      0003DF F8 07                  983 	ldhl	sp,	#7
+      0003E1 6E                     984 	ld	l, (hl)
+      0003E2 26 00                  985 	ld	h, #0x00
+      0003E4 2B                     986 	dec	hl
+      0003E5 5C                     987 	ld	e, h
+      0003E6 50                     988 	ld	d, b
+      0003E7 79                     989 	ld	a, c
+      0003E8 95                     990 	sub	a, l
+      0003E9 78                     991 	ld	a, b
+      0003EA 9C                     992 	sbc	a, h
+      0003EB CB 7B                  993 	bit	7, e
+      0003ED 28 07                  994 	jr	Z, 00133$
+      0003EF CB 7A                  995 	bit	7, d
+      0003F1 20 08                  996 	jr	NZ, 00134$
+      0003F3 BF                     997 	cp	a, a
+      0003F4 18 05                  998 	jr	00134$
+      0003F6                        999 00133$:
+      0003F6 CB 7A                 1000 	bit	7, d
+      0003F8 28 01                 1001 	jr	Z, 00134$
+      0003FA 37                    1002 	scf
+      0003FB                       1003 00134$:
+      0003FB 30 5A                 1004 	jr	NC, 00109$
+                                   1005 ;utils.c:100: for (int x = 0; x < pixel_x; x++)
+      0003FD AF                    1006 	xor	a, a
+      0003FE F8 02                 1007 	ldhl	sp,	#2
+      000400 22                    1008 	ld	(hl+), a
+      000401 77                    1009 	ld	(hl), a
+      000402                       1010 00104$:
+      000402 F8 06                 1011 	ldhl	sp,	#6
+      000404 7E                    1012 	ld	a, (hl)
+      000405 F8 00                 1013 	ldhl	sp,	#0
+      000407 22                    1014 	ld	(hl+), a
+      000408 36 00                 1015 	ld	(hl), #0x00
+      00040A F8 02                 1016 	ldhl	sp,	#2
+      00040C 5D                    1017 	ld	e, l
+      00040D 54                    1018 	ld	d, h
+      00040E F8 00                 1019 	ldhl	sp,	#0
+      000410 1A                    1020 	ld	a, (de)
+      000411 13                    1021 	inc	de
+      000412 96                    1022 	sub	a, (hl)
+      000413 23                    1023 	inc	hl
+      000414 1A                    1024 	ld	a, (de)
+      000415 9E                    1025 	sbc	a, (hl)
+      000416 1A                    1026 	ld	a, (de)
+      000417 57                    1027 	ld	d, a
+      000418 CB 7E                 1028 	bit	7, (hl)
+      00041A 28 07                 1029 	jr	Z, 00135$
+      00041C CB 7A                 1030 	bit	7, d
+      00041E 20 08                 1031 	jr	NZ, 00136$
+      000420 BF                    1032 	cp	a, a
+      000421 18 05                 1033 	jr	00136$
+      000423                       1034 00135$:
+      000423 CB 7A                 1035 	bit	7, d
+      000425 28 01                 1036 	jr	Z, 00136$
+      000427 37                    1037 	scf
+      000428                       1038 00136$:
+      000428 30 2A                 1039 	jr	NC, 00108$
+                                   1040 ;utils.c:101: map[x][y] = map[x][y + 1];
+      00042A F8 02                 1041 	ldhl	sp,#2
+      00042C 2A                    1042 	ld	a, (hl+)
+      00042D 5F                    1043 	ld	e, a
+      00042E 56                    1044 	ld	d, (hl)
+      00042F 6B                    1045 	ld	l, e
+      000430 62                    1046 	ld	h, d
+      000431 29                    1047 	add	hl, hl
+      000432 29                    1048 	add	hl, hl
+      000433 29                    1049 	add	hl, hl
+      000434 19                    1050 	add	hl, de
+      000435 29                    1051 	add	hl, hl
+      000436 7D                    1052 	ld	a, l
+      000437 C6r00                 1053 	add	a, #<(_map)
+      000439 5F                    1054 	ld	e, a
+      00043A 7C                    1055 	ld	a, h
+      00043B CEs00                 1056 	adc	a, #>(_map)
+      00043D 57                    1057 	ld	d, a
+      00043E 6B                    1058 	ld	l, e
+      00043F 62                    1059 	ld	h, d
+      000440 09                    1060 	add	hl, bc
+      000441 79                    1061 	ld	a, c
+      000442 3C                    1062 	inc	a
+      000443 83                    1063 	add	a, e
+      000444 5F                    1064 	ld	e, a
+      000445 3E 00                 1065 	ld	a, #0x00
+      000447 8A                    1066 	adc	a, d
+      000448 57                    1067 	ld	d, a
+      000449 1A                    1068 	ld	a, (de)
+      00044A 77                    1069 	ld	(hl), a
+                                   1070 ;utils.c:100: for (int x = 0; x < pixel_x; x++)
+      00044B F8 02                 1071 	ldhl	sp,	#2
+      00044D 34                    1072 	inc	(hl)
+      00044E 20 B2                 1073 	jr	NZ, 00104$
+      000450 23                    1074 	inc	hl
+      000451 34                    1075 	inc	(hl)
+      000452 18 AE                 1076 	jr	00104$
+      000454                       1077 00108$:
+                                   1078 ;utils.c:99: for (int y = 0; y < pixel_y - 1; y++)
+      000454 03                    1079 	inc	bc
+      000455 18 88                 1080 	jr	00107$
+      000457                       1081 00109$:
+                                   1082 ;utils.c:102: }
+      000457 E8 04                 1083 	add	sp, #4
+      000459 C9                    1084 	ret
+                                   1085 ;utils.c:104: void shift_down(const UINT8 pixel_x, const UINT8 pixel_y) {
+                                   1086 ;	---------------------------------
+                                   1087 ; Function shift_down
+                                   1088 ; ---------------------------------
+      00045A                       1089 _shift_down::
+      00045A E8 FC                 1090 	add	sp, #-4
+                                   1091 ;utils.c:105: for (int y = pixel_y - 1; y > 0; y--)
+      00045C F8 07                 1092 	ldhl	sp,	#7
+      00045E 4E                    1093 	ld	c, (hl)
+      00045F 06 00                 1094 	ld	b, #0x00
+      000461 0B                    1095 	dec	bc
+      000462                       1096 00107$:
+      000462 58                    1097 	ld	e, b
+      000463 AF                    1098 	xor	a, a
+      000464 57                    1099 	ld	d, a
+      000465 B9                    1100 	cp	a, c
+      000466 98                    1101 	sbc	a, b
+      000467 CB 7B                 1102 	bit	7, e
+      000469 28 07                 1103 	jr	Z, 00133$
+      00046B CB 7A                 1104 	bit	7, d
+      00046D 20 08                 1105 	jr	NZ, 00134$
+      00046F BF                    1106 	cp	a, a
+      000470 18 05                 1107 	jr	00134$
+      000472                       1108 00133$:
+      000472 CB 7A                 1109 	bit	7, d
+      000474 28 01                 1110 	jr	Z, 00134$
+      000476 37                    1111 	scf
+      000477                       1112 00134$:
+      000477 30 5A                 1113 	jr	NC, 00109$
+                                   1114 ;utils.c:106: for (int x = 0; x < pixel_x; x++)
+      000479 AF                    1115 	xor	a, a
+      00047A F8 02                 1116 	ldhl	sp,	#2
+      00047C 22                    1117 	ld	(hl+), a
+      00047D 77                    1118 	ld	(hl), a
+      00047E                       1119 00104$:
+      00047E F8 06                 1120 	ldhl	sp,	#6
+      000480 7E                    1121 	ld	a, (hl)
+      000481 F8 00                 1122 	ldhl	sp,	#0
+      000483 22                    1123 	ld	(hl+), a
+      000484 36 00                 1124 	ld	(hl), #0x00
+      000486 F8 02                 1125 	ldhl	sp,	#2
+      000488 5D                    1126 	ld	e, l
+      000489 54                    1127 	ld	d, h
+      00048A F8 00                 1128 	ldhl	sp,	#0
+      00048C 1A                    1129 	ld	a, (de)
+      00048D 13                    1130 	inc	de
+      00048E 96                    1131 	sub	a, (hl)
+      00048F 23                    1132 	inc	hl
+      000490 1A                    1133 	ld	a, (de)
+      000491 9E                    1134 	sbc	a, (hl)
+      000492 1A                    1135 	ld	a, (de)
+      000493 57                    1136 	ld	d, a
+      000494 CB 7E                 1137 	bit	7, (hl)
+      000496 28 07                 1138 	jr	Z, 00135$
+      000498 CB 7A                 1139 	bit	7, d
+      00049A 20 08                 1140 	jr	NZ, 00136$
+      00049C BF                    1141 	cp	a, a
+      00049D 18 05                 1142 	jr	00136$
+      00049F                       1143 00135$:
+      00049F CB 7A                 1144 	bit	7, d
+      0004A1 28 01                 1145 	jr	Z, 00136$
+      0004A3 37                    1146 	scf
+      0004A4                       1147 00136$:
+      0004A4 30 2A                 1148 	jr	NC, 00108$
+                                   1149 ;utils.c:107: map[x][y] = map[x][y - 1];
+      0004A6 F8 02                 1150 	ldhl	sp,#2
+      0004A8 2A                    1151 	ld	a, (hl+)
+      0004A9 5F                    1152 	ld	e, a
+      0004AA 56                    1153 	ld	d, (hl)
+      0004AB 6B                    1154 	ld	l, e
+      0004AC 62                    1155 	ld	h, d
+      0004AD 29                    1156 	add	hl, hl
+      0004AE 29                    1157 	add	hl, hl
+      0004AF 29                    1158 	add	hl, hl
+      0004B0 19                    1159 	add	hl, de
+      0004B1 29                    1160 	add	hl, hl
+      0004B2 7D                    1161 	ld	a, l
+      0004B3 C6r00                 1162 	add	a, #<(_map)
+      0004B5 5F                    1163 	ld	e, a
+      0004B6 7C                    1164 	ld	a, h
+      0004B7 CEs00                 1165 	adc	a, #>(_map)
+      0004B9 57                    1166 	ld	d, a
+      0004BA 6B                    1167 	ld	l, e
+      0004BB 62                    1168 	ld	h, d
+      0004BC 09                    1169 	add	hl, bc
+      0004BD 79                    1170 	ld	a, c
+      0004BE 3D                    1171 	dec	a
+      0004BF 83                    1172 	add	a, e
+      0004C0 5F                    1173 	ld	e, a
+      0004C1 3E 00                 1174 	ld	a, #0x00
+      0004C3 8A                    1175 	adc	a, d
+      0004C4 57                    1176 	ld	d, a
+      0004C5 1A                    1177 	ld	a, (de)
+      0004C6 77                    1178 	ld	(hl), a
+                                   1179 ;utils.c:106: for (int x = 0; x < pixel_x; x++)
+      0004C7 F8 02                 1180 	ldhl	sp,	#2
+      0004C9 34                    1181 	inc	(hl)
+      0004CA 20 B2                 1182 	jr	NZ, 00104$
+      0004CC 23                    1183 	inc	hl
+      0004CD 34                    1184 	inc	(hl)
+      0004CE 18 AE                 1185 	jr	00104$
+      0004D0                       1186 00108$:
+                                   1187 ;utils.c:105: for (int y = pixel_y - 1; y > 0; y--)
+      0004D0 0B                    1188 	dec	bc
+      0004D1 18 8F                 1189 	jr	00107$
+      0004D3                       1190 00109$:
+                                   1191 ;utils.c:108: }
+      0004D3 E8 04                 1192 	add	sp, #4
+      0004D5 C9                    1193 	ret
+                                   1194 ;utils.c:110: void generate_side(const char side, const UINT8 pixel_x, const UINT8 pixel_y) {
+                                   1195 ;	---------------------------------
+                                   1196 ; Function generate_side
+                                   1197 ; ---------------------------------
+      0004D6                       1198 _generate_side::
+      0004D6 E8 F5                 1199 	add	sp, #-11
+                                   1200 ;utils.c:114: for (int x = 0; x < pixel_x; x++)
+      0004D8 F8 0E                 1201 	ldhl	sp,	#14
+      0004DA 7E                    1202 	ld	a, (hl)
+      0004DB F8 04                 1203 	ldhl	sp,	#4
+      0004DD 22                    1204 	ld	(hl+), a
+      0004DE 36 00                 1205 	ld	(hl), #0x00
+                                   1206 ;utils.c:117: for (int y = 0; y < pixel_y; y++)
+      0004E0 F8 0F                 1207 	ldhl	sp,	#15
+      0004E2 7E                    1208 	ld	a, (hl)
+      0004E3 F8 06                 1209 	ldhl	sp,	#6
+      0004E5 22                    1210 	ld	(hl+), a
+      0004E6 36 00                 1211 	ld	(hl), #0x00
+                                   1212 ;utils.c:112: switch (side) {
+      0004E8 F8 0D                 1213 	ldhl	sp,	#13
+      0004EA 7E                    1214 	ld	a, (hl)
+      0004EB D6 62                 1215 	sub	a, #0x62
+      0004ED CArF9r05              1216 	jp	Z,00133$
+      0004F0 F8 0D                 1217 	ldhl	sp,	#13
+      0004F2 7E                    1218 	ld	a, (hl)
+      0004F3 D6 6C                 1219 	sub	a, #0x6c
+      0004F5 CAr5Fr06              1220 	jp	Z,00135$
+      0004F8 F8 0D                 1221 	ldhl	sp,	#13
+      0004FA 7E                    1222 	ld	a, (hl)
+      0004FB D6 72                 1223 	sub	a, #0x72
+      0004FD 28 6F                 1224 	jr	Z, 00131$
+      0004FF F8 0D                 1225 	ldhl	sp,	#13
+      000501 7E                    1226 	ld	a, (hl)
+      000502 D6 74                 1227 	sub	a, #0x74
+      000504 C2rABr06              1228 	jp	NZ,00122$
+                                   1229 ;utils.c:114: for (int x = 0; x < pixel_x; x++)
+      000507 AF                    1230 	xor	a, a
+      000508 F8 09                 1231 	ldhl	sp,	#9
+      00050A 22                    1232 	ld	(hl+), a
+      00050B 77                    1233 	ld	(hl), a
+      00050C                       1234 00111$:
+      00050C F8 09                 1235 	ldhl	sp,	#9
+      00050E 5D                    1236 	ld	e, l
+      00050F 54                    1237 	ld	d, h
+      000510 F8 04                 1238 	ldhl	sp,	#4
+      000512 1A                    1239 	ld	a, (de)
+      000513 13                    1240 	inc	de
+      000514 96                    1241 	sub	a, (hl)
+      000515 23                    1242 	inc	hl
+      000516 1A                    1243 	ld	a, (de)
+      000517 9E                    1244 	sbc	a, (hl)
+      000518 1A                    1245 	ld	a, (de)
+      000519 57                    1246 	ld	d, a
+      00051A CB 7E                 1247 	bit	7, (hl)
+      00051C 28 07                 1248 	jr	Z, 00193$
+      00051E CB 7A                 1249 	bit	7, d
+      000520 20 08                 1250 	jr	NZ, 00194$
+      000522 BF                    1251 	cp	a, a
+      000523 18 05                 1252 	jr	00194$
+      000525                       1253 00193$:
+      000525 CB 7A                 1254 	bit	7, d
+      000527 28 01                 1255 	jr	Z, 00194$
+      000529 37                    1256 	scf
+      00052A                       1257 00194$:
+      00052A 30 42                 1258 	jr	NC, 00131$
+                                   1259 ;utils.c:115: map[x][0] = terrain(x + p.x[0], p.y[0]);
+      00052C F8 09                 1260 	ldhl	sp,#9
+      00052E 2A                    1261 	ld	a, (hl+)
+      00052F 4F                    1262 	ld	c, a
+      000530 46                    1263 	ld	b, (hl)
+      000531 69                    1264 	ld	l, c
+      000532 60                    1265 	ld	h, b
+      000533 29                    1266 	add	hl, hl
+      000534 29                    1267 	add	hl, hl
+      000535 29                    1268 	add	hl, hl
+      000536 09                    1269 	add	hl, bc
+      000537 29                    1270 	add	hl, hl
+      000538 33                    1271 	inc	sp
+      000539 33                    1272 	inc	sp
+      00053A E5                    1273 	push	hl
+      00053B 11r00r00              1274 	ld	de, #_map
+      00053E E1                    1275 	pop	hl
+      00053F E5                    1276 	push	hl
+      000540 19                    1277 	add	hl, de
+      000541 E5                    1278 	push	hl
+      000542 7D                    1279 	ld	a, l
+      000543 F8 04                 1280 	ldhl	sp,	#4
+      000545 77                    1281 	ld	(hl), a
+      000546 E1                    1282 	pop	hl
+      000547 7C                    1283 	ld	a, h
+      000548 F8 03                 1284 	ldhl	sp,	#3
+      00054A 77                    1285 	ld	(hl), a
+      00054B 21r6Ar01              1286 	ld	hl, #(_p + 2)
+      00054E 46                    1287 	ld	b, (hl)
+      00054F F8 09                 1288 	ldhl	sp,	#9
+      000551 4E                    1289 	ld	c, (hl)
+      000552 FAr68r01              1290 	ld	a, (#_p + 0)
+      000555 81                    1291 	add	a, c
+      000556 C5                    1292 	push	bc
+      000557 33                    1293 	inc	sp
+      000558 F5                    1294 	push	af
+      000559 33                    1295 	inc	sp
+      00055A CDr3Br02              1296 	call	_terrain
+      00055D E1                    1297 	pop	hl
+      00055E 4B                    1298 	ld	c, e
+      00055F F8 02                 1299 	ldhl	sp,	#2
+      000561 2A                    1300 	ld	a,	(hl+)
+      000562 66                    1301 	ld	h, (hl)
+      000563 6F                    1302 	ld	l, a
+      000564 71                    1303 	ld	(hl), c
+                                   1304 ;utils.c:114: for (int x = 0; x < pixel_x; x++)
+      000565 F8 09                 1305 	ldhl	sp,	#9
+      000567 34                    1306 	inc	(hl)
+      000568 20 A2                 1307 	jr	NZ, 00111$
+      00056A 23                    1308 	inc	hl
+      00056B 34                    1309 	inc	(hl)
+      00056C 18 9E                 1310 	jr	00111$
+                                   1311 ;utils.c:117: for (int y = 0; y < pixel_y; y++)
+      00056E                       1312 00131$:
+      00056E AF                    1313 	xor	a, a
+      00056F F8 09                 1314 	ldhl	sp,	#9
+      000571 22                    1315 	ld	(hl+), a
+      000572 77                    1316 	ld	(hl), a
+      000573                       1317 00114$:
+      000573 F8 09                 1318 	ldhl	sp,	#9
+      000575 5D                    1319 	ld	e, l
+      000576 54                    1320 	ld	d, h
+      000577 F8 06                 1321 	ldhl	sp,	#6
+      000579 1A                    1322 	ld	a, (de)
+      00057A 13                    1323 	inc	de
+      00057B 96                    1324 	sub	a, (hl)
+      00057C 23                    1325 	inc	hl
+      00057D 1A                    1326 	ld	a, (de)
+      00057E 9E                    1327 	sbc	a, (hl)
+      00057F 1A                    1328 	ld	a, (de)
+      000580 57                    1329 	ld	d, a
+      000581 CB 7E                 1330 	bit	7, (hl)
+      000583 28 07                 1331 	jr	Z, 00196$
+      000585 CB 7A                 1332 	bit	7, d
+      000587 20 08                 1333 	jr	NZ, 00197$
+      000589 BF                    1334 	cp	a, a
+      00058A 18 05                 1335 	jr	00197$
+      00058C                       1336 00196$:
+      00058C CB 7A                 1337 	bit	7, d
+      00058E 28 01                 1338 	jr	Z, 00197$
+      000590 37                    1339 	scf
+      000591                       1340 00197$:
+      000591 30 66                 1341 	jr	NC, 00133$
+                                   1342 ;utils.c:118: map[pixel_x - 1][y] = terrain(pixel_x - 1 + p.x[0], y + p.y[0]);
+      000593 F8 04                 1343 	ldhl	sp,#4
+      000595 2A                    1344 	ld	a, (hl+)
+      000596 5F                    1345 	ld	e, a
+      000597 56                    1346 	ld	d, (hl)
+      000598 21 01 00              1347 	ld	hl, #0x0001
+      00059B 7B                    1348 	ld	a, e
+      00059C 95                    1349 	sub	a, l
+      00059D 5F                    1350 	ld	e, a
+      00059E 7A                    1351 	ld	a, d
+      00059F 9C                    1352 	sbc	a, h
+      0005A0 F8 03                 1353 	ldhl	sp,	#3
+      0005A2 32                    1354 	ld	(hl-), a
+      0005A3 7B                    1355 	ld	a, e
+      0005A4 22                    1356 	ld	(hl+), a
+      0005A5 2B                    1357 	dec	hl
+      0005A6 2A                    1358 	ld	a, (hl+)
+      0005A7 4F                    1359 	ld	c, a
+      0005A8 46                    1360 	ld	b, (hl)
+      0005A9 69                    1361 	ld	l, c
+      0005AA 60                    1362 	ld	h, b
+      0005AB 29                    1363 	add	hl, hl
+      0005AC 29                    1364 	add	hl, hl
+      0005AD 29                    1365 	add	hl, hl
+      0005AE 09                    1366 	add	hl, bc
+      0005AF 29                    1367 	add	hl, hl
+      0005B0 E5                    1368 	push	hl
+      0005B1 7D                    1369 	ld	a, l
+      0005B2 F8 04                 1370 	ldhl	sp,	#4
+      0005B4 77                    1371 	ld	(hl), a
+      0005B5 E1                    1372 	pop	hl
+      0005B6 7C                    1373 	ld	a, h
+      0005B7 F8 03                 1374 	ldhl	sp,	#3
+      0005B9 77                    1375 	ld	(hl), a
+      0005BA 11r00r00              1376 	ld	de, #_map
+      0005BD 3A                    1377 	ld	a, (hl-)
+      0005BE 6E                    1378 	ld	l, (hl)
+      0005BF 67                    1379 	ld	h, a
+      0005C0 19                    1380 	add	hl, de
+      0005C1 4D                    1381 	ld	c, l
+      0005C2 44                    1382 	ld	b, h
+      0005C3 F8 09                 1383 	ldhl	sp,	#9
+      0005C5 2A                    1384 	ld	a,	(hl+)
+      0005C6 66                    1385 	ld	h, (hl)
+      0005C7 6F                    1386 	ld	l, a
+      0005C8 09                    1387 	add	hl, bc
+      0005C9 4D                    1388 	ld	c, l
+      0005CA 44                    1389 	ld	b, h
+      0005CB F8 09                 1390 	ldhl	sp,	#9
+      0005CD 7E                    1391 	ld	a, (hl)
+      0005CE 21r6Ar01              1392 	ld	hl, #(_p + 2)
+      0005D1 6E                    1393 	ld	l, (hl)
+                                   1394 ;	spillPairReg hl
+      0005D2 85                    1395 	add	a, l
+      0005D3 F8 08                 1396 	ldhl	sp,	#8
+      0005D5 77                    1397 	ld	(hl), a
+      0005D6 F8 0E                 1398 	ldhl	sp,	#14
+      0005D8 7E                    1399 	ld	a, (hl)
+      0005D9 3D                    1400 	dec	a
+      0005DA 21r68r01              1401 	ld	hl, #_p
+      0005DD 6E                    1402 	ld	l, (hl)
+                                   1403 ;	spillPairReg hl
+      0005DE 85                    1404 	add	a, l
+      0005DF C5                    1405 	push	bc
+      0005E0 F8 0A                 1406 	ldhl	sp,	#10
+      0005E2 66                    1407 	ld	h, (hl)
+                                   1408 ;	spillPairReg hl
+                                   1409 ;	spillPairReg hl
+      0005E3 E5                    1410 	push	hl
+      0005E4 33                    1411 	inc	sp
+      0005E5 F5                    1412 	push	af
+      0005E6 33                    1413 	inc	sp
+      0005E7 CDr3Br02              1414 	call	_terrain
+      0005EA E1                    1415 	pop	hl
+      0005EB 7B                    1416 	ld	a, e
+      0005EC C1                    1417 	pop	bc
+      0005ED 02                    1418 	ld	(bc), a
+                                   1419 ;utils.c:117: for (int y = 0; y < pixel_y; y++)
+      0005EE F8 09                 1420 	ldhl	sp,	#9
+      0005F0 34                    1421 	inc	(hl)
+      0005F1 C2r73r05              1422 	jp	NZ,00114$
+      0005F4 23                    1423 	inc	hl
+      0005F5 34                    1424 	inc	(hl)
+      0005F6 C3r73r05              1425 	jp	00114$
+                                   1426 ;utils.c:120: for (int x = 0; x < pixel_x; x++)
+      0005F9                       1427 00133$:
+      0005F9 01 00 00              1428 	ld	bc, #0x0000
+      0005FC                       1429 00117$:
+      0005FC F8 04                 1430 	ldhl	sp,	#4
+      0005FE 79                    1431 	ld	a, c
+      0005FF 96                    1432 	sub	a, (hl)
+      000600 23                    1433 	inc	hl
+      000601 78                    1434 	ld	a, b
+      000602 9E                    1435 	sbc	a, (hl)
+      000603 78                    1436 	ld	a, b
+      000604 57                    1437 	ld	d, a
+      000605 CB 7E                 1438 	bit	7, (hl)
+      000607 28 07                 1439 	jr	Z, 00199$
+      000609 CB 7A                 1440 	bit	7, d
+      00060B 20 08                 1441 	jr	NZ, 00200$
+      00060D BF                    1442 	cp	a, a
+      00060E 18 05                 1443 	jr	00200$
+      000610                       1444 00199$:
+      000610 CB 7A                 1445 	bit	7, d
+      000612 28 01                 1446 	jr	Z, 00200$
+      000614 37                    1447 	scf
+      000615                       1448 00200$:
+      000615 30 48                 1449 	jr	NC, 00135$
+                                   1450 ;utils.c:121: map[x][pixel_y - 1] = terrain(x + p.x[0], pixel_y - 1 + p.y[0]);
+      000617 69                    1451 	ld	l, c
+      000618 60                    1452 	ld	h, b
+      000619 29                    1453 	add	hl, hl
+      00061A 29                    1454 	add	hl, hl
+      00061B 29                    1455 	add	hl, hl
+      00061C 09                    1456 	add	hl, bc
+      00061D 29                    1457 	add	hl, hl
+      00061E 7D                    1458 	ld	a, l
+      00061F C6r00                 1459 	add	a, #<(_map)
+      000621 5F                    1460 	ld	e, a
+      000622 7C                    1461 	ld	a, h
+      000623 CEs00                 1462 	adc	a, #>(_map)
+      000625 57                    1463 	ld	d, a
+      000626 F8 0F                 1464 	ldhl	sp,	#15
+      000628 7E                    1465 	ld	a, (hl)
+      000629 3D                    1466 	dec	a
+      00062A F8 0A                 1467 	ldhl	sp,	#10
+      00062C 77                    1468 	ld	(hl), a
+      00062D 6E                    1469 	ld	l, (hl)
+      00062E 26 00                 1470 	ld	h, #0x00
+      000630 19                    1471 	add	hl, de
+      000631 E5                    1472 	push	hl
+      000632 7D                    1473 	ld	a, l
+      000633 F8 0A                 1474 	ldhl	sp,	#10
+      000635 77                    1475 	ld	(hl), a
+      000636 E1                    1476 	pop	hl
+      000637 7C                    1477 	ld	a, h
+      000638 F8 09                 1478 	ldhl	sp,	#9
+      00063A 22                    1479 	ld	(hl+), a
+      00063B FAr6Ar01              1480 	ld	a, (#(_p + 2) + 0)
+      00063E 86                    1481 	add	a, (hl)
+      00063F 77                    1482 	ld	(hl), a
+      000640 79                    1483 	ld	a, c
+      000641 21r68r01              1484 	ld	hl, #_p
+      000644 6E                    1485 	ld	l, (hl)
+                                   1486 ;	spillPairReg hl
+      000645 85                    1487 	add	a, l
+      000646 C5                    1488 	push	bc
+      000647 F8 0C                 1489 	ldhl	sp,	#12
+      000649 66                    1490 	ld	h, (hl)
+                                   1491 ;	spillPairReg hl
+                                   1492 ;	spillPairReg hl
+      00064A E5                    1493 	push	hl
+      00064B 33                    1494 	inc	sp
+      00064C F5                    1495 	push	af
+      00064D 33                    1496 	inc	sp
+      00064E CDr3Br02              1497 	call	_terrain
+      000651 E1                    1498 	pop	hl
+      000652 7B                    1499 	ld	a, e
+      000653 C1                    1500 	pop	bc
+      000654 F8 08                 1501 	ldhl	sp,	#8
+      000656 F5                    1502 	push	af
+      000657 2A                    1503 	ld	a,	(hl+)
+      000658 66                    1504 	ld	h, (hl)
+      000659 6F                    1505 	ld	l, a
+      00065A F1                    1506 	pop	af
+      00065B 77                    1507 	ld	(hl), a
+                                   1508 ;utils.c:120: for (int x = 0; x < pixel_x; x++)
+      00065C 03                    1509 	inc	bc
+      00065D 18 9D                 1510 	jr	00117$
+                                   1511 ;utils.c:123: for (int y = 0; y < pixel_y; y++)
+      00065F                       1512 00135$:
+      00065F 01 00 00              1513 	ld	bc, #0x0000
+      000662                       1514 00120$:
+      000662 F8 06                 1515 	ldhl	sp,	#6
+      000664 79                    1516 	ld	a, c
+      000665 96                    1517 	sub	a, (hl)
+      000666 23                    1518 	inc	hl
+      000667 78                    1519 	ld	a, b
+      000668 9E                    1520 	sbc	a, (hl)
+      000669 78                    1521 	ld	a, b
+      00066A 57                    1522 	ld	d, a
+      00066B CB 7E                 1523 	bit	7, (hl)
+      00066D 28 07                 1524 	jr	Z, 00201$
+      00066F CB 7A                 1525 	bit	7, d
+      000671 20 08                 1526 	jr	NZ, 00202$
+      000673 BF                    1527 	cp	a, a
+      000674 18 05                 1528 	jr	00202$
+      000676                       1529 00201$:
+      000676 CB 7A                 1530 	bit	7, d
+      000678 28 01                 1531 	jr	Z, 00202$
+      00067A 37                    1532 	scf
+      00067B                       1533 00202$:
+      00067B 30 2E                 1534 	jr	NC, 00122$
+                                   1535 ;utils.c:124: map[0][y] = terrain(p.x[0], y + p.y[0]);
+      00067D 21r00r00              1536 	ld	hl, #_map
+      000680 09                    1537 	add	hl, bc
+      000681 E5                    1538 	push	hl
+      000682 7D                    1539 	ld	a, l
+      000683 F8 0B                 1540 	ldhl	sp,	#11
+      000685 77                    1541 	ld	(hl), a
+      000686 E1                    1542 	pop	hl
+      000687 7C                    1543 	ld	a, h
+      000688 F8 0A                 1544 	ldhl	sp,	#10
+      00068A 77                    1545 	ld	(hl), a
+      00068B 79                    1546 	ld	a, c
+      00068C 21r6Ar01              1547 	ld	hl, #(_p + 2)
+      00068F 6E                    1548 	ld	l, (hl)
+                                   1549 ;	spillPairReg hl
+      000690 85                    1550 	add	a, l
+      000691 21r68r01              1551 	ld	hl, #_p
+      000694 66                    1552 	ld	h, (hl)
+                                   1553 ;	spillPairReg hl
+      000695 C5                    1554 	push	bc
+      000696 F5                    1555 	push	af
+      000697 33                    1556 	inc	sp
+      000698 E5                    1557 	push	hl
+      000699 33                    1558 	inc	sp
+      00069A CDr3Br02              1559 	call	_terrain
+      00069D E1                    1560 	pop	hl
+      00069E 7B                    1561 	ld	a, e
+      00069F C1                    1562 	pop	bc
+      0006A0 F8 09                 1563 	ldhl	sp,	#9
+      0006A2 F5                    1564 	push	af
+      0006A3 2A                    1565 	ld	a,	(hl+)
+      0006A4 66                    1566 	ld	h, (hl)
+      0006A5 6F                    1567 	ld	l, a
+      0006A6 F1                    1568 	pop	af
+      0006A7 77                    1569 	ld	(hl), a
+                                   1570 ;utils.c:123: for (int y = 0; y < pixel_y; y++)
+      0006A8 03                    1571 	inc	bc
+      0006A9 18 B7                 1572 	jr	00120$
+                                   1573 ;utils.c:125: }
+      0006AB                       1574 00122$:
+                                   1575 ;utils.c:126: }
+      0006AB E8 0B                 1576 	add	sp, #11
+      0006AD C9                    1577 	ret
+                                   1578 ;utils.c:128: void generate_map() {
+                                   1579 ;	---------------------------------
+                                   1580 ; Function generate_map
+                                   1581 ; ---------------------------------
+      0006AE                       1582 _generate_map::
+      0006AE E8 F9                 1583 	add	sp, #-7
+                                   1584 ;utils.c:129: const UINT8 pixel_x = screen_x / sprite_size;
+      0006B0 21r6Cr00              1585 	ld	hl, #_sprite_size
+      0006B3 46                    1586 	ld	b, (hl)
+      0006B4 FAr6Dr00              1587 	ld	a, (#_screen_x)
+      0006B7 C5                    1588 	push	bc
+      0006B8 C5                    1589 	push	bc
+      0006B9 33                    1590 	inc	sp
+      0006BA F5                    1591 	push	af
+      0006BB 33                    1592 	inc	sp
+      0006BC CDr00r00              1593 	call	__divuchar
+      0006BF E1                    1594 	pop	hl
+      0006C0 C1                    1595 	pop	bc
+      0006C1 F8 00                 1596 	ldhl	sp,	#0
+      0006C3 73                    1597 	ld	(hl), e
+                                   1598 ;utils.c:130: const UINT8 pixel_y = screen_y / sprite_size;
+      0006C4 FAr6Er00              1599 	ld	a, (#_screen_y)
+      0006C7 C5                    1600 	push	bc
+      0006C8 33                    1601 	inc	sp
+      0006C9 F5                    1602 	push	af
+      0006CA 33                    1603 	inc	sp
+      0006CB CDr00r00              1604 	call	__divuchar
+      0006CE E1                    1605 	pop	hl
+      0006CF F8 06                 1606 	ldhl	sp,#6
+      0006D1 73                    1607 	ld	(hl), e
+      0006D2 7E                    1608 	ld	a, (hl)
+      0006D3 F8 01                 1609 	ldhl	sp,	#1
+      0006D5 77                    1610 	ld	(hl), a
+                                   1611 ;utils.c:131: const INT8 diff_x = p.x[1] - p.x[0];
+      0006D6 21r68r01              1612 	ld	hl, #_p
+      0006D9 4E                    1613 	ld	c, (hl)
+      0006DA FAr69r01              1614 	ld	a, (#(_p + 1) + 0)
+      0006DD 91                    1615 	sub	a, c
+      0006DE F8 04                 1616 	ldhl	sp,	#4
+      0006E0 77                    1617 	ld	(hl), a
+                                   1618 ;utils.c:132: const INT8 diff_y = p.y[1] - p.y[0];
+      0006E1 21r6Ar01              1619 	ld	hl, #(_p + 2)
+      0006E4 4E                    1620 	ld	c, (hl)
+      0006E5 FAr6Br01              1621 	ld	a, (#(_p + 3) + 0)
+      0006E8 91                    1622 	sub	a, c
+      0006E9 F8 05                 1623 	ldhl	sp,	#5
+      0006EB 77                    1624 	ld	(hl), a
+                                   1625 ;utils.c:133: if (p.steps > 0) {
+      0006EC FAr6Cr01              1626 	ld	a, (#(_p + 4) + 0)
+      0006EF F8 06                 1627 	ldhl	sp,#6
+      0006F1 77                    1628 	ld	(hl), a
+      0006F2 B7                    1629 	or	a, a
+      0006F3 CArA5r07              1630 	jp	Z, 00132$
+                                   1631 ;utils.c:134: if (diff_x < 0) {
+      0006F6 2B                    1632 	dec	hl
+      0006F7 2B                    1633 	dec	hl
+      0006F8 CB 7E                 1634 	bit	7, (hl)
+      0006FA 28 1A                 1635 	jr	Z, 00104$
+                                   1636 ;utils.c:136: shift_left(pixel_x, pixel_y);
+      0006FC F8 01                 1637 	ldhl	sp,	#1
+      0006FE 3A                    1638 	ld	a, (hl-)
+      0006FF 57                    1639 	ld	d, a
+      000700 5E                    1640 	ld	e, (hl)
+      000701 D5                    1641 	push	de
+      000702 CDr67r02              1642 	call	_shift_left
+      000705 E1                    1643 	pop	hl
+                                   1644 ;utils.c:137: generate_side('r', pixel_x, pixel_y);
+      000706 F8 01                 1645 	ldhl	sp,	#1
+      000708 3A                    1646 	ld	a, (hl-)
+      000709 F5                    1647 	push	af
+      00070A 33                    1648 	inc	sp
+      00070B 66                    1649 	ld	h, (hl)
+      00070C 2E 72                 1650 	ld	l, #0x72
+      00070E E5                    1651 	push	hl
+      00070F CDrD6r04              1652 	call	_generate_side
+      000712 E8 03                 1653 	add	sp, #3
+      000714 18 30                 1654 	jr	00105$
+      000716                       1655 00104$:
+                                   1656 ;utils.c:138: } else if (diff_x > 0) {
+      000716 F8 04                 1657 	ldhl	sp,	#4
+      000718 5E                    1658 	ld	e, (hl)
+      000719 AF                    1659 	xor	a, a
+      00071A 57                    1660 	ld	d, a
+      00071B 96                    1661 	sub	a, (hl)
+      00071C CB 7B                 1662 	bit	7, e
+      00071E 28 07                 1663 	jr	Z, 00171$
+      000720 CB 7A                 1664 	bit	7, d
+      000722 20 08                 1665 	jr	NZ, 00172$
+      000724 BF                    1666 	cp	a, a
+      000725 18 05                 1667 	jr	00172$
+      000727                       1668 00171$:
+      000727 CB 7A                 1669 	bit	7, d
+      000729 28 01                 1670 	jr	Z, 00172$
+      00072B 37                    1671 	scf
+      00072C                       1672 00172$:
+      00072C 30 18                 1673 	jr	NC, 00105$
+                                   1674 ;utils.c:140: shift_right(pixel_x, pixel_y);
+      00072E F8 01                 1675 	ldhl	sp,	#1
+      000730 3A                    1676 	ld	a, (hl-)
+      000731 57                    1677 	ld	d, a
+      000732 5E                    1678 	ld	e, (hl)
+      000733 D5                    1679 	push	de
+      000734 CDr1Fr03              1680 	call	_shift_right
+      000737 E1                    1681 	pop	hl
+                                   1682 ;utils.c:141: generate_side('l', pixel_x, pixel_y);
+      000738 F8 01                 1683 	ldhl	sp,	#1
+      00073A 3A                    1684 	ld	a, (hl-)
+      00073B F5                    1685 	push	af
+      00073C 33                    1686 	inc	sp
+      00073D 66                    1687 	ld	h, (hl)
+      00073E 2E 6C                 1688 	ld	l, #0x6c
+      000740 E5                    1689 	push	hl
+      000741 CDrD6r04              1690 	call	_generate_side
+      000744 E8 03                 1691 	add	sp, #3
+      000746                       1692 00105$:
+                                   1693 ;utils.c:143: if (diff_y < 0) {
+      000746 F8 05                 1694 	ldhl	sp,	#5
+      000748 CB 7E                 1695 	bit	7, (hl)
+      00074A 28 1A                 1696 	jr	Z, 00109$
+                                   1697 ;utils.c:145: shift_up(pixel_x, pixel_y);
+      00074C F8 01                 1698 	ldhl	sp,	#1
+      00074E 3A                    1699 	ld	a, (hl-)
+      00074F 57                    1700 	ld	d, a
+      000750 5E                    1701 	ld	e, (hl)
+      000751 D5                    1702 	push	de
+      000752 CDrDAr03              1703 	call	_shift_up
+      000755 E1                    1704 	pop	hl
+                                   1705 ;utils.c:146: generate_side('b', pixel_x, pixel_y);
+      000756 F8 01                 1706 	ldhl	sp,	#1
+      000758 3A                    1707 	ld	a, (hl-)
+      000759 F5                    1708 	push	af
+      00075A 33                    1709 	inc	sp
+      00075B 66                    1710 	ld	h, (hl)
+      00075C 2E 62                 1711 	ld	l, #0x62
+      00075E E5                    1712 	push	hl
+      00075F CDrD6r04              1713 	call	_generate_side
+      000762 E8 03                 1714 	add	sp, #3
+      000764 18 30                 1715 	jr	00110$
+      000766                       1716 00109$:
+                                   1717 ;utils.c:147: } else if (diff_y > 0) {
+      000766 F8 05                 1718 	ldhl	sp,	#5
+      000768 5E                    1719 	ld	e, (hl)
+      000769 AF                    1720 	xor	a, a
+      00076A 57                    1721 	ld	d, a
+      00076B 96                    1722 	sub	a, (hl)
+      00076C CB 7B                 1723 	bit	7, e
+      00076E 28 07                 1724 	jr	Z, 00173$
+      000770 CB 7A                 1725 	bit	7, d
+      000772 20 08                 1726 	jr	NZ, 00174$
+      000774 BF                    1727 	cp	a, a
+      000775 18 05                 1728 	jr	00174$
+      000777                       1729 00173$:
+      000777 CB 7A                 1730 	bit	7, d
+      000779 28 01                 1731 	jr	Z, 00174$
+      00077B 37                    1732 	scf
+      00077C                       1733 00174$:
+      00077C 30 18                 1734 	jr	NC, 00110$
+                                   1735 ;utils.c:149: shift_down(pixel_x, pixel_y);
+      00077E F8 01                 1736 	ldhl	sp,	#1
+      000780 3A                    1737 	ld	a, (hl-)
+      000781 57                    1738 	ld	d, a
+      000782 5E                    1739 	ld	e, (hl)
+      000783 D5                    1740 	push	de
+      000784 CDr5Ar04              1741 	call	_shift_down
+      000787 E1                    1742 	pop	hl
+                                   1743 ;utils.c:150: generate_side('t', pixel_x, pixel_y);
+      000788 F8 01                 1744 	ldhl	sp,	#1
+      00078A 3A                    1745 	ld	a, (hl-)
+      00078B F5                    1746 	push	af
+      00078C 33                    1747 	inc	sp
+      00078D 66                    1748 	ld	h, (hl)
+      00078E 2E 74                 1749 	ld	l, #0x74
+      000790 E5                    1750 	push	hl
+      000791 CDrD6r04              1751 	call	_generate_side
+      000794 E8 03                 1752 	add	sp, #3
+      000796                       1753 00110$:
+                                   1754 ;utils.c:152: p.x[1] = p.x[0];
+      000796 01r69r01              1755 	ld	bc, #_p + 1
+      000799 FAr68r01              1756 	ld	a, (#_p + 0)
+      00079C 02                    1757 	ld	(bc), a
+                                   1758 ;utils.c:153: p.y[1] = p.y[0];
+      00079D FAr6Ar01              1759 	ld	a, (#(_p + 2) + 0)
+      0007A0 EAr6Br01              1760 	ld	(#(_p + 3)),a
+      0007A3 18 64                 1761 	jr	00122$
+                                   1762 ;utils.c:155: for (UINT8 x = 0; x < pixel_x; x++)
+      0007A5                       1763 00132$:
+      0007A5 F8 06                 1764 	ldhl	sp,	#6
+      0007A7 36 00                 1765 	ld	(hl), #0x00
+      0007A9                       1766 00120$:
+      0007A9 F8 06                 1767 	ldhl	sp,	#6
+      0007AB 7E                    1768 	ld	a, (hl)
+      0007AC F8 00                 1769 	ldhl	sp,	#0
+      0007AE 96                    1770 	sub	a, (hl)
+      0007AF 30 58                 1771 	jr	NC, 00122$
+                                   1772 ;utils.c:156: for (UINT8 y = 0; y < pixel_y; y++)
+      0007B1 F8 06                 1773 	ldhl	sp,	#6
+      0007B3 4E                    1774 	ld	c, (hl)
+      0007B4 06 00                 1775 	ld	b, #0x00
+      0007B6 69                    1776 	ld	l, c
+      0007B7 60                    1777 	ld	h, b
+      0007B8 29                    1778 	add	hl, hl
+      0007B9 29                    1779 	add	hl, hl
+      0007BA 29                    1780 	add	hl, hl
+      0007BB 09                    1781 	add	hl, bc
+      0007BC 29                    1782 	add	hl, hl
+      0007BD 01r00r00              1783 	ld	bc,#_map
+      0007C0 09                    1784 	add	hl,bc
+      0007C1 E5                    1785 	push	hl
+      0007C2 7D                    1786 	ld	a, l
+      0007C3 F8 04                 1787 	ldhl	sp,	#4
+      0007C5 77                    1788 	ld	(hl), a
+      0007C6 E1                    1789 	pop	hl
+      0007C7 7C                    1790 	ld	a, h
+      0007C8 F8 03                 1791 	ldhl	sp,	#3
+      0007CA 77                    1792 	ld	(hl), a
+      0007CB 0E 00                 1793 	ld	c, #0x00
+      0007CD                       1794 00117$:
+      0007CD 79                    1795 	ld	a, c
+      0007CE F8 01                 1796 	ldhl	sp,	#1
+      0007D0 96                    1797 	sub	a, (hl)
+      0007D1 30 31                 1798 	jr	NC, 00121$
+                                   1799 ;utils.c:157: map[x][y] = terrain(x + p.x[0], y + p.y[0]);
+      0007D3 23                    1800 	inc	hl
+      0007D4 2A                    1801 	ld	a, (hl+)
+      0007D5 5F                    1802 	ld	e, a
+      0007D6 56                    1803 	ld	d, (hl)
+      0007D7 69                    1804 	ld	l, c
+      0007D8 26 00                 1805 	ld	h, #0x00
+      0007DA 19                    1806 	add	hl, de
+      0007DB E5                    1807 	push	hl
+      0007DC 7D                    1808 	ld	a, l
+      0007DD F8 06                 1809 	ldhl	sp,	#6
+      0007DF 77                    1810 	ld	(hl), a
+      0007E0 E1                    1811 	pop	hl
+      0007E1 7C                    1812 	ld	a, h
+      0007E2 F8 05                 1813 	ldhl	sp,	#5
+      0007E4 22                    1814 	ld	(hl+), a
+      0007E5 FAr6Ar01              1815 	ld	a, (#(_p + 2) + 0)
+      0007E8 81                    1816 	add	a, c
+      0007E9 47                    1817 	ld	b, a
+      0007EA FAr68r01              1818 	ld	a, (#_p + 0)
+      0007ED 86                    1819 	add	a, (hl)
+      0007EE C5                    1820 	push	bc
+      0007EF C5                    1821 	push	bc
+      0007F0 33                    1822 	inc	sp
+      0007F1 F5                    1823 	push	af
+      0007F2 33                    1824 	inc	sp
+      0007F3 CDr3Br02              1825 	call	_terrain
+      0007F6 E1                    1826 	pop	hl
+      0007F7 7B                    1827 	ld	a, e
+      0007F8 C1                    1828 	pop	bc
+      0007F9 F8 04                 1829 	ldhl	sp,	#4
+      0007FB F5                    1830 	push	af
+      0007FC 2A                    1831 	ld	a,	(hl+)
+      0007FD 66                    1832 	ld	h, (hl)
+      0007FE 6F                    1833 	ld	l, a
+      0007FF F1                    1834 	pop	af
+      000800 77                    1835 	ld	(hl), a
+                                   1836 ;utils.c:156: for (UINT8 y = 0; y < pixel_y; y++)
+      000801 0C                    1837 	inc	c
+      000802 18 C9                 1838 	jr	00117$
+      000804                       1839 00121$:
+                                   1840 ;utils.c:155: for (UINT8 x = 0; x < pixel_x; x++)
+      000804 F8 06                 1841 	ldhl	sp,	#6
+      000806 34                    1842 	inc	(hl)
+      000807 18 A0                 1843 	jr	00120$
+      000809                       1844 00122$:
+                                   1845 ;utils.c:158: }
+      000809 E8 07                 1846 	add	sp, #7
+      00080B C9                    1847 	ret
+                                   1848 ;utils.c:160: void load_map() {
+                                   1849 ;	---------------------------------
+                                   1850 ; Function load_map
+                                   1851 ; ---------------------------------
+      00080C                       1852 _load_map::
+                                   1853 ;utils.c:161: for (UINT8 i = 0; i < 20; i++)
+      00080C 0E 00                 1854 	ld	c, #0x00
+      00080E                       1855 00103$:
+      00080E 79                    1856 	ld	a, c
+      00080F D6 14                 1857 	sub	a, #0x14
+      000811 D0                    1858 	ret	NC
+                                   1859 ;utils.c:162: set_bkg_tiles(0, 0, 20, 18, map[i]);
+      000812 06 00                 1860 	ld	b, #0x00
+      000814 69                    1861 	ld	l, c
+      000815 60                    1862 	ld	h, b
+      000816 29                    1863 	add	hl, hl
+      000817 29                    1864 	add	hl, hl
+      000818 29                    1865 	add	hl, hl
+      000819 09                    1866 	add	hl, bc
+      00081A 29                    1867 	add	hl, hl
+      00081B 11r00r00              1868 	ld	de, #_map
+      00081E 19                    1869 	add	hl, de
+      00081F E5                    1870 	push	hl
+      000820 21 14 12              1871 	ld	hl, #0x1214
+      000823 E5                    1872 	push	hl
+      000824 AF                    1873 	xor	a, a
+      000825 0F                    1874 	rrca
+      000826 F5                    1875 	push	af
+      000827 CDr00r00              1876 	call	_set_bkg_tiles
+      00082A E8 06                 1877 	add	sp, #6
+                                   1878 ;utils.c:161: for (UINT8 i = 0; i < 20; i++)
+      00082C 0C                    1879 	inc	c
+                                   1880 ;utils.c:163: }
+      00082D 18 DF                 1881 	jr	00103$
+                                   1882 ;main.c:19: void main() {
+                                   1883 ;	---------------------------------
+                                   1884 ; Function main
+                                   1885 ; ---------------------------------
+      00082F                       1886 _main::
+                                   1887 ;main.c:20: init();
+      00082F CDr3Dr08              1888 	call	_init
+                                   1889 ;main.c:22: while (1) {
+      000832                       1890 00102$:
+                                   1891 ;main.c:23: checkInput();     // Check for user input (and act on it)
+      000832 CDr13r09              1892 	call	_checkInput
+                                   1893 ;main.c:24: updateSwitches(); // Make sure the SHOW_SPRITES and SHOW_BKG switches are on
+      000835 CDr00r09              1894 	call	_updateSwitches
+                                   1895 ;main.c:26: wait_vbl_done();  // Wait until VBLANK to avoid corrupting memory
+      000838 CDr00r00              1896 	call	_wait_vbl_done
+                                   1897 ;main.c:28: }
+      00083B 18 F5                 1898 	jr	00102$
+                                   1899 ;main.c:30: void init() {
+                                   1900 ;	---------------------------------
+                                   1901 ; Function init
+                                   1902 ; ---------------------------------
+      00083D                       1903 _init::
+      00083D E8 FD                 1904 	add	sp, #-3
+                                   1905 ;main.c:31: DISPLAY_ON; // Turn on the display
+      00083F F0r00                 1906 	ldh	a, (_LCDC_REG + 0)
+      000841 F6 80                 1907 	or	a, #0x80
+      000843 E0r00                 1908 	ldh	(_LCDC_REG + 0), a
+                                   1909 ;main.c:33: font_init();                   // Initialize font
+      000845 CDr00r00              1910 	call	_font_init
+                                   1911 ;main.c:34: font_set(font_load(font_ibm)); // Set and load the font
+      000848 11r00r00              1912 	ld	de, #_font_ibm
+      00084B D5                    1913 	push	de
+      00084C CDr00r00              1914 	call	_font_load
+      00084F E1                    1915 	pop	hl
+      000850 D5                    1916 	push	de
+      000851 CDr00r00              1917 	call	_font_set
+      000854 E1                    1918 	pop	hl
+                                   1919 ;main.c:36: set_bkg_data(0, 3, landscape);
+      000855 11r80r00              1920 	ld	de, #_landscape
+      000858 D5                    1921 	push	de
+      000859 21 00 03              1922 	ld	hl, #0x300
+      00085C E5                    1923 	push	hl
+      00085D CDr00r00              1924 	call	_set_bkg_data
+      000860 E8 04                 1925 	add	sp, #4
+                                   1926 ;main.c:39: set_sprite_data(0, 0, player_sprite);
+      000862 11r70r00              1927 	ld	de, #_player_sprite
+      000865 D5                    1928 	push	de
+      000866 AF                    1929 	xor	a, a
+      000867 0F                    1930 	rrca
+      000868 F5                    1931 	push	af
+      000869 CDr00r00              1932 	call	_set_sprite_data
+      00086C E8 04                 1933 	add	sp, #4
+                                   1934 ;/home/spence/Documents/gbdk-2020/build/gbdk/include/gb/gb.h:1326: shadow_OAM[nb].tile=tile;
+      00086E 21r02r00              1935 	ld	hl, #(_shadow_OAM + 2)
+      000871 36 00                 1936 	ld	(hl), #0x00
+                                   1937 ;main.c:46: move_sprite(0, (screen_x + sprite_size) / 2, (screen_y + sprite_size) / 2);
+      000873 21r6Er00              1938 	ld	hl, #_screen_y
+      000876 4E                    1939 	ld	c, (hl)
+      000877 06 00                 1940 	ld	b, #0x00
+      000879 FAr6Cr00              1941 	ld	a, (#_sprite_size)
+      00087C F8 00                 1942 	ldhl	sp,	#0
+      00087E 22                    1943 	ld	(hl+), a
+      00087F 36 00                 1944 	ld	(hl), #0x00
+      000881 E1                    1945 	pop	hl
+      000882 E5                    1946 	push	hl
+      000883 09                    1947 	add	hl, bc
+                                   1948 ;	spillPairReg hl
+                                   1949 ;	spillPairReg hl
+      000884 4D                    1950 	ld	c,l
+      000885 44                    1951 	ld	b,h
+                                   1952 ;	spillPairReg hl
+                                   1953 ;	spillPairReg hl
+      000886 CB 78                 1954 	bit	7, b
+      000888 28 03                 1955 	jr	Z, 00105$
+      00088A 69                    1956 	ld	l, c
+                                   1957 ;	spillPairReg hl
+                                   1958 ;	spillPairReg hl
+      00088B 60                    1959 	ld	h, b
+                                   1960 ;	spillPairReg hl
+                                   1961 ;	spillPairReg hl
+      00088C 23                    1962 	inc	hl
+      00088D                       1963 00105$:
+      00088D 4D                    1964 	ld	c, l
+      00088E 44                    1965 	ld	b, h
+      00088F CB 28                 1966 	sra	b
+      000891 CB 19                 1967 	rr	c
+      000893 F8 02                 1968 	ldhl	sp,	#2
+      000895 71                    1969 	ld	(hl), c
+      000896 21r6Dr00              1970 	ld	hl, #_screen_x
+      000899 4E                    1971 	ld	c, (hl)
+      00089A 06 00                 1972 	ld	b, #0x00
+      00089C E1                    1973 	pop	hl
+      00089D E5                    1974 	push	hl
+      00089E 09                    1975 	add	hl, bc
+      00089F 4D                    1976 	ld	c, l
+      0008A0 44                    1977 	ld	b, h
+      0008A1 61                    1978 	ld	h, c
+                                   1979 ;	spillPairReg hl
+                                   1980 ;	spillPairReg hl
+      0008A2 68                    1981 	ld	l, b
+                                   1982 ;	spillPairReg hl
+                                   1983 ;	spillPairReg hl
+      0008A3 CB 78                 1984 	bit	7, b
+      0008A5 28 03                 1985 	jr	Z, 00106$
+      0008A7 03                    1986 	inc	bc
+      0008A8 61                    1987 	ld	h, c
+                                   1988 ;	spillPairReg hl
+                                   1989 ;	spillPairReg hl
+      0008A9 68                    1990 	ld	l, b
+                                   1991 ;	spillPairReg hl
+                                   1992 ;	spillPairReg hl
+      0008AA                       1993 00106$:
+      0008AA 4C                    1994 	ld	c, h
+      0008AB CB 2D                 1995 	sra	l
+      0008AD CB 19                 1996 	rr	c
+                                   1997 ;/home/spence/Documents/gbdk-2020/build/gbdk/include/gb/gb.h:1399: OAM_item_t * itm = &shadow_OAM[nb];
+      0008AF 11r00r00              1998 	ld	de, #_shadow_OAM+0
+                                   1999 ;/home/spence/Documents/gbdk-2020/build/gbdk/include/gb/gb.h:1400: itm->y=y, itm->x=x;
+      0008B2 F8 02                 2000 	ldhl	sp,	#2
+      0008B4 7E                    2001 	ld	a, (hl)
+      0008B5 12                    2002 	ld	(de), a
+      0008B6 13                    2003 	inc	de
+      0008B7 79                    2004 	ld	a, c
+      0008B8 12                    2005 	ld	(de), a
+                                   2006 ;main.c:49: start_time = time(NULL);
+      0008B9 11 00 00              2007 	ld	de, #0x0000
+      0008BC D5                    2008 	push	de
+      0008BD CDr00r00              2009 	call	_time
+      0008C0 E1                    2010 	pop	hl
+      0008C1 21r71r01              2011 	ld	hl, #_start_time
+      0008C4 7B                    2012 	ld	a, e
+      0008C5 22                    2013 	ld	(hl+), a
+      0008C6 72                    2014 	ld	(hl), d
+                                   2015 ;main.c:51: p.x[0] = p.x[1] = p.y[0] = p.y[1] = start_position;
+      0008C7 11r6Br01              2016 	ld	de, #(_p + 3)
+      0008CA 21r01r00              2017 	ld	hl, #_start_position
+      0008CD 7E                    2018 	ld	a, (hl)
+      0008CE 12                    2019 	ld	(de), a
+      0008CF 11r6Ar01              2020 	ld	de, #(_p + 2)
+      0008D2 7E                    2021 	ld	a, (hl)
+      0008D3 12                    2022 	ld	(de), a
+      0008D4 11r69r01              2023 	ld	de, #(_p + 1)
+      0008D7 7E                    2024 	ld	a, (hl)
+      0008D8 12                    2025 	ld	(de), a
+      0008D9 11r68r01              2026 	ld	de, #_p
+      0008DC 7E                    2027 	ld	a, (hl)
+      0008DD 12                    2028 	ld	(de), a
+                                   2029 ;main.c:53: p.steps = p.gold = p.maps = 0;
+      0008DE 21r70r01              2030 	ld	hl, #(_p + 8)
+      0008E1 36 00                 2031 	ld	(hl), #0x00
+      0008E3 21r6Fr01              2032 	ld	hl, #(_p + 7)
+      0008E6 36 00                 2033 	ld	(hl), #0x00
+      0008E8 21r6Cr01              2034 	ld	hl, #(_p + 4)
+      0008EB 36 00                 2035 	ld	(hl), #0x00
+                                   2036 ;main.c:54: p.weapons[0] = p.weapons[1] = -1;
+      0008ED 21r6Er01              2037 	ld	hl, #(_p + 6)
+      0008F0 36 FF                 2038 	ld	(hl), #0xff
+      0008F2 21r6Dr01              2039 	ld	hl, #(_p + 5)
+      0008F5 36 FF                 2040 	ld	(hl), #0xff
+                                   2041 ;main.c:56: generate_map();
+      0008F7 CDrAEr06              2042 	call	_generate_map
+                                   2043 ;main.c:57: load_map();
+      0008FA CDr0Cr08              2044 	call	_load_map
+                                   2045 ;main.c:58: }
+      0008FD E8 03                 2046 	add	sp, #3
+      0008FF C9                    2047 	ret
+                                   2048 ;main.c:60: void updateSwitches() {
+                                   2049 ;	---------------------------------
+                                   2050 ; Function updateSwitches
+                                   2051 ; ---------------------------------
+      000900                       2052 _updateSwitches::
+                                   2053 ;main.c:61: HIDE_WIN;
+      000900 F0r00                 2054 	ldh	a, (_LCDC_REG + 0)
+      000902 E6 DF                 2055 	and	a, #0xdf
+      000904 E0r00                 2056 	ldh	(_LCDC_REG + 0), a
+                                   2057 ;main.c:62: SHOW_SPRITES;
+      000906 F0r00                 2058 	ldh	a, (_LCDC_REG + 0)
+      000908 F6 02                 2059 	or	a, #0x02
+      00090A E0r00                 2060 	ldh	(_LCDC_REG + 0), a
+                                   2061 ;main.c:63: SHOW_BKG;
+      00090C F0r00                 2062 	ldh	a, (_LCDC_REG + 0)
+      00090E F6 01                 2063 	or	a, #0x01
+      000910 E0r00                 2064 	ldh	(_LCDC_REG + 0), a
+                                   2065 ;main.c:64: }
+      000912 C9                    2066 	ret
+                                   2067 ;main.c:66: void checkInput() {
+                                   2068 ;	---------------------------------
+                                   2069 ; Function checkInput
+                                   2070 ; ---------------------------------
+      000913                       2071 _checkInput::
+                                   2072 ;main.c:67: if (joypad()) {
+      000913 CDr00r00              2073 	call	_joypad
+      000916 7B                    2074 	ld	a, e
+      000917 B7                    2075 	or	a, a
+      000918 C8                    2076 	ret	Z
+                                   2077 ;main.c:68: update_position();
+      000919 CDr00r00              2078 	call	_update_position
+                                   2079 ;main.c:69: generate_map();
+      00091C CDrAEr06              2080 	call	_generate_map
+                                   2081 ;main.c:70: load_map();
+                                   2082 ;main.c:72: }
+      00091F C3r0Cr08              2083 	jp	_load_map
+                                   2084 	.area _CODE
+                                   2085 	.area _INITIALIZER
+      000000                       2086 __xinit__SEED:
+      000000 39                    2087 	.db #0x39	; 57	'9'
+      000001                       2088 __xinit__start_position:
+      000001 7F                    2089 	.db #0x7f	; 127
+                                   2090 	.area _CABS (ABS)

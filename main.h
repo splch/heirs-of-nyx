@@ -8,7 +8,6 @@ extern const UINT8 screen_x = 160;
 extern const UINT8 screen_y = 144;
 
 extern UINT8 SEED = 57;
-extern UINT8 array[256];
 
 // map[screen_x / sprite_size][screen_y / sprite_size]
 extern unsigned char map[20][18];
@@ -21,7 +20,7 @@ extern struct player {
 } p;
 
 extern UINT16 start_time;
-extern UINT8 start_position = 0;
+extern UINT8 start_position = 127;
 
 extern const UINT8 scale = 2;
 
