@@ -2,31 +2,12 @@
 #include <gb/gb.h>
 #include <rand.h>
 
-void update_position() {
-  UINT8 _x = p.x[0];
-  UINT8 _y = p.y[0];
-  if (joypad() & J_RIGHT)
-    _x++;
-  else if (joypad() & J_UP)
-    _y--;
-  else if (joypad() & J_LEFT)
-    _x--;
-  else if (joypad() & J_DOWN)
-    _y++;
-  if (_x != p.x[0]) {
-    p.x[1] = p.x[0];
-    p.x[0] = _x;
-    p.steps++;
-  } else if (_y != p.y[0]) {
-    p.y[1] = p.y[0];
-    p.y[0] = _y;
-    p.steps++;
-  }
-}
-
 UINT8 noise(UINT8 x, UINT8 y) {
-  // return random number [0, 255]
-  return 1 ^ ((x + y * SEED) << 1) * SEED;
+  // return random number [88, 124]
+  x = x ^ SEED ^ y;        // the mix of addition and XOR
+  y = y + x;               // and the use of very few instructions
+  x = SEED + (y >> 1) ^ x; // ensure high-order bits from b can affect
+  return x;                // low order bits of other variables
 }
 
 UINT8 smooth_noise(UINT8 x, UINT8 y) {
@@ -62,12 +43,12 @@ UINT8 interpolate_noise(UINT8 x, UINT8 y) {
 
 // TODO: fix generator
 unsigned char closest(UINT8 value) {
-  // 99 <= value <= 153
-  if (value < 110)
+  // 44 <= value <= 188
+  if (value < 80)
     return 0x01; // water
-  else if (value < 135)
+  else if (value < 120)
     return 0x00; // grass
-  else if (value < 140)
+  else if (value < 160)
     return 0x02; // trees
   else
     return 0x03; // mountains
@@ -160,4 +141,33 @@ void generate_map() {
 void display_map() {
   for (UINT8 i = 0; i < 20; i++)
     set_bkg_tiles(i, 0, 1, 18, map[i]);
+}
+
+void update_position() {
+  bool update = false;
+  UINT8 _x = p.x[0];
+  UINT8 _y = p.y[0];
+  if (joypad() & J_RIGHT)
+    _x++;
+  else if (joypad() & J_LEFT)
+    _x--;
+  if (joypad() & J_UP)
+    _y--;
+  else if (joypad() & J_DOWN)
+    _y++;
+  if (_x != p.x[0]) {
+    p.x[1] = p.x[0];
+    p.x[0] = _x;
+    p.steps++;
+    update = true;
+  } else if (_y != p.y[0]) {
+    p.y[1] = p.y[0];
+    p.y[0] = _y;
+    p.steps++;
+    update = true;
+  }
+  if (update == true) {
+    generate_map();
+    display_map();
+  }
 }

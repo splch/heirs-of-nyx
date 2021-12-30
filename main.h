@@ -3,6 +3,8 @@
 
 #include <gb/gb.h>
 
+typedef enum { false, true } bool;
+
 extern const UINT8 sprite_size = 8;
 extern const UINT8 screen_x = 160;
 extern const UINT8 screen_y = 144;
@@ -20,6 +22,6 @@ extern struct player {
 } p;
 
 extern UINT8 start_position = 0;
-extern const UINT8 scale = 3;
+extern const UINT8 scale = 1;
 
 #endif

@@ -69,7 +69,5 @@ void updateSwitches() {
 void checkInput() {
   if (joypad()) {
     update_position();
-    generate_map();
-    display_map();
   }
 }
