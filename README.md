@@ -2,7 +2,7 @@
 
 Travel through vast procedural lands (1,000+ Km^2), over mountains, through forests, across plains, and around water. All the while, searching for treasure and defeating pirates.
 
-![Game](https://user-images.githubusercontent.com/25377399/147722186-b087ae51-0bf3-4bb9-a61e-508874bafb8f.png)
+![Game](https://user-images.githubusercontent.com/25377399/147735402-449d84ce-14c2-426c-9d64-fbddad7d1a6f.png)
 
 (apologies for the graphics :laughing:)
 
