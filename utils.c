@@ -63,9 +63,9 @@ UINT8 interpolate_noise(UINT8 x, UINT8 y) {
 // TODO: fix generator
 unsigned char closest(UINT8 value) {
   // 99 <= value <= 153
-  if (value < 105)
+  if (value < 110)
     return 0x01; // water
-  else if (value < 125)
+  else if (value < 135)
     return 0x00; // grass
   else if (value < 140)
     return 0x02; // trees
@@ -75,7 +75,7 @@ unsigned char closest(UINT8 value) {
 
 unsigned char terrain(UINT8 x, UINT8 y) {
   // return type of terrain at (x, y)
-  const UINT8 scale = 2;
+  const UINT8 scale = 3;
   const UINT8 value = interpolate_noise(x / scale, y / scale);
   return closest(value);
 }
@@ -110,15 +110,19 @@ void generate_side(const char side, const UINT8 pixel_x, const UINT8 pixel_y) {
   case 't':
     for (int x = 0; x < pixel_x; x++)
       map[x][0] = terrain(x + p.x[0], p.y[0]);
+    break;
   case 'r':
     for (int y = 0; y < pixel_y; y++)
       map[pixel_x - 1][y] = terrain(pixel_x - 1 + p.x[0], y + p.y[0]);
+    break;
   case 'b':
     for (int x = 0; x < pixel_x; x++)
       map[x][pixel_y - 1] = terrain(x + p.x[0], pixel_y - 1 + p.y[0]);
+    break;
   case 'l':
     for (int y = 0; y < pixel_y; y++)
       map[0][y] = terrain(p.x[0], y + p.y[0]);
+    break;
   }
 }
 

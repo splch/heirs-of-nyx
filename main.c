@@ -53,6 +53,7 @@ void init() {
   p.steps = p.gold = p.maps = 0;
   p.weapons[0] = p.weapons[1] = -1;
   // Generate terrain
+  printf("Welcome to\nPirate's Folly");
   generate_map();
   load_map();
 }
