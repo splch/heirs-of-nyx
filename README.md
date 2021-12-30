@@ -4,8 +4,6 @@ Travel through vast procedural lands (1,000+ Km^2), over mountains, through fore
 
 ![Game](https://user-images.githubusercontent.com/25377399/147735402-449d84ce-14c2-426c-9d64-fbddad7d1a6f.png)
 
-(apologies for the graphics :laughing:)
-
 ## Install
 
 1. To play the game, move the `Pirates Folly.gb` file into your emulator / flash cart.
