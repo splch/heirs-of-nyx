@@ -18,6 +18,8 @@ make
 
 There should now be a new `Pirates Folly.gb` file in the directory.
 
+Alternatively, you can upload the ROM to an enumator site like @Juchi's [Gameboy emulator](http://juchi.github.io/gameboy.js/) and run it.
+
 ## This game is in development
 
 Changes:
