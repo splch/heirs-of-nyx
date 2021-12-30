@@ -22,6 +22,6 @@ extern struct player {
 extern UINT16 start_time;
 extern UINT8 start_position = 0;
 
-extern const UINT8 scale = 2;
+extern const UINT8 scale = 3;
 
 #endif

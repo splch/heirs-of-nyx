@@ -75,7 +75,6 @@ unsigned char closest(UINT8 value) {
 
 unsigned char terrain(UINT8 x, UINT8 y) {
   // return type of terrain at (x, y)
-  const UINT8 scale = 3;
   const UINT8 value = interpolate_noise(x / scale, y / scale);
   return closest(value);
 }
