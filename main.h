@@ -19,9 +19,7 @@ extern struct player {
   UINT8 gold, maps;
 } p;
 
-extern UINT16 start_time;
 extern UINT8 start_position = 0;
-
 extern const UINT8 scale = 3;
 
 #endif

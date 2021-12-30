@@ -14,7 +14,6 @@ void updateSwitches();
 
 unsigned char map[20][18];
 struct player p;
-UINT16 start_time;
 
 void main() {
   init();
@@ -33,7 +32,7 @@ void init() {
   font_init();                   // Initialize font
   font_set(font_load(font_ibm)); // Set and load the font
 
-  set_bkg_data(0, 3, landscape);
+  set_bkg_data(0, 4, landscape);
 
   // Load the the 'sprites' tiles into sprite memory
   set_sprite_data(0, 0, player_sprite);
@@ -45,17 +44,20 @@ void init() {
   // the center of the screen
   move_sprite(0, (screen_x + sprite_size) / 2, (screen_y + sprite_size) / 2);
 
-  // Set globals
-  start_time = time(NULL);
   // Starting position
   p.x[0] = p.x[1] = p.y[0] = p.y[1] = start_position;
   // Item initialization
   p.steps = p.gold = p.maps = 0;
   p.weapons[0] = p.weapons[1] = -1;
-  // Generate terrain
+
+  // --- LOADING TEXT --- //
   printf("\n\tWelcome to\n\tPirate's Folly");
+  // -------------------- //
+
+  // Generate terrain
   generate_map();
-  load_map();
+  // Display terrain
+  display_map();
 }
 
 void updateSwitches() {
@@ -68,6 +70,6 @@ void checkInput() {
   if (joypad()) {
     update_position();
     generate_map();
-    load_map();
+    display_map();
   }
 }

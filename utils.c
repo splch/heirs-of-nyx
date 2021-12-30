@@ -157,7 +157,7 @@ void generate_map() {
         map[x][y] = terrain(x + p.x[0], y + p.y[0]);
 }
 
-void load_map() {
+void display_map() {
   for (UINT8 i = 0; i < 20; i++)
     set_bkg_tiles(i, 0, 1, 18, map[i]);
 }
