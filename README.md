@@ -2,7 +2,9 @@
 
 Travel through vast procedural lands (1,000+ Km^2), over mountains, through forests, across plains, and around water. All the while, searching for treasure and defeating pirates.
 
-![Game](https://slc.is/images/piratesFolly.webp)
+![game](https://user-images.githubusercontent.com/25377399/147716614-5ded4ab9-d4f0-4859-b2df-1e14083d1c01.png)
+
+(apologies for the graphics :laughing:)
 
 ## Install
 
