@@ -25,12 +25,8 @@ void update_position() {
 }
 
 UINT8 noise(UINT8 x, UINT8 y) {
-  // return random number [0, 0xffffffff]
-  initrand(x + y * SEED);
-  return rand();
-  // UINT8 n = x + y * SEED;
-  // n = (n << 13) ^ n;
-  // return ((n * (n * n * 15731 + 789221) + 1376312589) & 0x7fffffff);
+  // return random number [0, 255]
+  return 1 ^ ((x + y * SEED) << 1) * SEED;
 }
 
 UINT8 smooth_noise(UINT8 x, UINT8 y) {
@@ -66,14 +62,15 @@ UINT8 interpolate_noise(UINT8 x, UINT8 y) {
 
 // TODO: fix generator
 unsigned char closest(UINT8 value) {
-  if (value < 110)
+  // 99 <= value <= 153
+  if (value < 105)
     return 0x01; // water
-  else if (value < 150)
-    return 0x02; // grass
-  else if (value < 160)
-    return 0x03; // trees
+  else if (value < 125)
+    return 0x00; // grass
+  else if (value < 140)
+    return 0x02; // trees
   else
-    return 0x04; // mountains
+    return 0x03; // mountains
 }
 
 unsigned char terrain(UINT8 x, UINT8 y) {
@@ -159,5 +156,5 @@ void generate_map() {
 
 void load_map() {
   for (UINT8 i = 0; i < 20; i++)
-    set_bkg_tiles(0, 0, 20, 18, map[i]);
+    set_bkg_tiles(i, 0, 1, 18, map[i]);
 }
