@@ -5,8 +5,8 @@
 #include <gbdk/font.h>
 
 void init();
-void checkInput();
-void updateSwitches();
+void update_switches();
+void check_input();
 
 unsigned char map[20][18];
 struct player p;
@@ -15,10 +15,10 @@ void main() {
   init();
 
   while (1) {
-    checkInput();     // Check for user input (and act on it)
-    updateSwitches(); // Make sure the SHOW_SPRITES and SHOW_BKG switches are on
-                      // each loop
-    wait_vbl_done();  // Wait until VBLANK to avoid corrupting memory
+    check_input();     // Check for user input (and act on it)
+    update_switches(); // Make sure the SHOW_SPRITES and SHOW_BKG switches are
+                       // on each loop
+    wait_vbl_done();   // Wait until VBLANK to avoid corrupting memory
   }
 }
 
@@ -28,9 +28,10 @@ void init() {
   font_init();                   // Initialize font
   font_set(font_load(font_ibm)); // Set and load the font
 
+  // Load tiles as background memory
   set_bkg_data(0, 4, landscape);
 
-  // Load the the 'sprites' tiles into sprite memory
+  // Load tiles into sprite memory
   set_sprite_data(0, 0, player_sprite);
 
   // Set first movable sprite (0) to be first tile in sprite memory (0)
@@ -40,9 +41,9 @@ void init() {
   // the center of the screen
   move_sprite(0, (screen_x + sprite_size) / 2, (screen_y + sprite_size) / 2);
 
-  // Starting position
+  // Starting position for map generation
   p.x[0] = p.x[1] = p.y[0] = p.y[1] = start_position;
-  // Item initialization
+  // Player item initialization
   p.steps = p.gold = p.maps = 0;
   p.weapons[0] = p.weapons[1] = -1;
 
@@ -56,13 +57,13 @@ void init() {
   display_map();
 }
 
-void updateSwitches() {
+void update_switches() {
   HIDE_WIN;
   SHOW_SPRITES;
   SHOW_BKG;
 }
 
-void checkInput() {
+void check_input() {
   if (joypad() & J_START)
     show_menu();
   else if (joypad())

@@ -17,10 +17,10 @@
 	.globl _display_map
 	.globl _generate_map
 	.globl _generate_side
-	.globl _shift_down
-	.globl _shift_up
-	.globl _shift_right
-	.globl _shift_left
+	.globl _shift_array_down
+	.globl _shift_array_up
+	.globl _shift_array_right
+	.globl _shift_array_left
 	.globl _printf
 	.globl _set_sprite_data
 	.globl _set_bkg_tiles
@@ -32,8 +32,8 @@
 	.globl _landscape
 	.globl _player_sprite
 	.globl _init
-	.globl _updateSwitches
-	.globl _checkInput
+	.globl _update_switches
+	.globl _check_input
 ;--------------------------------------------------------
 ; special function registers
 ;--------------------------------------------------------
@@ -69,13 +69,13 @@ _p::
 ; code
 ;--------------------------------------------------------
 	.area _CODE
-;utils.c:64: void shift_left(const UINT8 pixel_x, const UINT8 pixel_y) {
+;utils.c:61: void shift_array_left(const UINT8 pixel_x, const UINT8 pixel_y) {
 ;	---------------------------------
-; Function shift_left
+; Function shift_array_left
 ; ---------------------------------
-_shift_left::
+_shift_array_left::
 	add	sp, #-10
-;utils.c:65: for (int x = 0; x < pixel_x - 1; x++)
+;utils.c:62: for (int x = 0; x < pixel_x - 1; x++)
 	ld	bc, #0x0000
 00107$:
 	ldhl	sp,	#12
@@ -100,7 +100,7 @@ _shift_left::
 	scf
 00134$:
 	jp	NC, 00109$
-;utils.c:66: for (int y = 0; y < pixel_y; y++)
+;utils.c:63: for (int y = 0; y < pixel_y; y++)
 	ld	l, c
 	ld	h, b
 	add	hl, hl
@@ -184,7 +184,7 @@ _shift_left::
 	scf
 00136$:
 	jr	NC, 00108$
-;utils.c:67: map[x][y] = map[x + 1][y];
+;utils.c:64: map[x][y] = map[x + 1][y];
 	pop	de
 	push	de
 	ldhl	sp,	#8
@@ -207,7 +207,7 @@ _shift_left::
 	ld	d, h
 	ld	a, (de)
 	ld	(bc), a
-;utils.c:66: for (int y = 0; y < pixel_y; y++)
+;utils.c:63: for (int y = 0; y < pixel_y; y++)
 	ldhl	sp,	#8
 	inc	(hl)
 	jr	NZ, 00104$
@@ -215,14 +215,14 @@ _shift_left::
 	inc	(hl)
 	jr	00104$
 00108$:
-;utils.c:65: for (int x = 0; x < pixel_x - 1; x++)
+;utils.c:62: for (int x = 0; x < pixel_x - 1; x++)
 	ldhl	sp,	#2
 	ld	a, (hl+)
 	ld	c, a
 	ld	b, (hl)
 	jp	00107$
 00109$:
-;utils.c:68: }
+;utils.c:65: }
 	add	sp, #10
 	ret
 _player_sprite:
@@ -307,13 +307,13 @@ _landscape:
 	.db #0xff	; 255
 	.db #0x80	; 128
 	.db #0xff	; 255
-;utils.c:70: void shift_right(const UINT8 pixel_x, const UINT8 pixel_y) {
+;utils.c:67: void shift_array_right(const UINT8 pixel_x, const UINT8 pixel_y) {
 ;	---------------------------------
-; Function shift_right
+; Function shift_array_right
 ; ---------------------------------
-_shift_right::
+_shift_array_right::
 	add	sp, #-10
-;utils.c:71: for (int x = pixel_x - 1; x > 0; x--)
+;utils.c:68: for (int x = pixel_x - 1; x > 0; x--)
 	ldhl	sp,	#12
 	ld	c, (hl)
 	ld	b, #0x00
@@ -336,7 +336,7 @@ _shift_right::
 	scf
 00134$:
 	jp	NC, 00109$
-;utils.c:72: for (int y = 0; y < pixel_y; y++)
+;utils.c:69: for (int y = 0; y < pixel_y; y++)
 	ld	l, c
 	ld	h, b
 	add	hl, hl
@@ -425,7 +425,7 @@ _shift_right::
 	scf
 00136$:
 	jr	NC, 00108$
-;utils.c:73: map[x][y] = map[x - 1][y];
+;utils.c:70: map[x][y] = map[x - 1][y];
 	pop	de
 	push	de
 	ldhl	sp,	#8
@@ -448,7 +448,7 @@ _shift_right::
 	ld	d, h
 	ld	a, (de)
 	ld	(bc), a
-;utils.c:72: for (int y = 0; y < pixel_y; y++)
+;utils.c:69: for (int y = 0; y < pixel_y; y++)
 	ldhl	sp,	#8
 	inc	(hl)
 	jr	NZ, 00104$
@@ -456,23 +456,23 @@ _shift_right::
 	inc	(hl)
 	jr	00104$
 00108$:
-;utils.c:71: for (int x = pixel_x - 1; x > 0; x--)
+;utils.c:68: for (int x = pixel_x - 1; x > 0; x--)
 	ldhl	sp,	#2
 	ld	a, (hl+)
 	ld	c, a
 	ld	b, (hl)
 	jp	00107$
 00109$:
-;utils.c:74: }
+;utils.c:71: }
 	add	sp, #10
 	ret
-;utils.c:76: void shift_up(const UINT8 pixel_x, const UINT8 pixel_y) {
+;utils.c:73: void shift_array_up(const UINT8 pixel_x, const UINT8 pixel_y) {
 ;	---------------------------------
-; Function shift_up
+; Function shift_array_up
 ; ---------------------------------
-_shift_up::
+_shift_array_up::
 	add	sp, #-4
-;utils.c:77: for (int y = 0; y < pixel_y - 1; y++)
+;utils.c:74: for (int y = 0; y < pixel_y - 1; y++)
 	ld	bc, #0x0000
 00107$:
 	ldhl	sp,	#7
@@ -497,7 +497,7 @@ _shift_up::
 	scf
 00134$:
 	jr	NC, 00109$
-;utils.c:78: for (int x = 0; x < pixel_x; x++)
+;utils.c:75: for (int x = 0; x < pixel_x; x++)
 	xor	a, a
 	ldhl	sp,	#2
 	ld	(hl+), a
@@ -532,7 +532,7 @@ _shift_up::
 	scf
 00136$:
 	jr	NC, 00108$
-;utils.c:79: map[x][y] = map[x][y + 1];
+;utils.c:76: map[x][y] = map[x][y + 1];
 	ldhl	sp,#2
 	ld	a, (hl+)
 	ld	e, a
@@ -562,7 +562,7 @@ _shift_up::
 	ld	d, a
 	ld	a, (de)
 	ld	(hl), a
-;utils.c:78: for (int x = 0; x < pixel_x; x++)
+;utils.c:75: for (int x = 0; x < pixel_x; x++)
 	ldhl	sp,	#2
 	inc	(hl)
 	jr	NZ, 00104$
@@ -570,20 +570,20 @@ _shift_up::
 	inc	(hl)
 	jr	00104$
 00108$:
-;utils.c:77: for (int y = 0; y < pixel_y - 1; y++)
+;utils.c:74: for (int y = 0; y < pixel_y - 1; y++)
 	inc	bc
 	jr	00107$
 00109$:
-;utils.c:80: }
+;utils.c:77: }
 	add	sp, #4
 	ret
-;utils.c:82: void shift_down(const UINT8 pixel_x, const UINT8 pixel_y) {
+;utils.c:79: void shift_array_down(const UINT8 pixel_x, const UINT8 pixel_y) {
 ;	---------------------------------
-; Function shift_down
+; Function shift_array_down
 ; ---------------------------------
-_shift_down::
+_shift_array_down::
 	add	sp, #-4
-;utils.c:83: for (int y = pixel_y - 1; y > 0; y--)
+;utils.c:80: for (int y = pixel_y - 1; y > 0; y--)
 	ldhl	sp,	#7
 	ld	c, (hl)
 	ld	b, #0x00
@@ -606,7 +606,7 @@ _shift_down::
 	scf
 00134$:
 	jr	NC, 00109$
-;utils.c:84: for (int x = 0; x < pixel_x; x++)
+;utils.c:81: for (int x = 0; x < pixel_x; x++)
 	xor	a, a
 	ldhl	sp,	#2
 	ld	(hl+), a
@@ -641,7 +641,7 @@ _shift_down::
 	scf
 00136$:
 	jr	NC, 00108$
-;utils.c:85: map[x][y] = map[x][y - 1];
+;utils.c:82: map[x][y] = map[x][y - 1];
 	ldhl	sp,#2
 	ld	a, (hl+)
 	ld	e, a
@@ -671,7 +671,7 @@ _shift_down::
 	ld	d, a
 	ld	a, (de)
 	ld	(hl), a
-;utils.c:84: for (int x = 0; x < pixel_x; x++)
+;utils.c:81: for (int x = 0; x < pixel_x; x++)
 	ldhl	sp,	#2
 	inc	(hl)
 	jr	NZ, 00104$
@@ -679,37 +679,37 @@ _shift_down::
 	inc	(hl)
 	jr	00104$
 00108$:
-;utils.c:83: for (int y = pixel_y - 1; y > 0; y--)
+;utils.c:80: for (int y = pixel_y - 1; y > 0; y--)
 	dec	bc
 	jr	00107$
 00109$:
-;utils.c:86: }
+;utils.c:83: }
 	add	sp, #4
 	ret
-;utils.c:88: void generate_side(const char side, const UINT8 pixel_x, const UINT8 pixel_y) {
+;utils.c:85: void generate_side(const char side, const UINT8 pixel_x, const UINT8 pixel_y) {
 ;	---------------------------------
 ; Function generate_side
 ; ---------------------------------
 _generate_side::
 	add	sp, #-22
-;utils.c:92: for (int x = 0; x < pixel_x; x++)
+;utils.c:89: for (int x = 0; x < pixel_x; x++)
 	ldhl	sp,	#25
 	ld	a, (hl)
 	ldhl	sp,	#4
 	ld	(hl+), a
 	ld	(hl), #0x00
-;utils.c:90: switch (side) {
+;utils.c:87: switch (side) {
 	ldhl	sp,	#24
 	ld	a, (hl)
 	sub	a, #0x62
 	jp	Z,00362$
-;utils.c:96: for (int y = 0; y < pixel_y; y++)
+;utils.c:93: for (int y = 0; y < pixel_y; y++)
 	ldhl	sp,	#26
 	ld	a, (hl)
 	ldhl	sp,	#6
 	ld	(hl+), a
 	ld	(hl), #0x00
-;utils.c:90: switch (side) {
+;utils.c:87: switch (side) {
 	ldhl	sp,	#24
 	ld	a, (hl)
 	sub	a, #0x6c
@@ -722,7 +722,7 @@ _generate_side::
 	ld	a, (hl)
 	sub	a, #0x74
 	jp	NZ,00342$
-;utils.c:92: for (int x = 0; x < pixel_x; x++)
+;utils.c:89: for (int x = 0; x < pixel_x; x++)
 	ld	bc, #_map+0
 	xor	a, a
 	ldhl	sp,	#20
@@ -753,7 +753,7 @@ _generate_side::
 	scf
 00474$:
 	jp	NC, 00342$
-;utils.c:93: map[x][0] = terrain(x + p.x[0], p.y[0]);
+;utils.c:90: map[x][0] = terrain(x + p.x[0], p.y[0]);
 	ldhl	sp,#20
 	ld	a, (hl+)
 	ld	e, a
@@ -795,7 +795,7 @@ _generate_side::
 ;	spillPairReg hl
 	add	a, l
 	ldhl	sp,	#19
-;utils.c:60: const UINT8 value = interpolate_noise(x / scale, y / scale);
+;utils.c:57: const UINT8 value = interpolate_noise(x / scale, y / scale);
 	ld	(hl-), a
 	ld	e, (hl)
 	ld	d, #0x00
@@ -1250,7 +1250,7 @@ _generate_side::
 	rrca
 	and	a, #0x3f
 	ld	e, a
-;utils.c:36: UINT8 v1 = smooth_noise(x, y);
+;utils.c:33: UINT8 v1 = smooth_noise(x, y);
 	ldhl	sp,	#19
 	ld	a, (hl-)
 	dec	hl
@@ -1258,7 +1258,7 @@ _generate_side::
 	add	a, e
 	ldhl	sp,	#14
 	ld	(hl), a
-;utils.c:37: UINT8 v2 = smooth_noise(x + 1, y);
+;utils.c:34: UINT8 v2 = smooth_noise(x + 1, y);
 	ldhl	sp,	#10
 	ld	a, (hl)
 ;utils.c:16: const UINT8 corners = (noise(x - 1, y - 1) + noise(x + 1, y - 1) +
@@ -1636,12 +1636,12 @@ _generate_side::
 	rrca
 	and	a, #0x3f
 	ld	d, a
-;utils.c:37: UINT8 v2 = smooth_noise(x + 1, y);
+;utils.c:34: UINT8 v2 = smooth_noise(x + 1, y);
 	ldhl	sp,	#19
 	ld	a, (hl)
 	add	a, e
 	add	a, d
-;utils.c:38: const UINT8 i1 = interpolate(v1, v2);
+;utils.c:35: const UINT8 i1 = interpolate(v1, v2);
 	ldhl	sp,	#14
 	ld	e, (hl)
 	ld	d, #0x00
@@ -1658,7 +1658,7 @@ _generate_side::
 	rr	e
 	ldhl	sp,	#19
 	ld	(hl), e
-;utils.c:60: const UINT8 value = interpolate_noise(x / scale, y / scale);
+;utils.c:57: const UINT8 value = interpolate_noise(x / scale, y / scale);
 	ldhl	sp,	#11
 	ld	a, (hl)
 ;utils.c:16: const UINT8 corners = (noise(x - 1, y - 1) + noise(x + 1, y - 1) +
@@ -2053,7 +2053,7 @@ _generate_side::
 	rrca
 	and	a, #0x3f
 	ld	e, a
-;utils.c:60: const UINT8 value = interpolate_noise(x / scale, y / scale);
+;utils.c:57: const UINT8 value = interpolate_noise(x / scale, y / scale);
 	ldhl	sp,	#18
 	ld	a, (hl-)
 	add	a, (hl)
@@ -2516,7 +2516,7 @@ _generate_side::
 	add	a, e
 	ldhl	sp,	#16
 	ld	e, (hl)
-;utils.c:60: const UINT8 value = interpolate_noise(x / scale, y / scale);
+;utils.c:57: const UINT8 value = interpolate_noise(x / scale, y / scale);
 	inc	hl
 	inc	hl
 	add	a, e
@@ -2527,7 +2527,7 @@ _generate_side::
 	ld	a, (hl-)
 	add	a, (hl)
 	add	a, e
-;utils.c:41: const UINT8 i2 = interpolate(v1, v2);
+;utils.c:38: const UINT8 i2 = interpolate(v1, v2);
 	ldhl	sp,	#9
 	ld	e, (hl)
 	ld	d, #0x00
@@ -2539,7 +2539,7 @@ _generate_side::
 	sra	h
 	rr	l
 	ld	a, l
-;utils.c:60: const UINT8 value = interpolate_noise(x / scale, y / scale);
+;utils.c:57: const UINT8 value = interpolate_noise(x / scale, y / scale);
 	ldhl	sp,	#19
 	ld	e, (hl)
 	ld	d, #0x00
@@ -2551,32 +2551,32 @@ _generate_side::
 	sra	h
 	rr	l
 	ld	a, l
-;utils.c:48: if (value < 100)
+;utils.c:44: if (value < 100)
 	cp	a, #0x64
 	jr	NC, 00161$
-;utils.c:49: return 0x01; // water
+;utils.c:45: return 0x01; // water
 	ld	a, #0x01
 	jr	00163$
 00161$:
-;utils.c:50: else if (value < 130)
+;utils.c:46: else if (value < 130)
 	cp	a, #0x82
 	jr	NC, 00159$
-;utils.c:51: return 0x00; // grass
+;utils.c:47: return 0x00; // grass
 	xor	a, a
 	jr	00163$
 00159$:
-;utils.c:52: else if (value < 150)
+;utils.c:48: else if (value < 150)
 	sub	a, #0x96
 	jr	NC, 00157$
-;utils.c:53: return 0x02; // trees
+;utils.c:49: return 0x02; // trees
 	ld	a, #0x02
 	jr	00163$
 00157$:
-;utils.c:55: return 0x03; // mountains
+;utils.c:51: return 0x03; // mountains
 	ld	a, #0x03
-;utils.c:61: return closest(value);
+;utils.c:58: return closest(value);
 00163$:
-;utils.c:93: map[x][0] = terrain(x + p.x[0], p.y[0]);
+;utils.c:90: map[x][0] = terrain(x + p.x[0], p.y[0]);
 	ldhl	sp,	#6
 	push	af
 	ld	a,	(hl+)
@@ -2584,14 +2584,14 @@ _generate_side::
 	ld	l, a
 	pop	af
 	ld	(hl), a
-;utils.c:92: for (int x = 0; x < pixel_x; x++)
+;utils.c:89: for (int x = 0; x < pixel_x; x++)
 	ldhl	sp,	#20
 	inc	(hl)
 	jp	NZ,00331$
 	inc	hl
 	inc	(hl)
 	jp	00331$
-;utils.c:96: for (int y = 0; y < pixel_y; y++)
+;utils.c:93: for (int y = 0; y < pixel_y; y++)
 00357$:
 	ld	bc, #0x0000
 00334$:
@@ -2615,7 +2615,7 @@ _generate_side::
 	scf
 00477$:
 	jp	NC, 00342$
-;utils.c:97: map[pixel_x - 1][y] = terrain(pixel_x - 1 + p.x[0], y + p.y[0]);
+;utils.c:94: map[pixel_x - 1][y] = terrain(pixel_x - 1 + p.x[0], y + p.y[0]);
 	ldhl	sp,#4
 	ld	a, (hl+)
 	ld	e, a
@@ -2673,7 +2673,7 @@ _generate_side::
 ;	spillPairReg hl
 	add	a, l
 	ldhl	sp,	#21
-;utils.c:60: const UINT8 value = interpolate_noise(x / scale, y / scale);
+;utils.c:57: const UINT8 value = interpolate_noise(x / scale, y / scale);
 	ld	(hl-), a
 	ld	e, (hl)
 	ld	d, #0x00
@@ -3128,7 +3128,7 @@ _generate_side::
 	rrca
 	and	a, #0x3f
 	ld	e, a
-;utils.c:36: UINT8 v1 = smooth_noise(x, y);
+;utils.c:33: UINT8 v1 = smooth_noise(x, y);
 	ldhl	sp,	#21
 	ld	a, (hl-)
 	dec	hl
@@ -3136,7 +3136,7 @@ _generate_side::
 	add	a, e
 	ldhl	sp,	#16
 	ld	(hl), a
-;utils.c:37: UINT8 v2 = smooth_noise(x + 1, y);
+;utils.c:34: UINT8 v2 = smooth_noise(x + 1, y);
 	ldhl	sp,	#12
 	ld	a, (hl)
 ;utils.c:16: const UINT8 corners = (noise(x - 1, y - 1) + noise(x + 1, y - 1) +
@@ -3514,12 +3514,12 @@ _generate_side::
 	rrca
 	and	a, #0x3f
 	ld	d, a
-;utils.c:37: UINT8 v2 = smooth_noise(x + 1, y);
+;utils.c:34: UINT8 v2 = smooth_noise(x + 1, y);
 	ldhl	sp,	#21
 	ld	a, (hl)
 	add	a, e
 	add	a, d
-;utils.c:38: const UINT8 i1 = interpolate(v1, v2);
+;utils.c:35: const UINT8 i1 = interpolate(v1, v2);
 	ldhl	sp,	#16
 	ld	e, (hl)
 	ld	d, #0x00
@@ -3536,7 +3536,7 @@ _generate_side::
 	rr	e
 	ldhl	sp,	#21
 	ld	(hl), e
-;utils.c:60: const UINT8 value = interpolate_noise(x / scale, y / scale);
+;utils.c:57: const UINT8 value = interpolate_noise(x / scale, y / scale);
 	ldhl	sp,	#13
 	ld	a, (hl)
 ;utils.c:16: const UINT8 corners = (noise(x - 1, y - 1) + noise(x + 1, y - 1) +
@@ -3931,7 +3931,7 @@ _generate_side::
 	rrca
 	and	a, #0x3f
 	ld	e, a
-;utils.c:60: const UINT8 value = interpolate_noise(x / scale, y / scale);
+;utils.c:57: const UINT8 value = interpolate_noise(x / scale, y / scale);
 	ldhl	sp,	#20
 	ld	a, (hl-)
 	add	a, (hl)
@@ -4394,7 +4394,7 @@ _generate_side::
 	add	a, e
 	ldhl	sp,	#18
 	ld	e, (hl)
-;utils.c:60: const UINT8 value = interpolate_noise(x / scale, y / scale);
+;utils.c:57: const UINT8 value = interpolate_noise(x / scale, y / scale);
 	inc	hl
 	inc	hl
 	add	a, e
@@ -4405,7 +4405,7 @@ _generate_side::
 	ld	a, (hl-)
 	add	a, (hl)
 	add	a, e
-;utils.c:41: const UINT8 i2 = interpolate(v1, v2);
+;utils.c:38: const UINT8 i2 = interpolate(v1, v2);
 	ldhl	sp,	#11
 	ld	e, (hl)
 	ld	d, #0x00
@@ -4417,7 +4417,7 @@ _generate_side::
 	sra	h
 	rr	l
 	ld	a, l
-;utils.c:60: const UINT8 value = interpolate_noise(x / scale, y / scale);
+;utils.c:57: const UINT8 value = interpolate_noise(x / scale, y / scale);
 	ldhl	sp,	#21
 	ld	e, (hl)
 	ld	d, #0x00
@@ -4429,32 +4429,32 @@ _generate_side::
 	sra	h
 	rr	l
 	ld	a, l
-;utils.c:48: if (value < 100)
+;utils.c:44: if (value < 100)
 	cp	a, #0x64
 	jr	NC, 00216$
-;utils.c:49: return 0x01; // water
+;utils.c:45: return 0x01; // water
 	ld	a, #0x01
 	jr	00218$
 00216$:
-;utils.c:50: else if (value < 130)
+;utils.c:46: else if (value < 130)
 	cp	a, #0x82
 	jr	NC, 00214$
-;utils.c:51: return 0x00; // grass
+;utils.c:47: return 0x00; // grass
 	xor	a, a
 	jr	00218$
 00214$:
-;utils.c:52: else if (value < 150)
+;utils.c:48: else if (value < 150)
 	sub	a, #0x96
 	jr	NC, 00212$
-;utils.c:53: return 0x02; // trees
+;utils.c:49: return 0x02; // trees
 	ld	a, #0x02
 	jr	00218$
 00212$:
-;utils.c:55: return 0x03; // mountains
+;utils.c:51: return 0x03; // mountains
 	ld	a, #0x03
-;utils.c:61: return closest(value);
+;utils.c:58: return closest(value);
 00218$:
-;utils.c:97: map[pixel_x - 1][y] = terrain(pixel_x - 1 + p.x[0], y + p.y[0]);
+;utils.c:94: map[pixel_x - 1][y] = terrain(pixel_x - 1 + p.x[0], y + p.y[0]);
 	ldhl	sp,	#8
 	push	af
 	ld	a,	(hl+)
@@ -4462,10 +4462,10 @@ _generate_side::
 	ld	l, a
 	pop	af
 	ld	(hl), a
-;utils.c:96: for (int y = 0; y < pixel_y; y++)
+;utils.c:93: for (int y = 0; y < pixel_y; y++)
 	inc	bc
 	jp	00334$
-;utils.c:100: for (int x = 0; x < pixel_x; x++)
+;utils.c:97: for (int x = 0; x < pixel_x; x++)
 00362$:
 	xor	a, a
 	ldhl	sp,	#20
@@ -4496,7 +4496,7 @@ _generate_side::
 	scf
 00479$:
 	jp	NC, 00342$
-;utils.c:101: map[x][pixel_y - 1] = terrain(x + p.x[0], pixel_y - 1 + p.y[0]);
+;utils.c:98: map[x][pixel_y - 1] = terrain(x + p.x[0], pixel_y - 1 + p.y[0]);
 	ldhl	sp,#20
 	ld	a, (hl+)
 	ld	c, a
@@ -4534,7 +4534,7 @@ _generate_side::
 	ld	a, (#_p + 0)
 	add	a, c
 	ld	c, a
-;utils.c:60: const UINT8 value = interpolate_noise(x / scale, y / scale);
+;utils.c:57: const UINT8 value = interpolate_noise(x / scale, y / scale);
 	ld	e, b
 	ld	d, #0x00
 	push	bc
@@ -4978,14 +4978,14 @@ _generate_side::
 	rrca
 	and	a, #0x3f
 	ld	e, a
-;utils.c:36: UINT8 v1 = smooth_noise(x, y);
+;utils.c:33: UINT8 v1 = smooth_noise(x, y);
 	ldhl	sp,	#19
 	ld	a, (hl)
 	add	a, c
 	add	a, e
 	ldhl	sp,	#14
 	ld	(hl), a
-;utils.c:37: UINT8 v2 = smooth_noise(x + 1, y);
+;utils.c:34: UINT8 v2 = smooth_noise(x + 1, y);
 	ldhl	sp,	#10
 	ld	a, (hl)
 	ldhl	sp,	#19
@@ -5360,12 +5360,12 @@ _generate_side::
 	rrca
 	and	a, #0x3f
 	ld	c, a
-;utils.c:37: UINT8 v2 = smooth_noise(x + 1, y);
+;utils.c:34: UINT8 v2 = smooth_noise(x + 1, y);
 	ldhl	sp,	#18
 	ld	a, (hl)
 	add	a, b
 	add	a, c
-;utils.c:38: const UINT8 i1 = interpolate(v1, v2);
+;utils.c:35: const UINT8 i1 = interpolate(v1, v2);
 	ldhl	sp,	#14
 	ld	c, (hl)
 	ld	b, #0x00
@@ -5382,7 +5382,7 @@ _generate_side::
 	rr	c
 	ldhl	sp,	#19
 	ld	(hl), c
-;utils.c:60: const UINT8 value = interpolate_noise(x / scale, y / scale);
+;utils.c:57: const UINT8 value = interpolate_noise(x / scale, y / scale);
 	ldhl	sp,	#11
 	ld	a, (hl)
 ;utils.c:16: const UINT8 corners = (noise(x - 1, y - 1) + noise(x + 1, y - 1) +
@@ -5759,7 +5759,7 @@ _generate_side::
 	rrca
 	and	a, #0x3f
 	ld	c, a
-;utils.c:60: const UINT8 value = interpolate_noise(x / scale, y / scale);
+;utils.c:57: const UINT8 value = interpolate_noise(x / scale, y / scale);
 	ldhl	sp,	#18
 	ld	a, (hl)
 	add	a, b
@@ -6215,12 +6215,12 @@ _generate_side::
 	rrca
 	and	a, #0x3f
 	ld	c, a
-;utils.c:60: const UINT8 value = interpolate_noise(x / scale, y / scale);
+;utils.c:57: const UINT8 value = interpolate_noise(x / scale, y / scale);
 	ldhl	sp,	#16
 	ld	a, (hl)
 	add	a, b
 	add	a, c
-;utils.c:41: const UINT8 i2 = interpolate(v1, v2);
+;utils.c:38: const UINT8 i2 = interpolate(v1, v2);
 	ldhl	sp,	#9
 	ld	c, (hl)
 	ld	b, #0x00
@@ -6234,7 +6234,7 @@ _generate_side::
 	sra	h
 	rr	l
 	ld	a, l
-;utils.c:60: const UINT8 value = interpolate_noise(x / scale, y / scale);
+;utils.c:57: const UINT8 value = interpolate_noise(x / scale, y / scale);
 	ldhl	sp,	#19
 	ld	c, (hl)
 	ld	b, #0x00
@@ -6248,45 +6248,45 @@ _generate_side::
 	sra	h
 	rr	l
 	ld	a, l
-;utils.c:48: if (value < 100)
+;utils.c:44: if (value < 100)
 	cp	a, #0x64
 	jr	NC, 00271$
-;utils.c:49: return 0x01; // water
+;utils.c:45: return 0x01; // water
 	ld	c, #0x01
 	jr	00273$
 00271$:
-;utils.c:50: else if (value < 130)
+;utils.c:46: else if (value < 130)
 	cp	a, #0x82
 	jr	NC, 00269$
-;utils.c:51: return 0x00; // grass
+;utils.c:47: return 0x00; // grass
 	ld	c, #0x00
 	jr	00273$
 00269$:
-;utils.c:52: else if (value < 150)
+;utils.c:48: else if (value < 150)
 	sub	a, #0x96
 	jr	NC, 00267$
-;utils.c:53: return 0x02; // trees
+;utils.c:49: return 0x02; // trees
 	ld	c, #0x02
 	jr	00273$
 00267$:
-;utils.c:55: return 0x03; // mountains
+;utils.c:51: return 0x03; // mountains
 	ld	c, #0x03
-;utils.c:61: return closest(value);
+;utils.c:58: return closest(value);
 00273$:
-;utils.c:101: map[x][pixel_y - 1] = terrain(x + p.x[0], pixel_y - 1 + p.y[0]);
+;utils.c:98: map[x][pixel_y - 1] = terrain(x + p.x[0], pixel_y - 1 + p.y[0]);
 	ldhl	sp,	#6
 	ld	a,	(hl+)
 	ld	h, (hl)
 	ld	l, a
 	ld	(hl), c
-;utils.c:100: for (int x = 0; x < pixel_x; x++)
+;utils.c:97: for (int x = 0; x < pixel_x; x++)
 	ldhl	sp,	#20
 	inc	(hl)
 	jp	NZ,00337$
 	inc	hl
 	inc	(hl)
 	jp	00337$
-;utils.c:104: for (int y = 0; y < pixel_y; y++)
+;utils.c:101: for (int y = 0; y < pixel_y; y++)
 00367$:
 	xor	a, a
 	ldhl	sp,	#20
@@ -6317,7 +6317,7 @@ _generate_side::
 	scf
 00482$:
 	jp	NC, 00342$
-;utils.c:105: map[0][y] = terrain(p.x[0], y + p.y[0]);
+;utils.c:102: map[0][y] = terrain(p.x[0], y + p.y[0]);
 	ld	de, #_map
 	ldhl	sp,	#20
 	ld	a,	(hl+)
@@ -6338,7 +6338,7 @@ _generate_side::
 	add	a, c
 	ld	hl, #_p
 	ld	c, (hl)
-;utils.c:60: const UINT8 value = interpolate_noise(x / scale, y / scale);
+;utils.c:57: const UINT8 value = interpolate_noise(x / scale, y / scale);
 	ld	d, #0x00
 	push	bc
 	ld	hl, #0x0003
@@ -6756,14 +6756,14 @@ _generate_side::
 	rrca
 	and	a, #0x3f
 	ld	c, a
-;utils.c:36: UINT8 v1 = smooth_noise(x, y);
+;utils.c:33: UINT8 v1 = smooth_noise(x, y);
 	ld	a, b
 	ldhl	sp,	#19
 	add	a, (hl)
 	add	a, c
 	ldhl	sp,	#16
 	ld	(hl), a
-;utils.c:37: UINT8 v2 = smooth_noise(x + 1, y);
+;utils.c:34: UINT8 v2 = smooth_noise(x + 1, y);
 	ldhl	sp,	#12
 	ld	c, (hl)
 ;utils.c:16: const UINT8 corners = (noise(x - 1, y - 1) + noise(x + 1, y - 1) +
@@ -7108,12 +7108,12 @@ _generate_side::
 	ld	e, a
 	srl	e
 	srl	e
-;utils.c:37: UINT8 v2 = smooth_noise(x + 1, y);
+;utils.c:34: UINT8 v2 = smooth_noise(x + 1, y);
 	ld	a, c
 	ldhl	sp,	#19
 	add	a, (hl)
 	add	a, e
-;utils.c:38: const UINT8 i1 = interpolate(v1, v2);
+;utils.c:35: const UINT8 i1 = interpolate(v1, v2);
 	ldhl	sp,	#16
 	ld	c, (hl)
 	ld	b, #0x00
@@ -7125,7 +7125,7 @@ _generate_side::
 	sra	h
 	rr	l
 	ld	c, l
-;utils.c:60: const UINT8 value = interpolate_noise(x / scale, y / scale);
+;utils.c:57: const UINT8 value = interpolate_noise(x / scale, y / scale);
 	ldhl	sp,	#13
 	ld	a, (hl)
 ;utils.c:16: const UINT8 corners = (noise(x - 1, y - 1) + noise(x + 1, y - 1) +
@@ -7507,7 +7507,7 @@ _generate_side::
 	rrca
 	and	a, #0x3f
 	ld	b, a
-;utils.c:60: const UINT8 value = interpolate_noise(x / scale, y / scale);
+;utils.c:57: const UINT8 value = interpolate_noise(x / scale, y / scale);
 	ldhl	sp,	#18
 	ld	a, (hl+)
 	add	a, (hl)
@@ -7955,12 +7955,12 @@ _generate_side::
 	ld	e, a
 	srl	e
 	srl	e
-;utils.c:60: const UINT8 value = interpolate_noise(x / scale, y / scale);
+;utils.c:57: const UINT8 value = interpolate_noise(x / scale, y / scale);
 	ldhl	sp,	#18
 	ld	a, (hl+)
 	add	a, (hl)
 	add	a, e
-;utils.c:41: const UINT8 i2 = interpolate(v1, v2);
+;utils.c:38: const UINT8 i2 = interpolate(v1, v2);
 	ldhl	sp,	#5
 	ld	e, (hl)
 	ld	d, #0x00
@@ -7971,7 +7971,7 @@ _generate_side::
 	add	hl, de
 	sra	h
 	rr	l
-;utils.c:60: const UINT8 value = interpolate_noise(x / scale, y / scale);
+;utils.c:57: const UINT8 value = interpolate_noise(x / scale, y / scale);
 	ld	b, #0x00
 	ld	h, b
 ;	spillPairReg hl
@@ -7980,56 +7980,56 @@ _generate_side::
 	sra	h
 	rr	l
 	ld	a, l
-;utils.c:48: if (value < 100)
+;utils.c:44: if (value < 100)
 	cp	a, #0x64
 	jr	NC, 00326$
-;utils.c:49: return 0x01; // water
+;utils.c:45: return 0x01; // water
 	ld	c, #0x01
 	jr	00328$
 00326$:
-;utils.c:50: else if (value < 130)
+;utils.c:46: else if (value < 130)
 	cp	a, #0x82
 	jr	NC, 00324$
-;utils.c:51: return 0x00; // grass
+;utils.c:47: return 0x00; // grass
 	ld	c, #0x00
 	jr	00328$
 00324$:
-;utils.c:52: else if (value < 150)
+;utils.c:48: else if (value < 150)
 	sub	a, #0x96
 	jr	NC, 00322$
-;utils.c:53: return 0x02; // trees
+;utils.c:49: return 0x02; // trees
 	ld	c, #0x02
 	jr	00328$
 00322$:
-;utils.c:55: return 0x03; // mountains
+;utils.c:51: return 0x03; // mountains
 	ld	c, #0x03
-;utils.c:61: return closest(value);
+;utils.c:58: return closest(value);
 00328$:
-;utils.c:105: map[0][y] = terrain(p.x[0], y + p.y[0]);
+;utils.c:102: map[0][y] = terrain(p.x[0], y + p.y[0]);
 	ldhl	sp,	#8
 	ld	a,	(hl+)
 	ld	h, (hl)
 	ld	l, a
 	ld	(hl), c
-;utils.c:104: for (int y = 0; y < pixel_y; y++)
+;utils.c:101: for (int y = 0; y < pixel_y; y++)
 	ldhl	sp,	#20
 	inc	(hl)
 	jp	NZ,00340$
 	inc	hl
 	inc	(hl)
 	jp	00340$
-;utils.c:107: }
+;utils.c:104: }
 00342$:
-;utils.c:108: }
+;utils.c:105: }
 	add	sp, #22
 	ret
-;utils.c:110: void generate_map() {
+;utils.c:107: void generate_map() {
 ;	---------------------------------
 ; Function generate_map
 ; ---------------------------------
 _generate_map::
 	add	sp, #-20
-;utils.c:113: const INT8 diff_x = p.x[1] - p.x[0];
+;utils.c:110: const INT8 diff_x = p.x[1] - p.x[0];
 	ld	hl, #(_p + 2)
 	ld	c, (hl)
 	ld	hl, #_p
@@ -8038,28 +8038,28 @@ _generate_map::
 	sub	a, b
 	ldhl	sp,	#18
 	ld	(hl), a
-;utils.c:114: const INT8 diff_y = p.y[1] - p.y[0];
+;utils.c:111: const INT8 diff_y = p.y[1] - p.y[0];
 	ld	a, (#(_p + 6) + 0)
 	ld	hl, #(_p + 4)
 	ld	c, (hl)
 	sub	a, c
 	ldhl	sp,	#19
 	ld	(hl), a
-;utils.c:115: if (p.steps > 0) {
+;utils.c:112: if (p.steps > 0) {
 	ld	hl, #_p + 8
 	ld	a, (hl+)
 	or	a,(hl)
 	jp	Z, 00190$
-;utils.c:116: if (diff_x < 0) {
+;utils.c:113: if (diff_x < 0) {
 	ldhl	sp,	#18
 	bit	7, (hl)
 	jr	Z, 00104$
-;utils.c:118: shift_left(pixel_x, pixel_y);
+;utils.c:115: shift_array_left(pixel_x, pixel_y);
 	ld	hl, #0x1214
 	push	hl
-	call	_shift_left
+	call	_shift_array_left
 	pop	hl
-;utils.c:119: generate_side('r', pixel_x, pixel_y);
+;utils.c:116: generate_side('r', pixel_x, pixel_y);
 	ld	hl, #0x1214
 	push	hl
 	ld	a, #0x72
@@ -8069,7 +8069,7 @@ _generate_map::
 	add	sp, #3
 	jr	00105$
 00104$:
-;utils.c:120: } else if (diff_x > 0) {
+;utils.c:117: } else if (diff_x > 0) {
 	ldhl	sp,	#18
 	ld	e, (hl)
 	xor	a, a
@@ -8087,12 +8087,12 @@ _generate_map::
 	scf
 00242$:
 	jr	NC, 00105$
-;utils.c:122: shift_right(pixel_x, pixel_y);
+;utils.c:119: shift_array_right(pixel_x, pixel_y);
 	ld	hl, #0x1214
 	push	hl
-	call	_shift_right
+	call	_shift_array_right
 	pop	hl
-;utils.c:123: generate_side('l', pixel_x, pixel_y);
+;utils.c:120: generate_side('l', pixel_x, pixel_y);
 	ld	hl, #0x1214
 	push	hl
 	ld	a, #0x6c
@@ -8101,16 +8101,16 @@ _generate_map::
 	call	_generate_side
 	add	sp, #3
 00105$:
-;utils.c:125: if (diff_y < 0) {
+;utils.c:122: if (diff_y < 0) {
 	ldhl	sp,	#19
 	bit	7, (hl)
 	jr	Z, 00109$
-;utils.c:127: shift_up(pixel_x, pixel_y);
+;utils.c:124: shift_array_up(pixel_x, pixel_y);
 	ld	hl, #0x1214
 	push	hl
-	call	_shift_up
+	call	_shift_array_up
 	pop	hl
-;utils.c:128: generate_side('b', pixel_x, pixel_y);
+;utils.c:125: generate_side('b', pixel_x, pixel_y);
 	ld	hl, #0x1214
 	push	hl
 	ld	a, #0x62
@@ -8120,7 +8120,7 @@ _generate_map::
 	add	sp, #3
 	jr	00110$
 00109$:
-;utils.c:129: } else if (diff_y > 0) {
+;utils.c:126: } else if (diff_y > 0) {
 	ldhl	sp,	#19
 	ld	e, (hl)
 	xor	a, a
@@ -8138,12 +8138,12 @@ _generate_map::
 	scf
 00244$:
 	jr	NC, 00110$
-;utils.c:131: shift_down(pixel_x, pixel_y);
+;utils.c:128: shift_array_down(pixel_x, pixel_y);
 	ld	hl, #0x1214
 	push	hl
-	call	_shift_down
+	call	_shift_array_down
 	pop	hl
-;utils.c:132: generate_side('t', pixel_x, pixel_y);
+;utils.c:129: generate_side('t', pixel_x, pixel_y);
 	ld	hl, #0x1214
 	push	hl
 	ld	a, #0x74
@@ -8152,7 +8152,7 @@ _generate_map::
 	call	_generate_side
 	add	sp, #3
 00110$:
-;utils.c:134: p.x[1] = p.x[0];
+;utils.c:132: p.x[1] = p.x[0];
 	ld	hl, #_p
 	ld	a, (hl+)
 	ld	c, a
@@ -8161,7 +8161,7 @@ _generate_map::
 	ld	a, c
 	ld	(hl+), a
 	ld	(hl), b
-;utils.c:135: p.y[1] = p.y[0];
+;utils.c:133: p.y[1] = p.y[0];
 	ld	hl, #(_p + 4)
 	ld	a, (hl+)
 	ld	c, a
@@ -8171,14 +8171,14 @@ _generate_map::
 	ld	(hl+), a
 	ld	(hl), b
 	jp	00177$
-;utils.c:137: for (UINT8 x = 0; x < pixel_x; x++)
+;utils.c:136: for (UINT8 x = 0; x < pixel_x; x++)
 00190$:
 	ld	c, #0x00
 00175$:
 	ld	a, c
 	sub	a, #0x14
 	jp	NC, 00177$
-;utils.c:138: for (UINT8 y = 0; y < pixel_y; y++)
+;utils.c:137: for (UINT8 y = 0; y < pixel_y; y++)
 	ld	b, #0x00
 	ld	l, c
 	ld	h, b
@@ -8213,7 +8213,7 @@ _generate_map::
 	ld	a, b
 	sub	a, #0x12
 	jp	NC, 00176$
-;utils.c:139: map[x][y] = terrain(x + p.x[0], y + p.y[0]);
+;utils.c:138: map[x][y] = terrain(x + p.x[0], y + p.y[0]);
 	ldhl	sp,#4
 	ld	a, (hl+)
 	ld	e, a
@@ -8235,7 +8235,7 @@ _generate_map::
 	ld	(hl+), a
 	ld	a, (#_p + 0)
 	add	a, c
-;utils.c:60: const UINT8 value = interpolate_noise(x / scale, y / scale);
+;utils.c:57: const UINT8 value = interpolate_noise(x / scale, y / scale);
 	ld	(hl-), a
 	ld	e, (hl)
 	ld	d, #0x00
@@ -8690,7 +8690,7 @@ _generate_map::
 	rrca
 	and	a, #0x3f
 	ld	e, a
-;utils.c:36: UINT8 v1 = smooth_noise(x, y);
+;utils.c:33: UINT8 v1 = smooth_noise(x, y);
 	ldhl	sp,	#19
 	ld	a, (hl-)
 	dec	hl
@@ -8698,7 +8698,7 @@ _generate_map::
 	add	a, e
 	ldhl	sp,	#14
 	ld	(hl), a
-;utils.c:37: UINT8 v2 = smooth_noise(x + 1, y);
+;utils.c:34: UINT8 v2 = smooth_noise(x + 1, y);
 	ldhl	sp,	#10
 	ld	a, (hl)
 ;utils.c:16: const UINT8 corners = (noise(x - 1, y - 1) + noise(x + 1, y - 1) +
@@ -9076,12 +9076,12 @@ _generate_map::
 	rrca
 	and	a, #0x3f
 	ld	d, a
-;utils.c:37: UINT8 v2 = smooth_noise(x + 1, y);
+;utils.c:34: UINT8 v2 = smooth_noise(x + 1, y);
 	ldhl	sp,	#19
 	ld	a, (hl)
 	add	a, e
 	add	a, d
-;utils.c:38: const UINT8 i1 = interpolate(v1, v2);
+;utils.c:35: const UINT8 i1 = interpolate(v1, v2);
 	ldhl	sp,	#14
 	ld	e, (hl)
 	ld	d, #0x00
@@ -9098,7 +9098,7 @@ _generate_map::
 	rr	e
 	ldhl	sp,	#19
 	ld	(hl), e
-;utils.c:60: const UINT8 value = interpolate_noise(x / scale, y / scale);
+;utils.c:57: const UINT8 value = interpolate_noise(x / scale, y / scale);
 	ldhl	sp,	#11
 	ld	a, (hl)
 ;utils.c:16: const UINT8 corners = (noise(x - 1, y - 1) + noise(x + 1, y - 1) +
@@ -9493,7 +9493,7 @@ _generate_map::
 	rrca
 	and	a, #0x3f
 	ld	e, a
-;utils.c:60: const UINT8 value = interpolate_noise(x / scale, y / scale);
+;utils.c:57: const UINT8 value = interpolate_noise(x / scale, y / scale);
 	ldhl	sp,	#18
 	ld	a, (hl-)
 	add	a, (hl)
@@ -9956,7 +9956,7 @@ _generate_map::
 	add	a, e
 	ldhl	sp,	#16
 	ld	e, (hl)
-;utils.c:60: const UINT8 value = interpolate_noise(x / scale, y / scale);
+;utils.c:57: const UINT8 value = interpolate_noise(x / scale, y / scale);
 	inc	hl
 	inc	hl
 	add	a, e
@@ -9967,7 +9967,7 @@ _generate_map::
 	ld	a, (hl-)
 	add	a, (hl)
 	add	a, e
-;utils.c:41: const UINT8 i2 = interpolate(v1, v2);
+;utils.c:38: const UINT8 i2 = interpolate(v1, v2);
 	ldhl	sp,	#9
 	ld	e, (hl)
 	ld	d, #0x00
@@ -9979,7 +9979,7 @@ _generate_map::
 	sra	h
 	rr	l
 	ld	a, l
-;utils.c:60: const UINT8 value = interpolate_noise(x / scale, y / scale);
+;utils.c:57: const UINT8 value = interpolate_noise(x / scale, y / scale);
 	ldhl	sp,	#19
 	ld	e, (hl)
 	ld	d, #0x00
@@ -9991,32 +9991,32 @@ _generate_map::
 	sra	h
 	rr	l
 	ld	a, l
-;utils.c:48: if (value < 100)
+;utils.c:44: if (value < 100)
 	cp	a, #0x64
 	jr	NC, 00167$
-;utils.c:49: return 0x01; // water
+;utils.c:45: return 0x01; // water
 	ld	a, #0x01
 	jr	00169$
 00167$:
-;utils.c:50: else if (value < 130)
+;utils.c:46: else if (value < 130)
 	cp	a, #0x82
 	jr	NC, 00165$
-;utils.c:51: return 0x00; // grass
+;utils.c:47: return 0x00; // grass
 	xor	a, a
 	jr	00169$
 00165$:
-;utils.c:52: else if (value < 150)
+;utils.c:48: else if (value < 150)
 	sub	a, #0x96
 	jr	NC, 00163$
-;utils.c:53: return 0x02; // trees
+;utils.c:49: return 0x02; // trees
 	ld	a, #0x02
 	jr	00169$
 00163$:
-;utils.c:55: return 0x03; // mountains
+;utils.c:51: return 0x03; // mountains
 	ld	a, #0x03
-;utils.c:61: return closest(value);
+;utils.c:58: return closest(value);
 00169$:
-;utils.c:139: map[x][y] = terrain(x + p.x[0], y + p.y[0]);
+;utils.c:138: map[x][y] = terrain(x + p.x[0], y + p.y[0]);
 	ldhl	sp,	#6
 	push	af
 	ld	a,	(hl+)
@@ -10024,11 +10024,11 @@ _generate_map::
 	ld	l, a
 	pop	af
 	ld	(hl), a
-;utils.c:138: for (UINT8 y = 0; y < pixel_y; y++)
+;utils.c:137: for (UINT8 y = 0; y < pixel_y; y++)
 	inc	b
 	jp	00172$
 00176$:
-;utils.c:137: for (UINT8 x = 0; x < pixel_x; x++)
+;utils.c:136: for (UINT8 x = 0; x < pixel_x; x++)
 	inc	c
 	jp	00175$
 00177$:
@@ -10236,12 +10236,12 @@ _show_menu::
 	ldh	(_LCDC_REG + 0), a
 ;utils.c:178: const UINT8 x = p.x[0] - start_position;
 	ld	a, (#_p + 0)
-	add	a, #0x81
+	add	a, #0xd8
 	ldhl	sp,	#0
 ;utils.c:179: const UINT8 y = p.y[0] - start_position;
 	ld	(hl+), a
 	ld	a, (#(_p + 4) + 0)
-	add	a, #0x81
+	add	a, #0xd8
 	ld	(hl), a
 ;utils.c:180: printf("\n\tgold:\t%u", p.gold);
 	ld	a, (#(_p + 12) + 0)
@@ -10419,11 +10419,11 @@ _main::
 	call	_init
 ;main.c:17: while (1) {
 00102$:
-;main.c:18: checkInput();     // Check for user input (and act on it)
-	call	_checkInput
-;main.c:19: updateSwitches(); // Make sure the SHOW_SPRITES and SHOW_BKG switches are on
-	call	_updateSwitches
-;main.c:21: wait_vbl_done();  // Wait until VBLANK to avoid corrupting memory
+;main.c:18: check_input();     // Check for user input (and act on it)
+	call	_check_input
+;main.c:19: update_switches(); // Make sure the SHOW_SPRITES and SHOW_BKG switches are
+	call	_update_switches
+;main.c:21: wait_vbl_done();   // Wait until VBLANK to avoid corrupting memory
 	call	_wait_vbl_done
 ;main.c:23: }
 	jr	00102$
@@ -10446,14 +10446,14 @@ _init::
 	push	de
 	call	_font_set
 	pop	hl
-;main.c:31: set_bkg_data(0, 4, landscape);
+;main.c:32: set_bkg_data(0, 4, landscape);
 	ld	de, #_landscape
 	push	de
 	ld	hl, #0x400
 	push	hl
 	call	_set_bkg_data
 	add	sp, #4
-;main.c:34: set_sprite_data(0, 0, player_sprite);
+;main.c:35: set_sprite_data(0, 0, player_sprite);
 	ld	de, #_player_sprite
 	push	de
 	xor	a, a
@@ -10470,24 +10470,24 @@ _init::
 	ld	a, #0x4c
 	ld	(hl+), a
 	ld	(hl), #0x54
-;main.c:44: p.x[0] = p.x[1] = p.y[0] = p.y[1] = start_position;
+;main.c:45: p.x[0] = p.x[1] = p.y[0] = p.y[1] = start_position;
 	ld	hl, #(_p + 6)
-	ld	a, #0x7f
+	ld	a, #0x28
 	ld	(hl+), a
 	ld	(hl), #0x00
 	ld	hl, #(_p + 4)
-	ld	a, #0x7f
+	ld	a, #0x28
 	ld	(hl+), a
 	ld	(hl), #0x00
 	ld	hl, #(_p + 2)
-	ld	a, #0x7f
+	ld	a, #0x28
 	ld	(hl+), a
 	ld	(hl), #0x00
 	ld	hl, #_p
-	ld	a, #0x7f
+	ld	a, #0x28
 	ld	(hl+), a
 	ld	(hl), #0x00
-;main.c:46: p.steps = p.gold = p.maps = 0;
+;main.c:47: p.steps = p.gold = p.maps = 0;
 	ld	hl, #(_p + 13)
 	ld	(hl), #0x00
 	ld	hl, #(_p + 12)
@@ -10496,20 +10496,20 @@ _init::
 	xor	a, a
 	ld	(hl+), a
 	ld	(hl), a
-;main.c:47: p.weapons[0] = p.weapons[1] = -1;
+;main.c:48: p.weapons[0] = p.weapons[1] = -1;
 	ld	hl, #(_p + 11)
 	ld	(hl), #0xff
 	ld	hl, #(_p + 10)
 	ld	(hl), #0xff
-;main.c:50: printf("\n\tWelcome to\n\tPirate's Folly");
+;main.c:51: printf("\n\tWelcome to\n\tPirate's Folly");
 	ld	de, #___str_7
 	push	de
 	call	_printf
 	pop	hl
-;main.c:54: generate_map();
+;main.c:55: generate_map();
 	call	_generate_map
-;main.c:56: display_map();
-;main.c:57: }
+;main.c:57: display_map();
+;main.c:58: }
 	jp	_display_map
 ___str_7:
 	.db 0x0a
@@ -10519,43 +10519,43 @@ ___str_7:
 	.db 0x09
 	.ascii "Pirate's Folly"
 	.db 0x00
-;main.c:59: void updateSwitches() {
+;main.c:60: void update_switches() {
 ;	---------------------------------
-; Function updateSwitches
+; Function update_switches
 ; ---------------------------------
-_updateSwitches::
-;main.c:60: HIDE_WIN;
+_update_switches::
+;main.c:61: HIDE_WIN;
 	ldh	a, (_LCDC_REG + 0)
 	and	a, #0xdf
 	ldh	(_LCDC_REG + 0), a
-;main.c:61: SHOW_SPRITES;
+;main.c:62: SHOW_SPRITES;
 	ldh	a, (_LCDC_REG + 0)
 	or	a, #0x02
 	ldh	(_LCDC_REG + 0), a
-;main.c:62: SHOW_BKG;
+;main.c:63: SHOW_BKG;
 	ldh	a, (_LCDC_REG + 0)
 	or	a, #0x01
 	ldh	(_LCDC_REG + 0), a
-;main.c:63: }
+;main.c:64: }
 	ret
-;main.c:65: void checkInput() {
+;main.c:66: void check_input() {
 ;	---------------------------------
-; Function checkInput
+; Function check_input
 ; ---------------------------------
-_checkInput::
-;main.c:66: if (joypad() & J_START)
+_check_input::
+;main.c:67: if (joypad() & J_START)
 	call	_joypad
 	ld	a, e
 	rlca
-;main.c:67: show_menu();
+;main.c:68: show_menu();
 	jp	C,_show_menu
-;main.c:68: else if (joypad())
+;main.c:69: else if (joypad())
 	call	_joypad
 	ld	a, e
 	or	a, a
-;main.c:69: update_position();
+;main.c:70: update_position();
 	jp	NZ,_update_position
-;main.c:70: }
+;main.c:71: }
 	ret
 	.area _CODE
 	.area _INITIALIZER

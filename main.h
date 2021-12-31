@@ -5,12 +5,17 @@
 #include <rand.h>
 #include <stdio.h>
 
+// --- CONFIG --- //
+#define scale 3
+#define start_position 40
+#define SEED 57
+// -------------- //
+
+// --- GB VALUES --- //
 #define sprite_size 8
 #define screen_x 160
 #define screen_y 144
-#define scale 3
-#define start_position 127
-#define SEED 57
+// ----------------- //
 
 typedef enum { false, true } bool;
 
