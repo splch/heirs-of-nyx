@@ -15,8 +15,8 @@ extern UINT8 SEED = 57;
 extern unsigned char map[20][18];
 
 extern struct player {
-  UINT8 x[2], y[2];
-  UINT8 steps;
+  UINT16 x[2], y[2];
+  UINT16 steps;
   INT8 weapons[2];
   UINT8 gold, maps;
 } p;
