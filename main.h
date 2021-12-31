@@ -5,13 +5,14 @@
 #include <rand.h>
 #include <stdio.h>
 
+#define sprite_size 8
+#define screen_x 160
+#define screen_y 144
+#define scale 3
+#define start_position 127
+#define SEED 57
+
 typedef enum { false, true } bool;
-
-extern const UINT8 sprite_size = 8;
-extern const UINT8 screen_x = 160;
-extern const UINT8 screen_y = 144;
-
-extern UINT8 SEED = 57;
 
 // map[screen_x / sprite_size][screen_y / sprite_size]
 extern unsigned char map[20][18];
@@ -22,8 +23,5 @@ extern struct player {
   INT8 weapons[2];
   UINT8 gold, maps;
 } p;
-
-extern UINT8 start_position = 0;
-extern const UINT8 scale = 1;
 
 #endif

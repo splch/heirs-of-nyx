@@ -2,15 +2,16 @@
 #include <gb/gb.h>
 #include <rand.h>
 
-UINT8 noise(UINT8 x, UINT8 y) {
+inline UINT8 noise(UINT8 x, UINT8 y) {
   // return random number [88, 124]
-  x = x ^ SEED ^ y;        // the mix of addition and XOR
-  y = y + x;               // and the use of very few instructions
-  x = SEED + (y >> 1) ^ x; // ensure high-order bits from b can affect
-  return x;                // low order bits of other variables
+  x ^= (x << 7);
+  x ^= (x >> 5);
+  y ^= (y << 7);
+  y ^= (y >> 5);
+  return x + y * SEED;
 }
 
-UINT8 smooth_noise(UINT8 x, UINT8 y) {
+inline UINT8 smooth_noise(UINT8 x, UINT8 y) {
   // gets average noise at (x, y)
   const UINT8 corners = (noise(x - 1, y - 1) + noise(x + 1, y - 1) +
                          noise(x - 1, y + 1) + noise(x + 1, y + 1)) >>
@@ -22,7 +23,7 @@ UINT8 smooth_noise(UINT8 x, UINT8 y) {
   return corners + sides + center;
 }
 
-UINT8 interpolate(UINT8 v1, UINT8 v2) {
+inline UINT8 interpolate(UINT8 v1, UINT8 v2) {
   // linear interpolate
   return (v1 + v2) >> 1; // divide by 2
   // cosine interpolate
@@ -30,7 +31,7 @@ UINT8 interpolate(UINT8 v1, UINT8 v2) {
   // return v1 * (1 - f) + v2 * f;
 }
 
-UINT8 interpolate_noise(UINT8 x, UINT8 y) {
+inline UINT8 interpolate_noise(UINT8 x, UINT8 y) {
   // gets expected noise
   UINT8 v1 = smooth_noise(x, y);
   UINT8 v2 = smooth_noise(x + 1, y);
@@ -42,19 +43,19 @@ UINT8 interpolate_noise(UINT8 x, UINT8 y) {
 }
 
 // TODO: fix generator
-unsigned char closest(UINT8 value) {
-  // 44 <= value <= 188
-  if (value < 80)
+inline unsigned char closest(UINT8 value) {
+  // 80 <= value <= 170
+  if (value < 100)
     return 0x01; // water
-  else if (value < 120)
+  else if (value < 130)
     return 0x00; // grass
-  else if (value < 160)
+  else if (value < 150)
     return 0x02; // trees
   else
     return 0x03; // mountains
 }
 
-unsigned char terrain(UINT8 x, UINT8 y) {
+inline unsigned char terrain(UINT8 x, UINT8 y) {
   // return type of terrain at (x, y)
   const UINT8 value = interpolate_noise(x / scale, y / scale);
   return closest(value);

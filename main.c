@@ -24,7 +24,6 @@ void main() {
 
 void init() {
   DISPLAY_ON; // Turn on the display
-  M_NO_SCROLL;
 
   font_init();                   // Initialize font
   font_set(font_load(font_ibm)); // Set and load the font
