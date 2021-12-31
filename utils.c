@@ -171,3 +171,18 @@ void update_position() {
     display_map();
   }
 }
+
+void show_menu() {
+  HIDE_SPRITES;
+  const UINT8 x = p.x[0] - start_position;
+  const UINT8 y = p.y[0] - start_position;
+  printf("\n\tgold:\t%u", p.gold);
+  printf("\n\tmaps:\t%u", p.maps);
+  printf("\n\tweapons:\t%d\t%d", p.weapons[0], p.weapons[1]);
+
+  printf("\n\n\tposition:\t(%u, %u)", x, y);
+  printf("\n\tsteps:\t%u", p.steps);
+  printf("\n\tseed:\t%u", SEED);
+
+  printf("\n\n\trandom:\t%u", noise(p.x[0], p.y[0]));
+}

@@ -2,6 +2,8 @@
 #define CONFIG
 
 #include <gb/gb.h>
+#include <rand.h>
+#include <stdio.h>
 
 typedef enum { false, true } bool;
 

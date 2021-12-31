@@ -23,13 +23,14 @@ Alternatively, you can upload the ROM to an enumator site like @Juchi's [Gameboy
 ## This game is in development
 
 Changes:
+
 - [x] Procedurally-generated map
 - [ ] Items
   - [ ] Gold
   - [ ] Weapons
   - [ ] Equipment
 - [ ] Enemies
-- [ ] Menu
+- [x] Menu
 - [x] New tileset
 
 ## Generation

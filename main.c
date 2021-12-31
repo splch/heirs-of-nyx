@@ -2,11 +2,7 @@
 #include "sprites.c"
 #include "tiles.c"
 #include "utils.c"
-#include <gb/gb.h>
 #include <gbdk/font.h>
-#include <rand.h>
-#include <stdio.h>
-#include <time.h>
 
 void init();
 void checkInput();
@@ -28,6 +24,7 @@ void main() {
 
 void init() {
   DISPLAY_ON; // Turn on the display
+  M_NO_SCROLL;
 
   font_init();                   // Initialize font
   font_set(font_load(font_ibm)); // Set and load the font
@@ -67,7 +64,8 @@ void updateSwitches() {
 }
 
 void checkInput() {
-  if (joypad()) {
+  if (joypad() & J_START)
+    show_menu();
+  else if (joypad())
     update_position();
-  }
 }
