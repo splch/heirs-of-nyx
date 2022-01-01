@@ -2,7 +2,7 @@
 #include <gb/gb.h>
 #include <rand.h>
 
-static inline unsigned char noise(unsigned char x, unsigned char y) {
+unsigned char noise(unsigned char x, unsigned char y) {
   // return random number [76, 172]
   x ^= (y << 7);
   x ^= (x >> 5);
@@ -52,7 +52,7 @@ static inline unsigned char closest(unsigned char value) {
     return 0x03; // mountains
 }
 
-static inline unsigned char terrain(unsigned char x, unsigned char y) {
+unsigned char terrain(unsigned char x, unsigned char y) {
   // return type of terrain at (x, y)
   // increasing scale increases the map size
   const unsigned char value = interpolate_noise(x / scale, y / scale);
@@ -147,6 +147,7 @@ void generate_map() {
 void display_map() {
   for (unsigned char i = 0; i < 20; i++)
     set_bkg_tiles(i, 0, 1, 18, map[i]);
+  SHOW_SPRITES; // menu is closed
 }
 
 void update_position() {
@@ -179,7 +180,7 @@ void update_position() {
 }
 
 void show_menu() {
-  HIDE_SPRITES;
+  HIDE_SPRITES; // menu is open
   const unsigned char x = p.x[0] - start_position;
   const unsigned char y = p.y[0] - start_position;
   printf("\n\tgold:\t%u", p.gold);

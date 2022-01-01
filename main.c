@@ -59,13 +59,13 @@ void init() {
 
 void update_switches() {
   HIDE_WIN;
-  SHOW_SPRITES;
   SHOW_BKG;
 }
 
 void check_input() {
-  if (joypad() & J_START)
+  if (joypad() & J_START) {
+    display_map();
     show_menu();
-  else if (joypad())
+  } else if (joypad())
     update_position();
 }
