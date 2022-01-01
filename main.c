@@ -6,7 +6,7 @@ void init();
 void update_switches();
 void check_input();
 
-unsigned char map[20][18];
+unsigned char map[screen_x / sprite_size][screen_y / sprite_size];
 struct player p;
 
 void main() {
@@ -37,7 +37,7 @@ void init() {
 
   // Move the sprite in the first movable sprite list (0)
   // the center of the screen
-  move_sprite(0, (screen_x + sprite_size) / 2, (screen_y + sprite_size) / 2);
+  move_sprite(0, center_x, center_y);
 
   // Starting position for map generation
   p.x[0] = p.x[1] = p.y[0] = p.y[1] = start_position;
@@ -67,7 +67,7 @@ void check_input() {
   if (j & J_START)
     show_menu();
   if (j & J_SELECT)
-    inventory();
+    change_item();
   if (j & J_A)
     interact();
   if (j & J_B)

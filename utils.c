@@ -41,13 +41,13 @@ inline unsigned char interpolate_noise(unsigned char x, unsigned char y) {
 inline unsigned char closest(unsigned char value) {
   // 49 <= value <= 201
   if (value < 100)
-    return 0x01; // water
+    return 1; // water
   else if (value < 135)
-    return 0x00; // grass
+    return 0; // grass
   else if (value < 160)
-    return 0x02; // trees
+    return 2; // trees
   else
-    return 0x03; // mountains
+    return 3; // mountains
 }
 
 inline unsigned char terrain(unsigned char x, unsigned char y) {
@@ -57,89 +57,118 @@ inline unsigned char terrain(unsigned char x, unsigned char y) {
   return closest(value);
 }
 
-void shift_array_left(const unsigned char pixel_x,
-                      const unsigned char pixel_y) {
-  for (unsigned char x = 0; x < pixel_x - 1; x++)
-    for (unsigned char y = 0; y < pixel_y; y++)
-      map[x][y] = map[x + 1][y];
+inline unsigned char generate_item(unsigned char x, unsigned char y) {
+  // return item at (x, y)
+  // 49 <= noise(x, y) <= 201
+  const unsigned char _n = noise(x, y);
+  if (_n > 49 && _n < 51)
+    return 1; // water
+  else if (_n > 133 && _n < 135)
+    return 0; // grass
+  else if (_n > 158 && _n < 160)
+    return 2; // trees
+  else if (_n > 197 && _n < 201)
+    return 3; // mountains
+  else
+    return 255; // no item
 }
 
-void shift_array_right(const unsigned char pixel_x,
-                       const unsigned char pixel_y) {
+void shift_array_right() {
   for (unsigned char x = pixel_x - 1; x > 0; x--)
-    for (unsigned char y = 0; y < pixel_y; y++)
+    for (unsigned char y = 0; y < pixel_y; y++) {
       map[x][y] = map[x - 1][y];
+    }
 }
 
-void shift_array_up(const unsigned char pixel_x, const unsigned char pixel_y) {
+void shift_array_left() {
+  for (unsigned char x = 0; x < pixel_x - 1; x++)
+    for (unsigned char y = 0; y < pixel_y; y++) {
+      map[x][y] = map[x + 1][y];
+    }
+}
+
+void shift_array_up() {
   for (unsigned char y = 0; y < pixel_y - 1; y++)
-    for (unsigned char x = 0; x < pixel_x; x++)
+    for (unsigned char x = 0; x < pixel_x; x++) {
       map[x][y] = map[x][y + 1];
+    }
 }
 
-void shift_array_down(const unsigned char pixel_x,
-                      const unsigned char pixel_y) {
+void shift_array_down() {
   for (unsigned char y = pixel_y - 1; y > 0; y--)
-    for (unsigned char x = 0; x < pixel_x; x++)
+    for (unsigned char x = 0; x < pixel_x; x++) {
       map[x][y] = map[x][y - 1];
+    }
 }
 
-void generate_side(const char side, const unsigned char pixel_x,
-                   const unsigned char pixel_y) {
-  // t - top, r - right, b - bottom, l - left
+void generate_side(const char side) {
+  // r - right, l - left, t - top, b - bottom
   switch (side) {
   case 'r':
-    for (unsigned char y = 0; y < pixel_y; y++)
-      map[pixel_x - 1][y] = terrain(pixel_x - 1 + p.x[0], y + p.y[0]);
+    for (unsigned char y = 0; y < pixel_y; y++) {
+      const unsigned char _t = terrain(pixel_x - 1 + p.x[0], y + p.y[0]);
+      const unsigned char _i = generate_item(pixel_x - 1 + p.x[0], y + p.y[0]);
+      map[pixel_x - 1][y] = _i == _t ? _i + 64 : _t;
+    }
     break;
   case 'l':
-    for (unsigned char y = 0; y < pixel_y; y++)
-      map[0][y] = terrain(p.x[0], y + p.y[0]);
+    for (unsigned char y = 0; y < pixel_y; y++) {
+      const unsigned char _t = terrain(p.x[0], y + p.y[0]);
+      const unsigned char _i = generate_item(p.x[0], y + p.y[0]);
+      map[0][y] = _i == _t ? _i + 64 : _t;
+    }
     break;
   case 't':
-    for (unsigned char x = 0; x < pixel_x; x++)
-      map[x][0] = terrain(x + p.x[0], p.y[0]);
+    for (unsigned char x = 0; x < pixel_x; x++) {
+      const unsigned char _t = terrain(x + p.x[0], p.y[0]);
+      const unsigned char _i = generate_item(x + p.x[0], p.y[0]);
+      map[x][0] = _i == _t ? _i + 64 : _t;
+    }
     break;
   case 'b':
-    for (unsigned char x = 0; x < pixel_x; x++)
-      map[x][pixel_y - 1] = terrain(x + p.x[0], pixel_y - 1 + p.y[0]);
+    for (unsigned char x = 0; x < pixel_x; x++) {
+      const unsigned char _t = terrain(x + p.x[0], pixel_y - 1 + p.y[0]);
+      const unsigned char _i = generate_item(x + p.x[0], pixel_y - 1 + p.y[0]);
+      map[x][pixel_y - 1] = _i == _t ? _i + 64 : _t;
+    }
     break;
   }
 }
 
 void generate_map() {
-  const unsigned char pixel_x = screen_x / sprite_size;
-  const unsigned char pixel_y = screen_y / sprite_size;
+  // generate entire map on first load
+  for (unsigned char x = 0; x < pixel_x; x++)
+    for (unsigned char y = 0; y < pixel_y; y++) {
+      const unsigned char _t = terrain(x + p.x[0], y + p.y[0]);
+      const unsigned char _i = generate_item(x + p.x[0], y + p.y[0]);
+      map[x][y] = _i == _t ? _i + 64 : _t;
+    }
+}
+
+void generate_map_side() {
   const char diff_x = p.x[1] - p.x[0];
   const char diff_y = p.y[1] - p.y[0];
-  if (p.steps > 0) {
-    if (diff_x < 0) {
-      // moved right
-      shift_array_left(pixel_x, pixel_y);
-      generate_side('r', pixel_x, pixel_y);
-    } else if (diff_x > 0) {
-      // moved left
-      shift_array_right(pixel_x, pixel_y);
-      generate_side('l', pixel_x, pixel_y);
-    }
-    if (diff_y > 0) {
-      // moved up
-      shift_array_down(pixel_x, pixel_y);
-      generate_side('t', pixel_x, pixel_y);
-    } else if (diff_y < 0) {
-      // moved down
-      shift_array_up(pixel_x, pixel_y);
-      generate_side('b', pixel_x, pixel_y);
-    }
-    // makes difference 0 so next step has difference of 1
-    p.x[1] = p.x[0];
-    p.y[1] = p.y[0];
-  } else {
-    // generate entire map on first load
-    for (unsigned char x = 0; x < pixel_x; x++)
-      for (unsigned char y = 0; y < pixel_y; y++)
-        map[x][y] = terrain(x + p.x[0], y + p.y[0]);
+  if (diff_x < 0) {
+    // moved right
+    shift_array_left();
+    generate_side('r');
+  } else if (diff_x > 0) {
+    // moved left
+    shift_array_right();
+    generate_side('l');
   }
+  if (diff_y > 0) {
+    // moved up
+    shift_array_down();
+    generate_side('t');
+  } else if (diff_y < 0) {
+    // moved down
+    shift_array_up();
+    generate_side('b');
+  }
+  // makes difference 0 so next step has difference of 1
+  p.x[1] = p.x[0];
+  p.y[1] = p.y[0];
 }
 
 void display_map() {
@@ -165,9 +194,38 @@ void show_menu() {
   printf("\n\n\trandom:\t%u", noise(p.x[0], p.y[0]));
 }
 
-void inventory() {}
+void add_item(const unsigned char item) {
+  // fill primary or replace secondary
+  if (p.weapons[0] == -1)
+    p.weapons[0] = item;
+  else
+    p.weapons[1] = item;
+}
 
-void interact() {}
+void change_item() {
+  const char _w = p.weapons[0];
+  p.weapons[0] = p.weapons[1];
+  p.weapons[1] = _w;
+}
+
+void interact() {
+  // -1 <= x - 1 <= 1
+  // -1 <= y - 2 <= 1
+  // -1 and -2 are "magic numbers"
+  // these loops form a square of interaction around the player
+  for (char x = -2; x <= 0; x++)
+    for (char y = -3; y <= -1; y++) {
+      const unsigned char pos_x = x + center_x / sprite_size;
+      const unsigned char pos_y = y + center_y / sprite_size;
+      const unsigned char _i = map[pos_x][pos_y];
+      if (_i >= 64) {
+        add_item(_i);
+        // item - 64 is the correct terrain tile
+        map[pos_x][pos_y] = _i - 64;
+        display_map();
+      }
+    }
+}
 
 void attack() {}
 
@@ -197,7 +255,7 @@ void update_position(unsigned char j) {
     update = true;
   }
   if (update == true) {
-    generate_map();
+    generate_map_side();
     display_map();
   }
 }
