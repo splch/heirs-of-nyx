@@ -6,8 +6,8 @@
 #include <stdio.h>
 
 // --- CONFIG --- //
-#define scale 3
-#define start_position 40
+#define scale 2
+#define start_position 127
 #define SEED 57
 // -------------- //
 
@@ -23,10 +23,10 @@ typedef enum { false, true } bool;
 extern unsigned char map[20][18];
 
 extern struct player {
-  UINT16 x[2], y[2];
-  UINT16 steps;
-  INT8 weapons[2];
-  UINT8 gold, maps;
+  unsigned long x[2], y[2];
+  unsigned long steps;
+  char weapons[2];
+  unsigned char gold, maps;
 } p;
 
 #endif

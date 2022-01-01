@@ -2,113 +2,118 @@
 #include <gb/gb.h>
 #include <rand.h>
 
-inline UINT8 noise(UINT8 x, UINT8 y) {
+static inline unsigned char noise(unsigned char x, unsigned char y) {
   // return random number [76, 172]
-  x ^= (x << 7);
+  x ^= (y << 7);
   x ^= (x >> 5);
-  y ^= (y << 7);
-  y ^= (y >> 5);
-  return x + y * SEED;
+  y ^= (x << 3);
+  y ^= (y >> 1);
+  return x ^ y * SEED;
 }
 
-inline UINT8 smooth_noise(UINT8 x, UINT8 y) {
+static inline unsigned char smooth_noise(unsigned char x, unsigned char y) {
   // gets average noise at (x, y)
-  const UINT8 corners = (noise(x - 1, y - 1) + noise(x + 1, y - 1) +
-                         noise(x - 1, y + 1) + noise(x + 1, y + 1)) >>
-                        4; // divide by 16
-  const UINT8 sides =
+  const unsigned char corners = (noise(x - 1, y - 1) + noise(x + 1, y - 1) +
+                                 noise(x - 1, y + 1) + noise(x + 1, y + 1)) >>
+                                4; // divide by 16
+  const unsigned char sides =
       (noise(x - 1, y) + noise(x + 1, y) + noise(x, y - 1) + noise(x, y + 1)) >>
-      3;                                 // divide by 8
-  const UINT8 center = noise(x, y) >> 2; // divide by 4
-  return corners + sides + center;       // average noise at center
+      3;                                         // divide by 8
+  const unsigned char center = noise(x, y) >> 2; // divide by 4
+  return corners + sides + center;               // average noise at center
 }
 
-inline UINT8 interpolate(UINT8 v1, UINT8 v2) {
+static inline unsigned char interpolate(unsigned char v1, unsigned char v2) {
   // linear interpolation is avg of v1 and v2
   return (v1 + v2) >> 1; // divide by 2
 }
 
-inline UINT8 interpolate_noise(UINT8 x, UINT8 y) {
+static inline unsigned char interpolate_noise(unsigned char x,
+                                              unsigned char y) {
   // gets expected noise
-  UINT8 v1 = smooth_noise(x, y);
-  UINT8 v2 = smooth_noise(x + 1, y);
-  const UINT8 i1 = interpolate(v1, v2);
+  unsigned char v1 = smooth_noise(x, y);
+  unsigned char v2 = smooth_noise(x + 1, y);
+  const unsigned char i1 = interpolate(v1, v2);
   v1 = smooth_noise(x, y + 1);
   v2 = smooth_noise(x + 1, y + 1);
-  const UINT8 i2 = interpolate(v1, v2);
+  const unsigned char i2 = interpolate(v1, v2);
   return interpolate(i1, i2); // average of smoothed sides
 }
 
-inline unsigned char closest(UINT8 value) {
+static inline unsigned char closest(unsigned char value) {
   // 80 <= value <= 170
   if (value < 100)
     return 0x01; // water
-  else if (value < 130)
+  else if (value < 135)
     return 0x00; // grass
-  else if (value < 150)
+  else if (value < 160)
     return 0x02; // trees
   else
     return 0x03; // mountains
 }
 
-inline unsigned char terrain(UINT8 x, UINT8 y) {
+static inline unsigned char terrain(unsigned char x, unsigned char y) {
   // return type of terrain at (x, y)
   // increasing scale increases the map size
-  const UINT8 value = interpolate_noise(x / scale, y / scale);
+  const unsigned char value = interpolate_noise(x / scale, y / scale);
   return closest(value);
 }
 
-void shift_array_left(const UINT8 pixel_x, const UINT8 pixel_y) {
-  for (int x = 0; x < pixel_x - 1; x++)
-    for (int y = 0; y < pixel_y; y++)
+void shift_array_left(const unsigned char pixel_x,
+                      const unsigned char pixel_y) {
+  for (unsigned char x = 0; x < pixel_x - 1; x++)
+    for (unsigned char y = 0; y < pixel_y; y++)
       map[x][y] = map[x + 1][y];
 }
 
-void shift_array_right(const UINT8 pixel_x, const UINT8 pixel_y) {
-  for (int x = pixel_x - 1; x > 0; x--)
-    for (int y = 0; y < pixel_y; y++)
+void shift_array_right(const unsigned char pixel_x,
+                       const unsigned char pixel_y) {
+  for (unsigned char x = pixel_x - 1; x > 0; x--)
+    for (unsigned char y = 0; y < pixel_y; y++)
       map[x][y] = map[x - 1][y];
 }
 
-void shift_array_up(const UINT8 pixel_x, const UINT8 pixel_y) {
-  for (int y = 0; y < pixel_y - 1; y++)
-    for (int x = 0; x < pixel_x; x++)
+void shift_array_up(const unsigned char pixel_x, const unsigned char pixel_y) {
+  for (unsigned char y = 0; y < pixel_y - 1; y++)
+    for (unsigned char x = 0; x < pixel_x; x++)
       map[x][y] = map[x][y + 1];
 }
 
-void shift_array_down(const UINT8 pixel_x, const UINT8 pixel_y) {
-  for (int y = pixel_y - 1; y > 0; y--)
-    for (int x = 0; x < pixel_x; x++)
+void shift_array_down(const unsigned char pixel_x,
+                      const unsigned char pixel_y) {
+  for (unsigned char y = pixel_y - 1; y > 0; y--)
+    for (unsigned char x = 0; x < pixel_x; x++)
       map[x][y] = map[x][y - 1];
 }
 
-void generate_side(const char side, const UINT8 pixel_x, const UINT8 pixel_y) {
+void generate_side(const char side, const unsigned char pixel_x,
+                   const unsigned char pixel_y) {
   // t - top, r - right, b - bottom, l - left
   switch (side) {
   case 't':
-    for (int x = 0; x < pixel_x; x++)
+    for (unsigned char x = 0; x < pixel_x; x++)
       map[x][0] = terrain(x + p.x[0], p.y[0]);
     break;
   case 'r':
-    for (int y = 0; y < pixel_y; y++)
+    for (unsigned char y = 0; y < pixel_y; y++)
       map[pixel_x - 1][y] = terrain(pixel_x - 1 + p.x[0], y + p.y[0]);
     break;
   case 'b':
-    for (int x = 0; x < pixel_x; x++)
+    for (unsigned char x = 0; x < pixel_x; x++)
       map[x][pixel_y - 1] = terrain(x + p.x[0], pixel_y - 1 + p.y[0]);
     break;
   case 'l':
-    for (int y = 0; y < pixel_y; y++)
+    for (unsigned char y = 0; y < pixel_y; y++)
       map[0][y] = terrain(p.x[0], y + p.y[0]);
     break;
   }
 }
 
 void generate_map() {
-  const UINT8 pixel_x = screen_x / sprite_size;
-  const UINT8 pixel_y = screen_y / sprite_size;
-  const INT8 diff_x = p.x[1] - p.x[0];
-  const INT8 diff_y = p.y[1] - p.y[0];
+  const unsigned char pixel_x = screen_x / sprite_size;
+  const unsigned char pixel_y = screen_y / sprite_size;
+  const char diff_x = p.x[1] - p.x[0];
+  const char diff_y = p.y[1] - p.y[0];
   if (p.steps > 0) {
     if (diff_x < 0) {
       // moved right
@@ -133,21 +138,21 @@ void generate_map() {
     p.y[1] = p.y[0];
   } else {
     // on first load, generate entire map
-    for (UINT8 x = 0; x < pixel_x; x++)
-      for (UINT8 y = 0; y < pixel_y; y++)
+    for (unsigned char x = 0; x < pixel_x; x++)
+      for (unsigned char y = 0; y < pixel_y; y++)
         map[x][y] = terrain(x + p.x[0], y + p.y[0]);
   }
 }
 
 void display_map() {
-  for (UINT8 i = 0; i < 20; i++)
+  for (unsigned char i = 0; i < 20; i++)
     set_bkg_tiles(i, 0, 1, 18, map[i]);
 }
 
 void update_position() {
   bool update = false;
-  UINT8 _x = p.x[0];
-  UINT8 _y = p.y[0];
+  unsigned char _x = p.x[0];
+  unsigned char _y = p.y[0];
   if (joypad() & J_RIGHT)
     _x++;
   else if (joypad() & J_LEFT)
@@ -175,8 +180,8 @@ void update_position() {
 
 void show_menu() {
   HIDE_SPRITES;
-  const UINT8 x = p.x[0] - start_position;
-  const UINT8 y = p.y[0] - start_position;
+  const unsigned char x = p.x[0] - start_position;
+  const unsigned char y = p.y[0] - start_position;
   printf("\n\tgold:\t%u", p.gold);
   printf("\n\tmaps:\t%u", p.maps);
   printf("\n\tweapons:\t%d\t%d", p.weapons[0], p.weapons[1]);
