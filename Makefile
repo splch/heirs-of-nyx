@@ -10,4 +10,4 @@ mainmake: $(DEPS)
 	@$(GB) $(GFLAGS) Pirates\ Folly.gb
 
 clean:
-	@rm main.asm main.ihx main.lst main.map main.noi main.o main.sym
+	@rm *.ihx *.lst *.map *.noi *.o *.sym
