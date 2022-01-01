@@ -1,8 +1,9 @@
 #ifndef CONFIG
 #define CONFIG
 
+#include "sprites.c"
+#include "tiles.c"
 #include <gb/gb.h>
-#include <rand.h>
 #include <stdio.h>
 
 // --- CONFIG --- //

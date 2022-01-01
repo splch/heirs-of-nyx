@@ -1,6 +1,5 @@
 #include "main.h"
 #include <gb/gb.h>
-#include <rand.h>
 
 inline unsigned char noise(unsigned char x, unsigned char y) {
   // return random number [49, 201]
@@ -89,21 +88,21 @@ void generate_side(const char side, const unsigned char pixel_x,
                    const unsigned char pixel_y) {
   // t - top, r - right, b - bottom, l - left
   switch (side) {
-  case 't':
-    for (unsigned char x = 0; x < pixel_x; x++)
-      map[x][0] = terrain(x + p.x[0], p.y[0]);
-    break;
   case 'r':
     for (unsigned char y = 0; y < pixel_y; y++)
       map[pixel_x - 1][y] = terrain(pixel_x - 1 + p.x[0], y + p.y[0]);
     break;
-  case 'b':
-    for (unsigned char x = 0; x < pixel_x; x++)
-      map[x][pixel_y - 1] = terrain(x + p.x[0], pixel_y - 1 + p.y[0]);
-    break;
   case 'l':
     for (unsigned char y = 0; y < pixel_y; y++)
       map[0][y] = terrain(p.x[0], y + p.y[0]);
+    break;
+  case 't':
+    for (unsigned char x = 0; x < pixel_x; x++)
+      map[x][0] = terrain(x + p.x[0], p.y[0]);
+    break;
+  case 'b':
+    for (unsigned char x = 0; x < pixel_x; x++)
+      map[x][pixel_y - 1] = terrain(x + p.x[0], pixel_y - 1 + p.y[0]);
     break;
   }
 }
@@ -123,14 +122,14 @@ void generate_map() {
       shift_array_right(pixel_x, pixel_y);
       generate_side('l', pixel_x, pixel_y);
     }
-    if (diff_y < 0) {
-      // moved down
-      shift_array_up(pixel_x, pixel_y);
-      generate_side('b', pixel_x, pixel_y);
-    } else if (diff_y > 0) {
+    if (diff_y > 0) {
       // moved up
       shift_array_down(pixel_x, pixel_y);
       generate_side('t', pixel_x, pixel_y);
+    } else if (diff_y < 0) {
+      // moved down
+      shift_array_up(pixel_x, pixel_y);
+      generate_side('b', pixel_x, pixel_y);
     }
     // makes difference 0 so next step has difference of 1
     p.x[1] = p.x[0];
@@ -149,17 +148,40 @@ void display_map() {
   SHOW_SPRITES; // menu is closed
 }
 
-void update_position() {
+void show_menu() {
+  // display map to erase previous menus
+  display_map();
+  HIDE_SPRITES; // menu is open
+  const unsigned char x = p.x[0] - start_position;
+  const unsigned char y = p.y[0] - start_position;
+  printf("\n\tgold:\t%u", p.gold);
+  printf("\n\tmaps:\t%u", p.maps);
+  printf("\n\tweapons:\t%d\t%d", p.weapons[0], p.weapons[1]);
+
+  printf("\n\n\tposition:\t(%u, %u)", x, y);
+  printf("\n\tsteps:\t%u", p.steps);
+  printf("\n\tseed:\t%u", SEED);
+
+  printf("\n\n\trandom:\t%u", noise(p.x[0], p.y[0]));
+}
+
+void inventory() {}
+
+void interact() {}
+
+void attack() {}
+
+void update_position(unsigned char j) {
   bool update = false;
   unsigned char _x = p.x[0];
   unsigned char _y = p.y[0];
-  if (joypad() & J_RIGHT)
+  if (j & J_RIGHT)
     _x++;
-  else if (joypad() & J_LEFT)
+  else if (j & J_LEFT)
     _x--;
-  if (joypad() & J_UP)
+  if (j & J_UP)
     _y--;
-  else if (joypad() & J_DOWN)
+  else if (j & J_DOWN)
     _y++;
   if (_x != p.x[0]) {
     p.x[1] = p.x[0];
@@ -178,19 +200,4 @@ void update_position() {
     generate_map();
     display_map();
   }
-}
-
-void show_menu() {
-  HIDE_SPRITES; // menu is open
-  const unsigned char x = p.x[0] - start_position;
-  const unsigned char y = p.y[0] - start_position;
-  printf("\n\tgold:\t%u", p.gold);
-  printf("\n\tmaps:\t%u", p.maps);
-  printf("\n\tweapons:\t%d\t%d", p.weapons[0], p.weapons[1]);
-
-  printf("\n\n\tposition:\t(%u, %u)", x, y);
-  printf("\n\tsteps:\t%u", p.steps);
-  printf("\n\tseed:\t%u", SEED);
-
-  printf("\n\n\trandom:\t%u", noise(p.x[0], p.y[0]));
 }

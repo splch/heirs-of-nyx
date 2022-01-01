@@ -1,6 +1,4 @@
 #include "main.h"
-#include "sprites.c"
-#include "tiles.c"
 #include "utils.c"
 #include <gbdk/font.h>
 
@@ -43,6 +41,7 @@ void init() {
 
   // Starting position for map generation
   p.x[0] = p.x[1] = p.y[0] = p.y[1] = start_position;
+
   // Player item initialization
   p.steps = p.gold = p.maps = 0;
   p.weapons[0] = p.weapons[1] = -1;
@@ -53,6 +52,7 @@ void init() {
 
   // Generate terrain
   generate_map();
+
   // Display terrain
   display_map();
 }
@@ -63,9 +63,15 @@ void update_switches() {
 }
 
 void check_input() {
-  if (joypad() & J_START) {
-    display_map();
+  const unsigned char j = joypad();
+  if (j & J_START)
     show_menu();
-  } else if (joypad())
-    update_position();
+  if (j & J_SELECT)
+    inventory();
+  if (j & J_A)
+    interact();
+  if (j & J_B)
+    attack();
+  if (j)
+    update_position(j);
 }
