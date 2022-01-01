@@ -2,8 +2,8 @@
 #include <gb/gb.h>
 #include <rand.h>
 
-unsigned char noise(unsigned char x, unsigned char y) {
-  // return random number [76, 172]
+inline unsigned char noise(unsigned char x, unsigned char y) {
+  // return random number [49, 201]
   x ^= (y << 7);
   x ^= (x >> 5);
   y ^= (x << 3);
@@ -11,7 +11,7 @@ unsigned char noise(unsigned char x, unsigned char y) {
   return x ^ y * SEED;
 }
 
-static inline unsigned char smooth_noise(unsigned char x, unsigned char y) {
+inline unsigned char smooth_noise(unsigned char x, unsigned char y) {
   // gets average noise at (x, y)
   const unsigned char corners = (noise(x - 1, y - 1) + noise(x + 1, y - 1) +
                                  noise(x - 1, y + 1) + noise(x + 1, y + 1)) >>
@@ -23,13 +23,12 @@ static inline unsigned char smooth_noise(unsigned char x, unsigned char y) {
   return corners + sides + center;               // average noise at center
 }
 
-static inline unsigned char interpolate(unsigned char v1, unsigned char v2) {
+inline unsigned char interpolate(unsigned char v1, unsigned char v2) {
   // linear interpolation is avg of v1 and v2
   return (v1 + v2) >> 1; // divide by 2
 }
 
-static inline unsigned char interpolate_noise(unsigned char x,
-                                              unsigned char y) {
+inline unsigned char interpolate_noise(unsigned char x, unsigned char y) {
   // gets expected noise
   unsigned char v1 = smooth_noise(x, y);
   unsigned char v2 = smooth_noise(x + 1, y);
@@ -40,8 +39,8 @@ static inline unsigned char interpolate_noise(unsigned char x,
   return interpolate(i1, i2); // average of smoothed sides
 }
 
-static inline unsigned char closest(unsigned char value) {
-  // 80 <= value <= 170
+inline unsigned char closest(unsigned char value) {
+  // 49 <= value <= 201
   if (value < 100)
     return 0x01; // water
   else if (value < 135)
@@ -52,7 +51,7 @@ static inline unsigned char closest(unsigned char value) {
     return 0x03; // mountains
 }
 
-unsigned char terrain(unsigned char x, unsigned char y) {
+inline unsigned char terrain(unsigned char x, unsigned char y) {
   // return type of terrain at (x, y)
   // increasing scale increases the map size
   const unsigned char value = interpolate_noise(x / scale, y / scale);
@@ -137,7 +136,7 @@ void generate_map() {
     p.x[1] = p.x[0];
     p.y[1] = p.y[0];
   } else {
-    // on first load, generate entire map
+    // generate entire map on first load
     for (unsigned char x = 0; x < pixel_x; x++)
       for (unsigned char y = 0; y < pixel_y; y++)
         map[x][y] = terrain(x + p.x[0], y + p.y[0]);
@@ -168,6 +167,8 @@ void update_position() {
     p.steps++;
     update = true;
   } else if (_y != p.y[0]) {
+    // else if so diagonal movement isn't possible
+    // y is second to prioritize right and left movement
     p.y[1] = p.y[0];
     p.y[0] = _y;
     p.steps++;
