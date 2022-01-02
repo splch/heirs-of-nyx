@@ -44,13 +44,13 @@ inline unsigned char interpolate_noise(unsigned char x, unsigned char y) {
 inline unsigned char closest(unsigned char value) {
   // 49 <= value <= 201
   if (value < 100)
-    return 1; // water
+    return 1 + font_memory; // water
   else if (value < 135)
-    return 0; // grass
+    return 0 + font_memory; // grass
   else if (value < 160)
-    return 2; // trees
+    return 2 + font_memory; // trees
   else
-    return 3; // mountains
+    return 3 + font_memory; // mountains
 }
 
 unsigned char terrain(unsigned char x, unsigned char y) {
@@ -65,13 +65,13 @@ unsigned char generate_item(unsigned char x, unsigned char y) {
   // 49 <= noise(x, y) <= 201
   const unsigned char _n = noise(x, y);
   if (_n > 49 && _n < 51)
-    return 1; // map on water
+    return 1 + font_memory; // map on water
   else if (_n > 133 && _n < 135)
-    return 0; // gun on grass
+    return 0 + font_memory; // gun on grass
   else if (_n > 158 && _n < 160)
-    return 2; // sword in trees
+    return 2 + font_memory; // sword in trees
   else if (_n > 190 && _n < 201)
-    return 3; // gold on mountains
+    return 3 + font_memory; // gold on mountains
   else
     return 255; // no item
 }
@@ -259,8 +259,8 @@ void interact() {
       const unsigned char pos_x = x + center_x / sprite_size;
       const unsigned char pos_y = y + center_y / sprite_size;
       const unsigned char item = map[pos_x][pos_y];
-      if (item >= backgrounds) {
-        add_inventory(item);
+      if (item >= font_memory + backgrounds) {
+        add_inventory(item - font_memory);
         remove_item(x + p.x[0], y + p.y[0]);
         // (item - backgrounds) is the terrain tile
         map[pos_x][pos_y] = item - backgrounds;
@@ -272,10 +272,10 @@ void interact() {
 void attack() {
   switch (p.weapons[0]) {
   case 0:
-    printf("\nbang!\n");
+    // printf("\nbang!\n");
     break;
   case 2:
-    printf("\nclink!\n");
+    // printf("\nclink!\n");
     break;
   }
 }

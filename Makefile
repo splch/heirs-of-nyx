@@ -29,8 +29,8 @@ CSOURCES   = $(foreach dir,$(SRCDIR),$(notdir $(wildcard $(dir)/*.c))) $(foreach
 ASMSOURCES = $(foreach dir,$(SRCDIR),$(notdir $(wildcard $(dir)/*.s)))
 OBJS       = $(CSOURCES:%.c=$(OBJDIR)/%.o) $(ASMSOURCES:%.s=$(OBJDIR)/%.o)
 
-# GB     = sameboy
-# GFLAGS = --nogl
+# GB      = sameboy
+# GBFLAGS = --nogl
 
 # Builds all targets sequentially
 all: $(TARGETS)

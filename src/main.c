@@ -32,7 +32,7 @@ void init() {
 
   // Decompress background and sprite data
   // and load them into memory
-  set_bkg_data(0, gb_decompress(landscape, buffer) >> 4, buffer);
+  set_bkg_data(font_memory, gb_decompress(landscape, buffer) >> 4, buffer);
   set_sprite_data(0, gb_decompress(player_sprite, buffer) >> 4, buffer);
 
   // Set first movable sprite (0) to be first tile in sprite memory (0)
@@ -50,7 +50,7 @@ void init() {
   p.weapons[0] = p.weapons[1] = -1;
 
   // --- LOADING TEXT --- //
-  printf("\n\tWelcome to\n\tPirates Folly");
+  printf("\n\tWelcome to\n\tPirate's Folly");
   // -------------------- //
 
   // Generate terrain
