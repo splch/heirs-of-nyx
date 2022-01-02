@@ -20,14 +20,19 @@
 #define pixel_y screen_y / sprite_size
 #define center_x screen_x / 2
 #define center_y screen_y / 2
+#define gen_x pixel_x / 2
+#define gen_y pixel_y / 2
 // ----------------- //
 
-typedef enum { false, true } bool;
+#define true 1
+#define false 0
+typedef char bool;
 
-extern unsigned char map[screen_x / sprite_size][screen_y / sprite_size];
+extern unsigned char map[pixel_x][pixel_y];
 
 extern struct player {
-  unsigned long x[2], y[2];
+  unsigned char x[2];
+  unsigned char y[2];
   unsigned long steps;
   char weapons[2];
   unsigned char gold, maps;

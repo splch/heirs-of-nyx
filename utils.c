@@ -1,7 +1,11 @@
 #include "main.h"
 #include <gb/gb.h>
 
-inline unsigned char noise(unsigned char x, unsigned char y) {
+// used[used_index][x,y]
+unsigned char used[255][2];
+unsigned char used_index = 0;
+
+unsigned char noise(unsigned char x, unsigned char y) {
   // return random number [49, 201]
   x ^= (y << 7);
   x ^= (x >> 5);
@@ -73,63 +77,77 @@ inline unsigned char generate_item(unsigned char x, unsigned char y) {
     return 255; // no item
 }
 
+bool is_removed(const unsigned char x, const unsigned char y) {
+  // returns true if item has been picked up at (x, y)
+  for (unsigned char i = 0; i < 255; i++)
+    if (used[i][0] == x && used[i][1] == y)
+      return true;
+  return false;
+}
+
 void shift_array_right() {
   for (unsigned char x = pixel_x - 1; x > 0; x--)
-    for (unsigned char y = 0; y < pixel_y; y++) {
+    for (unsigned char y = 0; y < pixel_y; y++)
       map[x][y] = map[x - 1][y];
-    }
 }
 
 void shift_array_left() {
   for (unsigned char x = 0; x < pixel_x - 1; x++)
-    for (unsigned char y = 0; y < pixel_y; y++) {
+    for (unsigned char y = 0; y < pixel_y; y++)
       map[x][y] = map[x + 1][y];
-    }
 }
 
 void shift_array_up() {
   for (unsigned char y = 0; y < pixel_y - 1; y++)
-    for (unsigned char x = 0; x < pixel_x; x++) {
+    for (unsigned char x = 0; x < pixel_x; x++)
       map[x][y] = map[x][y + 1];
-    }
 }
 
 void shift_array_down() {
   for (unsigned char y = pixel_y - 1; y > 0; y--)
-    for (unsigned char x = 0; x < pixel_x; x++) {
+    for (unsigned char x = 0; x < pixel_x; x++)
       map[x][y] = map[x][y - 1];
-    }
 }
 
 void generate_side(const char side) {
   // r - right, l - left, t - top, b - bottom
+  unsigned char _x;
+  unsigned char _y;
   switch (side) {
   case 'r':
     for (unsigned char y = 0; y < pixel_y; y++) {
-      const unsigned char _t = terrain(pixel_x - 1 + p.x[0], y + p.y[0]);
-      const unsigned char _i = generate_item(pixel_x - 1 + p.x[0], y + p.y[0]);
-      map[pixel_x - 1][y] = _i == _t ? _i + 64 : _t;
+      _x = pixel_x - 1 + p.x[0] - gen_x;
+      _y = y + p.y[0] - gen_y;
+      const unsigned char _t = terrain(_x, _y);
+      const unsigned char _i = generate_item(_x, _y);
+      map[pixel_x - 1][y] = (_i == _t && !is_removed(_x, _y)) ? _i + 64 : _t;
     }
     break;
   case 'l':
     for (unsigned char y = 0; y < pixel_y; y++) {
-      const unsigned char _t = terrain(p.x[0], y + p.y[0]);
-      const unsigned char _i = generate_item(p.x[0], y + p.y[0]);
-      map[0][y] = _i == _t ? _i + 64 : _t;
+      _x = p.x[0] - gen_x;
+      _y = y + p.y[0] - gen_y;
+      const unsigned char _t = terrain(_x, _y);
+      const unsigned char _i = generate_item(_x, _y);
+      map[0][y] = (_i == _t && !is_removed(_x, _y)) ? _i + 64 : _t;
     }
     break;
   case 't':
     for (unsigned char x = 0; x < pixel_x; x++) {
-      const unsigned char _t = terrain(x + p.x[0], p.y[0]);
-      const unsigned char _i = generate_item(x + p.x[0], p.y[0]);
-      map[x][0] = _i == _t ? _i + 64 : _t;
+      _x = x + p.x[0] - gen_x;
+      _y = p.y[0] - gen_y;
+      const unsigned char _t = terrain(_x, _y);
+      const unsigned char _i = generate_item(_x, _y);
+      map[x][0] = (_i == _t && !is_removed(_x, _y)) ? _i + 64 : _t;
     }
     break;
   case 'b':
     for (unsigned char x = 0; x < pixel_x; x++) {
-      const unsigned char _t = terrain(x + p.x[0], pixel_y - 1 + p.y[0]);
-      const unsigned char _i = generate_item(x + p.x[0], pixel_y - 1 + p.y[0]);
-      map[x][pixel_y - 1] = _i == _t ? _i + 64 : _t;
+      _x = x + p.x[0] - gen_x;
+      _y = pixel_y - 1 + p.y[0] - gen_y;
+      const unsigned char _t = terrain(_x, _y);
+      const unsigned char _i = generate_item(_x, _y);
+      map[x][pixel_y - 1] = (_i == _t && !is_removed(_x, _y)) ? _i + 64 : _t;
     }
     break;
   }
@@ -139,9 +157,11 @@ void generate_map() {
   // generate entire map on first load
   for (unsigned char x = 0; x < pixel_x; x++)
     for (unsigned char y = 0; y < pixel_y; y++) {
-      const unsigned char _t = terrain(x + p.x[0], y + p.y[0]);
-      const unsigned char _i = generate_item(x + p.x[0], y + p.y[0]);
-      map[x][y] = _i == _t ? _i + 64 : _t;
+      const unsigned char _x = x + p.x[0] - gen_x;
+      const unsigned char _y = y + p.y[0] - gen_y;
+      const unsigned char _t = terrain(_x, _y);
+      const unsigned char _i = generate_item(_x, _y);
+      map[x][y] = (_i == _t && !is_removed(_x, _y)) ? _i + 64 : _t;
     }
 }
 
@@ -172,8 +192,8 @@ void generate_map_side() {
 }
 
 void display_map() {
-  for (unsigned char i = 0; i < 20; i++)
-    set_bkg_tiles(i, 0, 1, 18, map[i]);
+  for (unsigned char i = 0; i < pixel_x; i++)
+    set_bkg_tiles(i, 0, 1, pixel_y, map[i]);
   SHOW_SPRITES; // menu is closed
 }
 
@@ -194,16 +214,20 @@ void show_menu() {
   printf("\n\n\trandom:\t%u", noise(p.x[0], p.y[0]));
 }
 
-void add_item(const unsigned char item, const unsigned char x,
-              const unsigned char y) {
+void remove_item(const unsigned char x, unsigned char y) {
+  // item has been picked up at (x, y)
+  used[used_index][0] = x;
+  used[used_index][1] = y;
+  used_index++;
+}
+
+void add_inventory(const unsigned char item) {
   // fill primary or replace secondary
   if (p.weapons[0] == -1) {
     p.weapons[0] = item;
   } else {
     p.weapons[1] = item;
   }
-  // item - 64 is the terrain tile
-  map[x][y] = item - 64;
 }
 
 void change_item() {
@@ -223,7 +247,10 @@ void interact() {
       const unsigned char pos_y = y + center_y / sprite_size;
       const unsigned char item = map[pos_x][pos_y];
       if (item >= 64) {
-        add_item(item, pos_x, pos_y);
+        add_inventory(item);
+        remove_item(x + p.x[0], y + p.y[0]);
+        // item - 64 is the terrain tile
+        map[pos_x][pos_y] = item - 64;
         display_map();
       }
     }
@@ -256,7 +283,7 @@ void update_position(unsigned char j) {
     p.steps++;
     update = true;
   }
-  if (update == true) {
+  if (update) {
     generate_map_side();
     display_map();
   }
