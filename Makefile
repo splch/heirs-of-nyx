@@ -1,6 +1,6 @@
 LCC=$(GBDK_HOME)/bin/lcc
 
-TARGETS=gb pocket megaduck sms gg
+TARGETS=gb gbc pocket megaduck sms gg
 
 LCCFLAGS_gb     = -Wl-yt0x1B # Set an MBC for banking (1B-ROM+MBC5+RAM+BATT)
 LCCFLAGS_gbc    = -Wl-yt0x1B -Wm-yc # Same as .gb with: -Wm-yc (gb & gbc) or Wm-yC (gbc exclusive)

@@ -244,6 +244,7 @@ void add_inventory(unsigned char item) {
 }
 
 void change_item() {
+  // switch primary with secondary weapons
   const char _w = p.weapons[0];
   p.weapons[0] = p.weapons[1];
   p.weapons[1] = _w;

@@ -9,7 +9,7 @@ void init();
 void update_switches();
 void check_input();
 
-unsigned char buffer[4096]; // for decompression
+unsigned char buffer[32]; // for decompression
 unsigned char map[DEVICE_SCREEN_WIDTH][DEVICE_SCREEN_HEIGHT];
 struct player p;
 
