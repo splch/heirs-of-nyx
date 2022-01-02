@@ -11,6 +11,7 @@
 // -------------- //
 
 // --- GB VALUES --- //
+#define backgrounds 4
 #define sprite_size 8
 #define screen_x 160
 #define screen_y 144
@@ -33,7 +34,8 @@ extern struct player {
   unsigned char y[2];
   unsigned long steps;
   char weapons[2];
-  unsigned char gold, maps;
+  unsigned char gold;
+  unsigned char maps;
 } p;
 
 #endif

@@ -1,6 +1,6 @@
 #include "main.h"
-#include "sprites.c"
-#include "tiles.c"
+#include "../res/sprites.c"
+#include "../res/tiles.c"
 #include "utils.c"
 #include <gb/gbdecompress.h>
 #include <gbdk/font.h>
@@ -49,7 +49,7 @@ void init() {
   p.weapons[0] = p.weapons[1] = -1;
 
   // --- LOADING TEXT --- //
-  printf("\n\tWelcome to\n\tPirate's Folly");
+  printf("\n\tWelcome to\n\tPirate`s Folly"); // Use ` since ' is replaced
   // -------------------- //
 
   // Generate terrain

@@ -10,13 +10,15 @@ Travel through procedural lands, across plains, through forests, over mountains,
 
 2. To build it from source, follow [GBDK's guide](https://github.com/gbdk-2020/gbdk-2020#build-instructions).
 
+3. Run `export GBDK=/path/to/gbdk-2020`
+
+> You may need to change which emulator the Makefile tries to use. I have it run `sameboy`, so change that to whichever you prefer.
+
 Once the environment has been built, run:
 
 ```shell
 make
 ```
-
-> You may need to change which emulator the Makefile tries to use. I have it run `sameboy`, so change that to whichever you prefer.
 
 There should now be a new `Pirates Folly.gb` file in the directory.
 

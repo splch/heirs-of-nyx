@@ -4,3 +4,6 @@
 *.noi
 *.o
 *.sym
+
+tiles.h
+sprites.h
