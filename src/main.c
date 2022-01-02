@@ -28,7 +28,7 @@ void init() {
   DISPLAY_ON; // Turn on the display
 
   font_init();                   // Initialize font system
-  font_set(font_load(font_min)); // Set and load the font
+  font_set(font_load(font_ibm)); // Set and load the font
 
   // Decompress background and sprite data
   // and load them into memory
@@ -50,7 +50,7 @@ void init() {
   p.weapons[0] = p.weapons[1] = -1;
 
   // --- LOADING TEXT --- //
-  printf("\n\tWelcome to\n\tPirate's Folly");
+  printf("\n\tWelcome to\n\tPirates Folly");
   // -------------------- //
 
   // Generate terrain
