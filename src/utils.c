@@ -239,6 +239,7 @@ void add_inventory(unsigned char item) {
     break;
   case 3:
     p.gold++;
+    break;
   }
 }
 
