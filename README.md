@@ -30,7 +30,7 @@ make gb
 
 There should now be a new `Pirates Folly.gb` file in the `build/gb/` directory.
 
-Alternatively, you can upload the ROM to an emulator site like @Juchi's [Gameboy emulator](http://juchi.github.io/gameboy.js/) and run it.
+Alternatively, you can upload the ROM to an emulator site like @Juchi's [Gameboy emulator](https://juchi.github.io/gameboy.js/) and run it.
 
 ## This game is in development
 
@@ -41,9 +41,9 @@ Features:
 - [ ] 16×16 Metasprites
 - [x] Procedurally-generated map
 - [x] Menu
-- [ ] Items
-  - [ ] Gold
-  - [ ] Weapons
+- [x] Items
+  - [x] Gold / Maps
+  - [x] Weapons
   - [ ] Equipment
 - [ ] Enemies
 - [ ] Music
