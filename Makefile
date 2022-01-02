@@ -10,7 +10,6 @@ LCCFLAGS_sms    =
 LCCFLAGS_gg     =
 
 LCCFLAGS += $(LCCFLAGS_$(EXT)) # This adds the current platform specific LCC Flags
-
 LCCFLAGS += -Wl-j -Wm-yS -Wm-yoA -Wm-ya4 -autobank -Wb-ext=.rel -Wb-v # MBC + Autobanking related flags
 # LCCFLAGS += -debug # Uncomment to enable debug output
 # LCCFLAGS += -v     # Uncomment for lcc verbose output
@@ -25,7 +24,7 @@ RESDIR = res
 BINDIR = build/$(EXT)
 MKDIRS = $(OBJDIR) $(BINDIR) # See bottom of Makefile for directory auto-creation
 
-BINS	     = $(OBJDIR)/$(PROJECTNAME).$(EXT)
+BINS       = $(OBJDIR)/$(PROJECTNAME).$(EXT)
 CSOURCES   = $(foreach dir,$(SRCDIR),$(notdir $(wildcard $(dir)/*.c))) $(foreach dir,$(RESDIR),$(notdir $(wildcard $(dir)/*.c)))
 ASMSOURCES = $(foreach dir,$(SRCDIR),$(notdir $(wildcard $(dir)/*.s)))
 OBJS       = $(CSOURCES:%.c=$(OBJDIR)/%.o) $(ASMSOURCES:%.s=$(OBJDIR)/%.o)
