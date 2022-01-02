@@ -2,7 +2,7 @@
 
 Travel through procedural lands, across plains, through forests, over mountains, and around water. All the while, searching for treasure and defeating pirates.
 
-![Game](https://user-images.githubusercontent.com/25377399/147886389-08cf1281-9e65-47dd-ae70-670ab8433c60.png)
+![Game](https://user-images.githubusercontent.com/25377399/147889181-562e4338-f2c7-4114-8b73-d9409a386b35.png)
 
 ## File Structure
 
