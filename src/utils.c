@@ -85,26 +85,26 @@ bool is_removed(const unsigned char x, const unsigned char y) {
 }
 
 void shift_array_right() {
-  for (unsigned char x = pixel_x - 1; x > 0; x--)
-    for (unsigned char y = 0; y < pixel_y; y++)
+  for (unsigned char x = DEVICE_SCREEN_WIDTH - 1; x > 0; x--)
+    for (unsigned char y = 0; y < DEVICE_SCREEN_HEIGHT; y++)
       map[x][y] = map[x - 1][y];
 }
 
 void shift_array_left() {
-  for (unsigned char x = 0; x < pixel_x - 1; x++)
-    for (unsigned char y = 0; y < pixel_y; y++)
+  for (unsigned char x = 0; x < DEVICE_SCREEN_WIDTH - 1; x++)
+    for (unsigned char y = 0; y < DEVICE_SCREEN_HEIGHT; y++)
       map[x][y] = map[x + 1][y];
 }
 
 void shift_array_up() {
-  for (unsigned char y = 0; y < pixel_y - 1; y++)
-    for (unsigned char x = 0; x < pixel_x; x++)
+  for (unsigned char y = 0; y < DEVICE_SCREEN_HEIGHT - 1; y++)
+    for (unsigned char x = 0; x < DEVICE_SCREEN_WIDTH; x++)
       map[x][y] = map[x][y + 1];
 }
 
 void shift_array_down() {
-  for (unsigned char y = pixel_y - 1; y > 0; y--)
-    for (unsigned char x = 0; x < pixel_x; x++)
+  for (unsigned char y = DEVICE_SCREEN_HEIGHT - 1; y > 0; y--)
+    for (unsigned char x = 0; x < DEVICE_SCREEN_WIDTH; x++)
       map[x][y] = map[x][y - 1];
 }
 
@@ -114,17 +114,17 @@ void generate_side(const char side) {
   unsigned char _y;
   switch (side) {
   case 'r':
-    for (unsigned char y = 0; y < pixel_y; y++) {
-      _x = pixel_x - 1 + p.x[0] - gen_x;
+    for (unsigned char y = 0; y < DEVICE_SCREEN_HEIGHT; y++) {
+      _x = DEVICE_SCREEN_WIDTH - 1 + p.x[0] - gen_x;
       _y = y + p.y[0] - gen_y;
       const unsigned char _t = terrain(_x, _y);
       const unsigned char _i = generate_item(_x, _y);
-      map[pixel_x - 1][y] =
+      map[DEVICE_SCREEN_WIDTH - 1][y] =
           (_i == _t && !is_removed(_x, _y)) ? _i + backgrounds : _t;
     }
     break;
   case 'l':
-    for (unsigned char y = 0; y < pixel_y; y++) {
+    for (unsigned char y = 0; y < DEVICE_SCREEN_HEIGHT; y++) {
       _x = p.x[0] - gen_x;
       _y = y + p.y[0] - gen_y;
       const unsigned char _t = terrain(_x, _y);
@@ -133,7 +133,7 @@ void generate_side(const char side) {
     }
     break;
   case 't':
-    for (unsigned char x = 0; x < pixel_x; x++) {
+    for (unsigned char x = 0; x < DEVICE_SCREEN_WIDTH; x++) {
       _x = x + p.x[0] - gen_x;
       _y = p.y[0] - gen_y;
       const unsigned char _t = terrain(_x, _y);
@@ -142,12 +142,12 @@ void generate_side(const char side) {
     }
     break;
   case 'b':
-    for (unsigned char x = 0; x < pixel_x; x++) {
+    for (unsigned char x = 0; x < DEVICE_SCREEN_WIDTH; x++) {
       _x = x + p.x[0] - gen_x;
-      _y = pixel_y - 1 + p.y[0] - gen_y;
+      _y = DEVICE_SCREEN_HEIGHT - 1 + p.y[0] - gen_y;
       const unsigned char _t = terrain(_x, _y);
       const unsigned char _i = generate_item(_x, _y);
-      map[x][pixel_y - 1] =
+      map[x][DEVICE_SCREEN_HEIGHT - 1] =
           (_i == _t && !is_removed(_x, _y)) ? _i + backgrounds : _t;
     }
     break;
@@ -156,8 +156,8 @@ void generate_side(const char side) {
 
 void generate_map() {
   // generate entire map on first load
-  for (unsigned char x = 0; x < pixel_x; x++)
-    for (unsigned char y = 0; y < pixel_y; y++) {
+  for (unsigned char x = 0; x < DEVICE_SCREEN_WIDTH; x++)
+    for (unsigned char y = 0; y < DEVICE_SCREEN_HEIGHT; y++) {
       const unsigned char _x = x + p.x[0] - gen_x;
       const unsigned char _y = y + p.y[0] - gen_y;
       const unsigned char _t = terrain(_x, _y);
@@ -193,8 +193,8 @@ void generate_map_side() {
 }
 
 void display_map() {
-  for (unsigned char i = 0; i < pixel_x; i++)
-    set_bkg_tiles(i, 0, 1, pixel_y, map[i]);
+  for (unsigned char i = 0; i < DEVICE_SCREEN_WIDTH; i++)
+    set_bkg_tiles(i, 0, 1, DEVICE_SCREEN_HEIGHT, map[i]);
   SHOW_SPRITES; // menu is closed
 }
 

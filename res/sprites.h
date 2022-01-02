@@ -1,8 +1,8 @@
 /*
 
- SPRITES.C
+ SPRITES.H
 
- Tile Source File.
+ Include File.
 
  Info:
   Form                 : All tiles as one unit.
@@ -22,12 +22,14 @@
 
 */
 
-/* Start of tile array. */
-const unsigned char player_sprite[] =
-{
-  0x02,0x38,0xC8,0x10,0x38,0x38,0x44,0x7C,
-  0x44,0x7C,0x44,0x38,0x02,0x28,0x10,0x00,
-  0x00
-};
+#ifndef __sprites_h_INCLUDE
+#define __sprites_h_INCLUDE
 
-/* End of SPRITES.C */
+/* Bank of tiles. */
+#define player_spriteBank 0
+/* Start of tile array. */
+extern const unsigned char player_sprite[];
+
+#endif
+
+/* End of SPRITES.H */

@@ -1,8 +1,8 @@
 /*
 
- SPRITES.C
+ TILES.H
 
- Tile Source File.
+ Include File.
 
  Info:
   Form                 : All tiles as one unit.
@@ -10,7 +10,7 @@
   Compression          : GB-Compress.
   Counter              : None.
   Tile size            : 8 x 8
-  Tiles                : 0 to 1
+  Tiles                : 0 to 8
 
   Palette colors       : None.
   SGB Palette          : None.
@@ -22,12 +22,14 @@
 
 */
 
-/* Start of tile array. */
-const unsigned char player_sprite[] =
-{
-  0x02,0x38,0xC8,0x10,0x38,0x38,0x44,0x7C,
-  0x44,0x7C,0x44,0x38,0x02,0x28,0x10,0x00,
-  0x00
-};
+#ifndef __tiles_h_INCLUDE
+#define __tiles_h_INCLUDE
 
-/* End of SPRITES.C */
+/* Bank of tiles. */
+#define landscapeBank 0
+/* Start of tile array. */
+extern const unsigned char landscape[];
+
+#endif
+
+/* End of TILES.H */

@@ -1,9 +1,6 @@
-*.ihx
-*.lst
-*.map
-*.noi
-*.o
-*.sym
+build/*/*.ihx
+build/*/*.map
+build/*/*.noi
+build/*/*.sym
 
-tiles.h
-sprites.h
+obj/*

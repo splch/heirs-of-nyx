@@ -1,7 +1,7 @@
 #ifndef CONFIG
 #define CONFIG
 
-#include <gb/gb.h>
+#include <gbdk/platform.h>
 #include <stdio.h>
 
 // --- CONFIG --- //
@@ -13,21 +13,17 @@
 // --- GB VALUES --- //
 #define backgrounds 4
 #define sprite_size 8
-#define screen_x 160
-#define screen_y 144
-#define pixel_x screen_x / sprite_size
-#define pixel_y screen_y / sprite_size
-#define center_x screen_x / 2
-#define center_y screen_y / 2
-#define gen_x pixel_x / 2
-#define gen_y pixel_y / 2
+#define center_x DEVICE_SCREEN_WIDTH * 4
+#define center_y DEVICE_SCREEN_HEIGHT * 4
+#define gen_x DEVICE_SCREEN_WIDTH / 2
+#define gen_y DEVICE_SCREEN_HEIGHT / 2
 // ----------------- //
 
 #define true 1
 #define false 0
 typedef char bool;
 
-extern unsigned char map[pixel_x][pixel_y];
+extern unsigned char map[DEVICE_SCREEN_WIDTH][DEVICE_SCREEN_HEIGHT];
 
 extern struct player {
   unsigned char x[2];

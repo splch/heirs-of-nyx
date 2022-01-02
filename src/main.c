@@ -1,15 +1,16 @@
 #include "main.h"
-#include "../res/sprites.c"
-#include "../res/tiles.c"
-#include "utils.c"
-#include <gb/gbdecompress.h>
+#include "../res/sprites.h"
+#include "../res/tiles.h"
+#include "utils.h"
 #include <gbdk/font.h>
+#include <gbdk/gbdecompress.h>
 
 void init();
 void update_switches();
 void check_input();
 
-unsigned char map[pixel_x][pixel_y];
+unsigned char buffer[4096]; // for decompression
+unsigned char map[DEVICE_SCREEN_WIDTH][DEVICE_SCREEN_HEIGHT];
 struct player p;
 
 void main() {
@@ -26,13 +27,13 @@ void main() {
 void init() {
   DISPLAY_ON; // Turn on the display
 
-  font_init();                   // Initialize font
-  font_set(font_load(font_ibm)); // Set and load the font
+  font_init();                   // Initialize font system
+  font_set(font_load(font_min)); // Set and load the font
 
   // Decompress background and sprite data
   // and load them into memory
-  gb_decompress_bkg_data(0, landscape);
-  gb_decompress_sprite_data(0, player_sprite);
+  set_bkg_data(0, gb_decompress(landscape, buffer) >> 4, buffer);
+  set_sprite_data(0, gb_decompress(player_sprite, buffer) >> 4, buffer);
 
   // Set first movable sprite (0) to be first tile in sprite memory (0)
   set_sprite_tile(0, 0);
@@ -49,12 +50,11 @@ void init() {
   p.weapons[0] = p.weapons[1] = -1;
 
   // --- LOADING TEXT --- //
-  printf("\n\tWelcome to\n\tPirate`s Folly"); // Use ` since ' is replaced
+  printf("\n\tWelcome to\n\tPirate's Folly");
   // -------------------- //
 
   // Generate terrain
   generate_map();
-
   // Display terrain
   display_map();
 }

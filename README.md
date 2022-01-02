@@ -4,23 +4,31 @@ Travel through procedural lands, across plains, through forests, over mountains,
 
 ![Game](https://user-images.githubusercontent.com/25377399/147735402-449d84ce-14c2-426c-9d64-fbddad7d1a6f.png)
 
+## File Structure
+
+1. `src/` contains all the source code for building the game
+
+2. `res/` contains all the visual resources in the game
+
+3. `GBTD/` is the [tile designer](https://www.devrs.com/gb/hmgd/gbtd.html) used to edit the `res/*.gbr` files
+
+4. `build/` has the most recent ROMS for different systems
+
 ## Install
 
-1. To play the game, move the `Pirates Folly.gb` file into your emulator / flash cart.
+1. To play the game, move the `build/gb/Pirates Folly.gb` file into your emulator / flash cart.
 
 2. To build it from source, follow [GBDK's guide](https://github.com/gbdk-2020/gbdk-2020#build-instructions).
 
-3. Run `export GBDK=/path/to/gbdk-2020`
-
-> You may need to change which emulator the Makefile tries to use. I have it run `sameboy`, so change that to whichever you prefer.
+3. Run `export GBDK_HOME=/path/to/gbdk-2020`
 
 Once the environment has been built, run:
 
 ```shell
-make
+make gb
 ```
 
-There should now be a new `Pirates Folly.gb` file in the directory.
+There should now be a new `Pirates Folly.gb` file in the `build/gb/` directory.
 
 Alternatively, you can upload the ROM to an emulator site like @Juchi's [Gameboy emulator](http://juchi.github.io/gameboy.js/) and run it.
 
