@@ -3,9 +3,9 @@ LCC=$(GBDK_HOME)/bin/lcc
 TARGETS=gb pocket megaduck sms gg
 
 LCCFLAGS_gb     = -Wl-yt0x1B # Set an MBC for banking (1B-ROM+MBC5+RAM+BATT)
+LCCFLAGS_gbc    = -Wl-yt0x1B -Wm-yc # Same as .gb with: -Wm-yc (gb & gbc) or Wm-yC (gbc exclusive)
 LCCFLAGS_pocket = -Wl-yt0x1B # Usually the same as required for .gb
 LCCFLAGS_duck   = -Wl-yt0x1B # Usually the same as required for .gb
-LCCFLAGS_gbc    = -Wl-yt0x1B -Wm-yc # Same as .gb with: -Wm-yc (gb & gbc) or Wm-yC (gbc exclusive)
 LCCFLAGS_sms    =
 LCCFLAGS_gg     =
 
@@ -18,9 +18,9 @@ LCCFLAGS += -Wl-j -Wm-yS -Wm-yoA -Wm-ya4 -autobank -Wb-ext=.rel -Wb-v # MBC + Au
 # You can set the name of the ROM file here
 PROJECTNAME = Pirates\ Folly
 
-# EXT?=gb # Only sets extension to default (game boy .gb) if not populated
+# EXT?   = gb # Only sets extension to default (game boy .gb) if not populated
 SRCDIR = src
-OBJDIR = obj/$(EXT)
+OBJDIR = .obj/$(EXT)
 RESDIR = res
 BINDIR = build/$(EXT)
 MKDIRS = $(OBJDIR) $(BINDIR) # See bottom of Makefile for directory auto-creation
@@ -30,8 +30,8 @@ CSOURCES   = $(foreach dir,$(SRCDIR),$(notdir $(wildcard $(dir)/*.c))) $(foreach
 ASMSOURCES = $(foreach dir,$(SRCDIR),$(notdir $(wildcard $(dir)/*.s)))
 OBJS       = $(CSOURCES:%.c=$(OBJDIR)/%.o) $(ASMSOURCES:%.s=$(OBJDIR)/%.o)
 
-GB=sameboy
-GFLAGS=--nogl
+# GB     = sameboy
+# GFLAGS = --nogl
 
 # Builds all targets sequentially
 all: $(TARGETS)
@@ -63,6 +63,7 @@ clean:
 	@for target in $(TARGETS); do \
 		$(MAKE) $$target-clean; \
 	done
+	rm -rf .obj
 
 # Include available build targets
 include Makefile.targets

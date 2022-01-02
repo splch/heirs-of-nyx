@@ -4,4 +4,4 @@ build/*/*.noi
 build/*/*.sav
 build/*/*.sym
 
-obj/*
+.obj/*

@@ -10,7 +10,7 @@ Travel through procedural lands, across plains, through forests, over mountains,
 
 2. `res/` contains all the visual resources in the game
 
-3. `GBTD/` is the [tile designer](https://www.devrs.com/gb/hmgd/gbtd.html) used to edit the `res/*.gbr` files
+3. `GBTD/` is the [tile designer](https://github.com/gbdk-2020/GBTD_GBMB/releases/) used to edit the `res/*.gbr` files
 
 4. `build/` has the most recent ROMS for different systems
 
