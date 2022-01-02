@@ -10197,58 +10197,84 @@ ___str_6:
 	.db 0x09
 	.ascii "%u"
 	.db 0x00
-;utils.c:197: void add_item(const unsigned char item) {
+;utils.c:197: void add_item(const unsigned char item, const unsigned char x,
 ;	---------------------------------
 ; Function add_item
 ; ---------------------------------
 _add_item::
-;utils.c:199: if (p.weapons[0] == -1)
+;utils.c:200: if (p.weapons[0] == -1) {
 	ld	bc, #_p + 20
 	ld	a, (bc)
 	inc	a
 	jr	NZ, 00102$
-;utils.c:200: p.weapons[0] = item;
+;utils.c:201: p.weapons[0] = item;
 	ldhl	sp,	#2
 	ld	a, (hl)
 	ld	(bc), a
-	ret
+	jr	00103$
 00102$:
-;utils.c:202: p.weapons[1] = item;
+;utils.c:203: p.weapons[1] = item;
 	ld	de, #(_p + 21)
 	ldhl	sp,	#2
 	ld	a, (hl)
 	ld	(de), a
-;utils.c:203: }
+00103$:
+;utils.c:206: map[x][y] = item - 64;
+	ldhl	sp,	#3
+	ld	c, (hl)
+	ld	b, #0x00
+	ld	l, c
+	ld	h, b
+	add	hl, hl
+	add	hl, hl
+	add	hl, hl
+	add	hl, bc
+	add	hl, hl
+	ld	bc,#_map
+	add	hl,bc
+	ld	c, l
+	ld	b, h
+	ldhl	sp,	#4
+	ld	a, (hl-)
+	dec	hl
+	add	a, c
+	ld	c, a
+	ld	a, #0x00
+	adc	a, b
+	ld	b, a
+	ld	a, (hl)
+	add	a, #0xc0
+	ld	(bc), a
+;utils.c:207: }
 	ret
-;utils.c:205: void change_item() {
+;utils.c:209: void change_item() {
 ;	---------------------------------
 ; Function change_item
 ; ---------------------------------
 _change_item::
-;utils.c:206: const char _w = p.weapons[0];
+;utils.c:210: const char _w = p.weapons[0];
 	ld	hl, #_p + 20
 	ld	c, (hl)
-;utils.c:207: p.weapons[0] = p.weapons[1];
+;utils.c:211: p.weapons[0] = p.weapons[1];
 	ld	de, #_p + 21
 	ld	a, (de)
 	ld	(hl), a
-;utils.c:208: p.weapons[1] = _w;
+;utils.c:212: p.weapons[1] = _w;
 	ld	a, c
 	ld	(de), a
-;utils.c:209: }
+;utils.c:213: }
 	ret
-;utils.c:211: void interact() {
+;utils.c:215: void interact() {
 ;	---------------------------------
 ; Function interact
 ; ---------------------------------
 _interact::
-	dec	sp
-	dec	sp
-;utils.c:216: for (char x = -2; x <= 0; x++)
-	ldhl	sp,	#0
+	add	sp, #-4
+;utils.c:220: for (char x = -2; x <= 0; x++)
+	ldhl	sp,	#3
 	ld	(hl), #0xfe
 00109$:
-	ldhl	sp,	#0
+	ldhl	sp,	#3
 	ld	e, (hl)
 	xor	a, a
 	ld	d, a
@@ -10265,11 +10291,13 @@ _interact::
 	scf
 00141$:
 	jr	C, 00111$
-;utils.c:217: for (char y = -3; y <= -1; y++) {
-	ldhl	sp,	#0
+;utils.c:221: for (char y = -3; y <= -1; y++) {
+	ldhl	sp,	#3
 	ld	a, (hl)
 	add	a, #0x0a
-	ld	c, a
+	ldhl	sp,	#0
+	ld	(hl), a
+	ld	c, (hl)
 	ld	b, #0x00
 	ld	l, c
 	ld	h, b
@@ -10280,16 +10308,20 @@ _interact::
 	add	hl, hl
 	ld	bc,#_map
 	add	hl,bc
-	ld	c, l
-	ld	b, h
-	ldhl	sp,	#1
-	ld	(hl), #0xfd
+	push	hl
+	ld	a, l
+	ldhl	sp,	#3
+	ld	(hl), a
+	pop	hl
+	ld	a, h
+	ldhl	sp,	#2
+	ld	(hl), a
+	ld	c, #0xfd
 00106$:
-	ldhl	sp,	#1
-	ld	e, (hl)
+	ld	e, c
 	ld	a,#0xff
 	ld	d,a
-	sub	a, (hl)
+	sub	a, c
 	bit	7, e
 	jr	Z, 00142$
 	bit	7, d
@@ -10302,73 +10334,73 @@ _interact::
 	scf
 00143$:
 	jr	C, 00110$
-;utils.c:219: const unsigned char pos_y = y + center_y / sprite_size;
-	ldhl	sp,	#1
-	ld	a, (hl)
+;utils.c:223: const unsigned char pos_y = y + center_y / sprite_size;
+	ld	a, c
 	add	a, #0x09
-;utils.c:220: const unsigned char _i = map[pos_x][pos_y];
-	ld	l, a
-	ld	h, #0x00
-	add	hl, bc
+	ld	b, a
+;utils.c:224: const unsigned char item = map[pos_x][pos_y];
+	ldhl	sp,#1
+	ld	a, (hl+)
+	ld	e, a
 	ld	d, (hl)
-;utils.c:221: if (_i >= 64) {
-	ld	a, d
-	sub	a, #0x40
+	ld	l, b
+	ld	h, #0x00
+	add	hl, de
+	ld	e, l
+	ld	d, h
+	ld	a, (de)
+;utils.c:225: if (item >= 64) {
+	cp	a, #0x40
 	jr	C, 00107$
-;utils.c:222: add_item(_i);
-	push	hl
+;utils.c:226: add_item(item, pos_x, pos_y);
 	push	bc
-	push	de
-	push	de
+	push	bc
+	inc	sp
+	ldhl	sp,	#3
+	ld	h, (hl)
+;	spillPairReg hl
+;	spillPairReg hl
+	push	hl
+	inc	sp
+	push	af
 	inc	sp
 	call	_add_item
-	inc	sp
-	pop	de
-	pop	bc
-	pop	hl
-;utils.c:224: map[pos_x][pos_y] = _i - 64;
-	ld	a, d
-	add	a, #0xc0
-	ld	(hl), a
-;utils.c:225: display_map();
-	push	bc
+	add	sp, #3
 	call	_display_map
 	pop	bc
 00107$:
-;utils.c:217: for (char y = -3; y <= -1; y++) {
-	ldhl	sp,	#1
-	inc	(hl)
+;utils.c:221: for (char y = -3; y <= -1; y++) {
+	inc	c
 	jr	00106$
 00110$:
-;utils.c:216: for (char x = -2; x <= 0; x++)
-	ldhl	sp,	#0
+;utils.c:220: for (char x = -2; x <= 0; x++)
+	ldhl	sp,	#3
 	inc	(hl)
-	jr	00109$
+	jp	00109$
 00111$:
-;utils.c:228: }
-	inc	sp
-	inc	sp
+;utils.c:230: }
+	add	sp, #4
 	ret
-;utils.c:230: void attack() {}
+;utils.c:232: void attack() {}
 ;	---------------------------------
 ; Function attack
 ; ---------------------------------
 _attack::
 	ret
-;utils.c:232: void update_position(unsigned char j) {
+;utils.c:234: void update_position(unsigned char j) {
 ;	---------------------------------
 ; Function update_position
 ; ---------------------------------
 _update_position::
 	add	sp, #-14
-;utils.c:233: bool update = false;
+;utils.c:235: bool update = false;
 	ldhl	sp,	#0
 	ld	(hl), #0x00
-;utils.c:234: unsigned char _x = p.x[0];
+;utils.c:236: unsigned char _x = p.x[0];
 	ld	a, (#_p + 0)
 	ldhl	sp,	#12
 	ld	(hl), a
-;utils.c:235: unsigned char _y = p.y[0];
+;utils.c:237: unsigned char _y = p.y[0];
 	ld	de, #(_p + 8)
 	ld	a, (de)
 	ldhl	sp,	#1
@@ -10386,39 +10418,39 @@ _update_position::
 	ld	a, (hl)
 	ldhl	sp,	#13
 	ld	(hl), a
-;utils.c:236: if (j & J_RIGHT)
+;utils.c:238: if (j & J_RIGHT)
 	ldhl	sp,	#16
 	ld	c, (hl)
 	bit	0, c
 	jr	Z, 00104$
-;utils.c:237: _x++;
+;utils.c:239: _x++;
 	ldhl	sp,	#12
 	inc	(hl)
 	jr	00105$
 00104$:
-;utils.c:238: else if (j & J_LEFT)
+;utils.c:240: else if (j & J_LEFT)
 	bit	1, c
 	jr	Z, 00105$
-;utils.c:239: _x--;
+;utils.c:241: _x--;
 	ldhl	sp,	#12
 	dec	(hl)
 00105$:
-;utils.c:240: if (j & J_UP)
+;utils.c:242: if (j & J_UP)
 	bit	2, c
 	jr	Z, 00109$
-;utils.c:241: _y--;
+;utils.c:243: _y--;
 	ldhl	sp,	#13
 	dec	(hl)
 	jr	00110$
 00109$:
-;utils.c:242: else if (j & J_DOWN)
+;utils.c:244: else if (j & J_DOWN)
 	bit	3, c
 	jr	Z, 00110$
-;utils.c:243: _y++;
+;utils.c:245: _y++;
 	ldhl	sp,	#13
 	inc	(hl)
 00110$:
-;utils.c:244: if (_x != p.x[0]) {
+;utils.c:246: if (_x != p.x[0]) {
 	ld	de, #_p
 	ld	a, (de)
 	ldhl	sp,	#5
@@ -10440,9 +10472,9 @@ _update_position::
 	ld	(hl+), a
 	ld	(hl+), a
 	ld	(hl), a
-;utils.c:247: p.steps++;
+;utils.c:249: p.steps++;
 	ld	bc, #_p + 16
-;utils.c:244: if (_x != p.x[0]) {
+;utils.c:246: if (_x != p.x[0]) {
 	ldhl	sp,	#5
 	ld	a, (hl)
 	ldhl	sp,	#9
@@ -10464,7 +10496,7 @@ _update_position::
 	sub	a, (hl)
 	jr	Z, 00114$
 00159$:
-;utils.c:245: p.x[1] = p.x[0];
+;utils.c:247: p.x[1] = p.x[0];
 	ld	de, #(_p + 4)
 	ldhl	sp,	#5
 	ld	a, (hl+)
@@ -10476,7 +10508,7 @@ _update_position::
 	ld	a, (hl+)
 	ld	(de), a
 	inc	de
-;utils.c:246: p.x[0] = _x;
+;utils.c:248: p.x[0] = _x;
 	ld	a, (hl+)
 	ld	(de), a
 	ld	de, #_p
@@ -10491,7 +10523,7 @@ _update_position::
 	inc	de
 	ld	a, (hl)
 	ld	(de), a
-;utils.c:247: p.steps++;
+;utils.c:249: p.steps++;
 	ld	e, c
 	ld	d, b
 	ld	a, (de)
@@ -10547,12 +10579,12 @@ _update_position::
 	inc	bc
 	ld	a, (hl)
 	ld	(bc), a
-;utils.c:248: update = true;
+;utils.c:250: update = true;
 	ldhl	sp,	#0
 	ld	(hl), #0x01
 	jp	00115$
 00114$:
-;utils.c:249: } else if (_y != p.y[0]) {
+;utils.c:251: } else if (_y != p.y[0]) {
 	ldhl	sp,	#13
 	ld	a, (hl)
 	ldhl	sp,	#10
@@ -10582,7 +10614,7 @@ _update_position::
 	sub	a, (hl)
 	jr	Z, 00115$
 00160$:
-;utils.c:252: p.y[1] = p.y[0];
+;utils.c:254: p.y[1] = p.y[0];
 	ld	de, #(_p + 12)
 	ldhl	sp,	#1
 	ld	a, (hl+)
@@ -10596,7 +10628,7 @@ _update_position::
 	inc	de
 	ld	a, (hl)
 	ld	(de), a
-;utils.c:253: p.y[0] = _y;
+;utils.c:255: p.y[0] = _y;
 	ld	de, #(_p + 8)
 	ldhl	sp,	#10
 	ld	a, (hl+)
@@ -10610,7 +10642,7 @@ _update_position::
 	inc	de
 	ld	a, (hl)
 	ld	(de), a
-;utils.c:254: p.steps++;
+;utils.c:256: p.steps++;
 	ld	e, c
 	ld	d, b
 	ld	a, (de)
@@ -10666,21 +10698,21 @@ _update_position::
 	inc	bc
 	ld	a, (hl)
 	ld	(bc), a
-;utils.c:255: update = true;
+;utils.c:257: update = true;
 	ldhl	sp,	#0
 	ld	(hl), #0x01
 00115$:
-;utils.c:257: if (update == true) {
+;utils.c:259: if (update == true) {
 	ldhl	sp,	#0
 	ld	a, (hl)
 	dec	a
 	jr	NZ, 00118$
-;utils.c:258: generate_map_side();
+;utils.c:260: generate_map_side();
 	call	_generate_map_side
-;utils.c:259: display_map();
+;utils.c:261: display_map();
 	call	_display_map
 00118$:
-;utils.c:261: }
+;utils.c:263: }
 	add	sp, #14
 	ret
 ;main.c:12: void main() {

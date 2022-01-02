@@ -194,12 +194,16 @@ void show_menu() {
   printf("\n\n\trandom:\t%u", noise(p.x[0], p.y[0]));
 }
 
-void add_item(const unsigned char item) {
+void add_item(const unsigned char item, const unsigned char x,
+              const unsigned char y) {
   // fill primary or replace secondary
-  if (p.weapons[0] == -1)
+  if (p.weapons[0] == -1) {
     p.weapons[0] = item;
-  else
+  } else {
     p.weapons[1] = item;
+  }
+  // item - 64 is the terrain tile
+  map[x][y] = item - 64;
 }
 
 void change_item() {
@@ -217,11 +221,9 @@ void interact() {
     for (char y = -3; y <= -1; y++) {
       const unsigned char pos_x = x + center_x / sprite_size;
       const unsigned char pos_y = y + center_y / sprite_size;
-      const unsigned char _i = map[pos_x][pos_y];
-      if (_i >= 64) {
-        add_item(_i);
-        // item - 64 is the correct terrain tile
-        map[pos_x][pos_y] = _i - 64;
+      const unsigned char item = map[pos_x][pos_y];
+      if (item >= 64) {
+        add_item(item, pos_x, pos_y);
         display_map();
       }
     }
