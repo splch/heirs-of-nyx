@@ -1,19 +1,22 @@
 #include "main.h"
+#include "sprites.c"
+#include "tiles.c"
 #include "utils.c"
+#include <gb/gbdecompress.h>
 #include <gbdk/font.h>
 
 void init();
 void update_switches();
 void check_input();
 
-unsigned char map[screen_x / sprite_size][screen_y / sprite_size];
+unsigned char map[pixel_x][pixel_y];
 struct player p;
 
 void main() {
   init();
 
   while (1) {
-    check_input();     // Check for user input (and act on it)
+    check_input();     // Check for user input
     update_switches(); // Make sure the SHOW_SPRITES and SHOW_BKG switches are
                        // on each loop
     wait_vbl_done();   // Wait until VBLANK to avoid corrupting memory
@@ -26,11 +29,10 @@ void init() {
   font_init();                   // Initialize font
   font_set(font_load(font_ibm)); // Set and load the font
 
-  // Load tiles as background memory
-  set_bkg_data(0, 4, landscape);
-
-  // Load tiles into sprite memory
-  set_sprite_data(0, 0, player_sprite);
+  // Decompress background and sprite data
+  // and load them into memory
+  gb_decompress_bkg_data(0, landscape);
+  gb_decompress_sprite_data(0, player_sprite);
 
   // Set first movable sprite (0) to be first tile in sprite memory (0)
   set_sprite_tile(0, 0);
@@ -57,12 +59,12 @@ void init() {
   display_map();
 }
 
-void update_switches() {
+inline void update_switches() {
   HIDE_WIN;
   SHOW_BKG;
 }
 
-void check_input() {
+inline void check_input() {
   const unsigned char j = joypad();
   if (j & J_START)
     show_menu();

@@ -1,11 +1,10 @@
 #include "main.h"
-#include <gb/gb.h>
 
 // used[used_index][x,y]
 unsigned char used[255][2];
 unsigned char used_index = 0;
 
-unsigned char noise(unsigned char x, unsigned char y) {
+inline unsigned char noise(unsigned char x, unsigned char y) {
   // return random number [49, 201]
   x ^= (y << 7);
   x ^= (x >> 5);

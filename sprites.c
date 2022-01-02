@@ -5,12 +5,12 @@
  Tile Source File.
 
  Info:
-  Form                 : Each tile separate.
+  Form                 : All tiles as one unit.
   Format               : Gameboy 4 color.
-  Compression          : None.
+  Compression          : GB-Compress.
   Counter              : None.
   Tile size            : 8 x 8
-  Tiles                : 0 to 0
+  Tiles                : 0 to 1
 
   Palette colors       : None.
   SGB Palette          : None.
@@ -22,8 +22,9 @@
 
 */
 
-const unsigned char player_sprite[] = {0x38, 0x38, 0x38, 0x10, 0x38, 0x38,
+/* Start of tile array. */
+const unsigned char player_sprite[] = {0x02, 0x38, 0xC8, 0x10, 0x38, 0x38,
                                        0x44, 0x7C, 0x44, 0x7C, 0x44, 0x38,
-                                       0x28, 0x28, 0x28, 0x00};
+                                       0x02, 0x28, 0x10, 0x00, 0x00};
 
 /* End of SPRITES.C */
