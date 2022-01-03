@@ -1,5 +1,7 @@
 #include "main.h"
 
+void update_position(const unsigned char, bool);
+
 // used[used_index][x,y]
 unsigned char used[255][2];
 unsigned char used_index = 0;
@@ -41,7 +43,7 @@ inline unsigned char interpolate_noise(unsigned char x, unsigned char y) {
   return interpolate(i1, i2); // average of smoothed sides
 }
 
-inline unsigned char closest(unsigned char value) {
+inline unsigned char closest(const unsigned char value) {
   // 49 <= value <= 201
   if (value < 100)
     return 1 + FONT_MEMORY; // water
@@ -218,7 +220,7 @@ void show_menu() {
   printf("\n\n\trandom:\t%u", noise(p.x[0], p.y[0]));
 }
 
-void remove_item(const unsigned char x, unsigned char y) {
+void remove_item(const unsigned char x, const unsigned char y) {
   // item has been picked up at (x, y)
   used[used_index][0] = x;
   used[used_index][1] = y;
@@ -260,8 +262,8 @@ void interact() {
   // these loops form a square of interaction around the player
   for (char x = -2; x <= 0; x++)
     for (char y = -3; y <= -1; y++) {
-      const unsigned char pos_x = x + CENTER_X_PX / SPRITE_SIZE;
-      const unsigned char pos_y = y + CENTER_Y_PX / SPRITE_SIZE;
+      const unsigned char pos_x = x + CENTER_X;
+      const unsigned char pos_y = y + CENTER_Y;
       const unsigned char item = map[pos_x][pos_y];
       if (item >= FONT_MEMORY + BACKGROUND_COUNT) {
         add_inventory(item - FONT_MEMORY);
@@ -269,6 +271,7 @@ void interact() {
         // (item - BACKGROUND_COUNT) is the terrain tile
         map[pos_x][pos_y] = item - BACKGROUND_COUNT;
         display_map();
+        return; // only pick up one item per interaction
       }
     }
 }
@@ -284,33 +287,117 @@ void attack() {
   }
 }
 
-void update_position(unsigned char j) {
-  bool update = false;
+unsigned char get_terrain(const char direction) {
+  switch (direction) {
+  // these "magic numbers" are from `interact()`
+  case 'r':
+    return map[CENTER_X][CENTER_Y - 2] - FONT_MEMORY;
+  case 'l':
+    return map[CENTER_X - 2][CENTER_Y - 2] - FONT_MEMORY;
+  case 'u':
+    return map[CENTER_X - 1][CENTER_Y - 3] - FONT_MEMORY;
+  case 'd':
+    return map[CENTER_X - 1][CENTER_Y - 1] - FONT_MEMORY;
+  }
+  return 255;
+}
+
+void push_player() {
+  display_map();
+  unsigned char last_direction = 'n';
+  // while the player's right and down are water
+  unsigned char r = get_terrain('r');
+  unsigned char d = get_terrain('d');
+  while (r == 1 || d == 1 || r == 1 + BACKGROUND_COUNT ||
+         d == 1 + BACKGROUND_COUNT) {
+    // push the user down the water
+    if (r == 1 || r == 1 + BACKGROUND_COUNT) {
+      // right - 1, left - 2, up - 4, down - 8
+      update_position(1, false);
+      generate_map_side();
+      last_direction = 'r';
+    }
+    if (d == 1 || d == 1 + BACKGROUND_COUNT) {
+      update_position(8, false);
+      generate_map_side();
+      last_direction = 'd';
+    }
+    display_map();
+    r = get_terrain('r');
+    d = get_terrain('d');
+  }
+  switch (last_direction) {
+  case 'r':
+    update_position(1, false);
+    break;
+  case 'd':
+    update_position(8, false);
+    break;
+  }
+  generate_map_side();
+}
+
+void adjust_position(const unsigned char terrain_type) {
+  switch (terrain_type) {
+  case 0:                    // grass
+  case 0 + BACKGROUND_COUNT: // item on terrain
+  case 2:                    // tree
+  case 2 + BACKGROUND_COUNT:
+    break; // ignore grass and tree tiles
+  case 1:  // water
+  case 1 + BACKGROUND_COUNT:
+    generate_map_side();
+    push_player();
+    break;
+  case 3: // mountain
+  case 3 + BACKGROUND_COUNT:
+    p.x[0] = p.x[1];
+    p.y[0] = p.y[1];
+    break;
+  }
+  generate_map_side();
+}
+
+void update_position(const unsigned char j, bool recurse) {
+  char direction_x = 'n'; // n - none, r - right, l - left, u - up, d - down
+  char direction_y = 'n';
+  unsigned char terrain_type;
   unsigned char _x = p.x[0];
   unsigned char _y = p.y[0];
-  if (j & J_RIGHT)
+  if (j & J_RIGHT) {
+    direction_x = 'r';
     _x++;
-  else if (j & J_LEFT)
+  } else if (j & J_LEFT) {
+    direction_x = 'l';
     _x--;
-  if (j & J_UP)
+  }
+  if (j & J_UP) {
+    direction_y = 'u';
     _y--;
-  else if (j & J_DOWN)
+  } else if (j & J_DOWN) {
+    direction_y = 'd';
     _y++;
-  if (_x != p.x[0]) {
+  }
+  if (direction_x == 'r' || direction_x == 'l') {
     p.x[1] = p.x[0];
     p.x[0] = _x;
     p.steps++;
-    update = true;
-  } else if (_y != p.y[0]) {
+    if (recurse) {
+      terrain_type = get_terrain(direction_x);
+      adjust_position(terrain_type);
+    }
+  }
+  if (direction_y == 'u' || direction_y == 'd') {
     // else if so diagonal movement isn't possible
     // y is second to prioritize right and left movement
     p.y[1] = p.y[0];
     p.y[0] = _y;
     p.steps++;
-    update = true;
+    if (recurse) {
+      terrain_type = get_terrain(direction_y);
+      adjust_position(terrain_type);
+    }
   }
-  if (update) {
-    generate_map_side();
+  if (recurse)
     display_map();
-  }
 }

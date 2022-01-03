@@ -62,7 +62,7 @@ clean:
 	@for target in $(TARGETS); do \
 		$(MAKE) $$target-clean; \
 	done
-	@rm -rf .obj
+	rm -rf .obj
 
 # Include available build targets
 include Makefile.targets

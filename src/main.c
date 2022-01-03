@@ -75,5 +75,5 @@ inline void check_input() {
   if (j & J_B)
     attack();
   if (j)
-    update_position(j);
+    update_position(j, true);
 }
