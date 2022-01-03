@@ -397,6 +397,6 @@ void update_position(const unsigned char j, bool recurse) {
       adjust_position(terrain_type);
     }
   }
-  if (recurse)
+  if (recurse && (direction_x != 'n' || direction_y != 'n'))
     display_map();
 }
