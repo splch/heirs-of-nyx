@@ -328,13 +328,12 @@ void push_player() {
   }
   switch (last_direction) {
   case 'r':
-    update_position(1, false);
+    update_position(1, true);
     break;
   case 'd':
-    update_position(8, false);
+    update_position(8, true);
     break;
   }
-  generate_map_side();
 }
 
 void adjust_position(const unsigned char terrain_type) {
