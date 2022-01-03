@@ -5,19 +5,19 @@
 #include <stdio.h>
 
 // --- CONFIG --- //
-#define scale 2
-#define start_position 127
+#define SCALE 2
+#define START_POSITION 127
 #define SEED 57
 // -------------- //
 
 // --- GB VALUES --- //
-#define font_memory 102 // prevents writing over font memory
-#define backgrounds 4
-#define sprite_size 8
-#define center_x DEVICE_SCREEN_WIDTH * 4
-#define center_y DEVICE_SCREEN_HEIGHT * 4
-#define gen_x DEVICE_SCREEN_WIDTH / 2
-#define gen_y DEVICE_SCREEN_HEIGHT / 2
+#define FONT_MEMORY 102 // prevents writing over font memory
+#define BACKGROUND_COUNT 4
+#define SPRITE_SIZE 8
+#define CENTER_X DEVICE_SCREEN_WIDTH / 2
+#define CENTER_Y DEVICE_SCREEN_HEIGHT / 2
+#define CENTER_X_PX DEVICE_SCREEN_WIDTH * 4
+#define CENTER_Y_PX DEVICE_SCREEN_HEIGHT * 4
 // ----------------- //
 
 #define true 1
@@ -26,7 +26,7 @@ typedef char bool;
 
 extern unsigned char map[DEVICE_SCREEN_WIDTH][DEVICE_SCREEN_HEIGHT];
 
-extern struct player {
+extern struct Player {
   unsigned char x[2];
   unsigned char y[2];
   unsigned long steps;

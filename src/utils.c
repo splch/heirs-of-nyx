@@ -44,19 +44,19 @@ inline unsigned char interpolate_noise(unsigned char x, unsigned char y) {
 inline unsigned char closest(unsigned char value) {
   // 49 <= value <= 201
   if (value < 100)
-    return 1 + font_memory; // water
+    return 1 + FONT_MEMORY; // water
   else if (value < 135)
-    return 0 + font_memory; // grass
+    return 0 + FONT_MEMORY; // grass
   else if (value < 160)
-    return 2 + font_memory; // trees
+    return 2 + FONT_MEMORY; // trees
   else
-    return 3 + font_memory; // mountains
+    return 3 + FONT_MEMORY; // mountains
 }
 
 unsigned char terrain(unsigned char x, unsigned char y) {
   // return type of terrain at (x, y)
   // increasing scale increases the map size
-  const unsigned char value = interpolate_noise(x / scale, y / scale);
+  const unsigned char value = interpolate_noise(x / SCALE, y / SCALE);
   return closest(value);
 }
 
@@ -65,13 +65,13 @@ unsigned char generate_item(unsigned char x, unsigned char y) {
   // 49 <= noise(x, y) <= 201
   const unsigned char _n = noise(x, y);
   if (_n > 49 && _n < 51)
-    return 1 + font_memory; // map on water
+    return 1 + FONT_MEMORY; // map on water
   else if (_n > 133 && _n < 135)
-    return 0 + font_memory; // gun on grass
+    return 0 + FONT_MEMORY; // gun on grass
   else if (_n > 158 && _n < 160)
-    return 2 + font_memory; // sword in trees
+    return 2 + FONT_MEMORY; // sword in trees
   else if (_n > 190 && _n < 201)
-    return 3 + font_memory; // gold on mountains
+    return 3 + FONT_MEMORY; // gold on mountains
   else
     return 255; // no item
 }
@@ -115,40 +115,42 @@ void generate_side(const char side) {
   switch (side) {
   case 'r':
     for (unsigned char y = 0; y < DEVICE_SCREEN_HEIGHT; y++) {
-      _x = DEVICE_SCREEN_WIDTH - 1 + p.x[0] - gen_x;
-      _y = y + p.y[0] - gen_y;
+      _x = DEVICE_SCREEN_WIDTH - 1 + p.x[0] - CENTER_X;
+      _y = y + p.y[0] - CENTER_Y;
       const unsigned char _t = terrain(_x, _y);
       const unsigned char _i = generate_item(_x, _y);
       map[DEVICE_SCREEN_WIDTH - 1][y] =
-          (_i == _t && !is_removed(_x, _y)) ? _i + backgrounds : _t;
+          (_i == _t && !is_removed(_x, _y)) ? _i + BACKGROUND_COUNT : _t;
     }
     break;
   case 'l':
     for (unsigned char y = 0; y < DEVICE_SCREEN_HEIGHT; y++) {
-      _x = p.x[0] - gen_x;
-      _y = y + p.y[0] - gen_y;
+      _x = p.x[0] - CENTER_X;
+      _y = y + p.y[0] - CENTER_Y;
       const unsigned char _t = terrain(_x, _y);
       const unsigned char _i = generate_item(_x, _y);
-      map[0][y] = (_i == _t && !is_removed(_x, _y)) ? _i + backgrounds : _t;
+      map[0][y] =
+          (_i == _t && !is_removed(_x, _y)) ? _i + BACKGROUND_COUNT : _t;
     }
     break;
   case 't':
     for (unsigned char x = 0; x < DEVICE_SCREEN_WIDTH; x++) {
-      _x = x + p.x[0] - gen_x;
-      _y = p.y[0] - gen_y;
+      _x = x + p.x[0] - CENTER_X;
+      _y = p.y[0] - CENTER_Y;
       const unsigned char _t = terrain(_x, _y);
       const unsigned char _i = generate_item(_x, _y);
-      map[x][0] = (_i == _t && !is_removed(_x, _y)) ? _i + backgrounds : _t;
+      map[x][0] =
+          (_i == _t && !is_removed(_x, _y)) ? _i + BACKGROUND_COUNT : _t;
     }
     break;
   case 'b':
     for (unsigned char x = 0; x < DEVICE_SCREEN_WIDTH; x++) {
-      _x = x + p.x[0] - gen_x;
-      _y = DEVICE_SCREEN_HEIGHT - 1 + p.y[0] - gen_y;
+      _x = x + p.x[0] - CENTER_X;
+      _y = DEVICE_SCREEN_HEIGHT - 1 + p.y[0] - CENTER_Y;
       const unsigned char _t = terrain(_x, _y);
       const unsigned char _i = generate_item(_x, _y);
       map[x][DEVICE_SCREEN_HEIGHT - 1] =
-          (_i == _t && !is_removed(_x, _y)) ? _i + backgrounds : _t;
+          (_i == _t && !is_removed(_x, _y)) ? _i + BACKGROUND_COUNT : _t;
     }
     break;
   }
@@ -158,11 +160,12 @@ void generate_map() {
   // generate entire map on first load
   for (unsigned char x = 0; x < DEVICE_SCREEN_WIDTH; x++)
     for (unsigned char y = 0; y < DEVICE_SCREEN_HEIGHT; y++) {
-      const unsigned char _x = x + p.x[0] - gen_x;
-      const unsigned char _y = y + p.y[0] - gen_y;
+      const unsigned char _x = x + p.x[0] - CENTER_X;
+      const unsigned char _y = y + p.y[0] - CENTER_Y;
       const unsigned char _t = terrain(_x, _y);
       const unsigned char _i = generate_item(_x, _y);
-      map[x][y] = (_i == _t && !is_removed(_x, _y)) ? _i + backgrounds : _t;
+      map[x][y] =
+          (_i == _t && !is_removed(_x, _y)) ? _i + BACKGROUND_COUNT : _t;
     }
 }
 
@@ -202,8 +205,8 @@ void show_menu() {
   // display map to erase previous menus
   display_map();
   HIDE_SPRITES; // menu is open
-  const unsigned char x = p.x[0] - start_position;
-  const unsigned char y = p.y[0] - start_position;
+  const unsigned char x = p.x[0] - START_POSITION;
+  const unsigned char y = p.y[0] - START_POSITION;
   printf("\n\tgold:\t%u", p.gold);
   printf("\n\tmaps:\t%u", p.maps);
   printf("\n\tweapons:\t%d\t%d", p.weapons[0], p.weapons[1]);
@@ -224,7 +227,7 @@ void remove_item(const unsigned char x, unsigned char y) {
 
 void add_inventory(unsigned char item) {
   // fill primary or replace secondary
-  item -= backgrounds;
+  item -= BACKGROUND_COUNT;
   switch (item) {
   case 0:
   case 2:
@@ -257,14 +260,14 @@ void interact() {
   // these loops form a square of interaction around the player
   for (char x = -2; x <= 0; x++)
     for (char y = -3; y <= -1; y++) {
-      const unsigned char pos_x = x + center_x / sprite_size;
-      const unsigned char pos_y = y + center_y / sprite_size;
+      const unsigned char pos_x = x + CENTER_X_PX / SPRITE_SIZE;
+      const unsigned char pos_y = y + CENTER_Y_PX / SPRITE_SIZE;
       const unsigned char item = map[pos_x][pos_y];
-      if (item >= font_memory + backgrounds) {
-        add_inventory(item - font_memory);
+      if (item >= FONT_MEMORY + BACKGROUND_COUNT) {
+        add_inventory(item - FONT_MEMORY);
         remove_item(x + p.x[0], y + p.y[0]);
-        // (item - backgrounds) is the terrain tile
-        map[pos_x][pos_y] = item - backgrounds;
+        // (item - BACKGROUND_COUNT) is the terrain tile
+        map[pos_x][pos_y] = item - BACKGROUND_COUNT;
         display_map();
       }
     }

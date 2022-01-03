@@ -11,7 +11,7 @@ void check_input();
 
 unsigned char buffer[32]; // for decompression
 unsigned char map[DEVICE_SCREEN_WIDTH][DEVICE_SCREEN_HEIGHT];
-struct player p;
+struct Player p;
 
 void main() {
   init();
@@ -32,7 +32,7 @@ void init() {
 
   // Decompress background and sprite data
   // and load them into memory
-  set_bkg_data(font_memory, gb_decompress(landscape, buffer) >> 4, buffer);
+  set_bkg_data(FONT_MEMORY, gb_decompress(landscape, buffer) >> 4, buffer);
   set_sprite_data(0, gb_decompress(player_sprite, buffer) >> 4, buffer);
 
   // Set first movable sprite (0) to be first tile in sprite memory (0)
@@ -40,10 +40,10 @@ void init() {
 
   // Move the sprite in the first movable sprite list (0)
   // the center of the screen
-  move_sprite(0, center_x, center_y);
+  move_sprite(0, CENTER_X_PX, CENTER_Y_PX);
 
   // Starting position for map generation
-  p.x[0] = p.x[1] = p.y[0] = p.y[1] = start_position;
+  p.x[0] = p.x[1] = p.y[0] = p.y[1] = START_POSITION;
 
   // Player item initialization
   p.steps = p.gold = p.maps = 0;
