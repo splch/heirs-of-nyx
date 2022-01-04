@@ -9,6 +9,7 @@ void init();
 void update_switches();
 void check_input();
 
+// unsigned char SEED;
 unsigned char buffer[32]; // for decompression
 unsigned char map[DEVICE_SCREEN_WIDTH][DEVICE_SCREEN_HEIGHT];
 struct Player p;
@@ -54,14 +55,17 @@ void init() {
   printf("\n\tWelcome to\n\tPirate's Folly");
   // -------------------- //
 
+  // Set SEED
+  // uncomment the SEED lines to let player change SEED
+  // SEED = 57;
+
   // Generate terrain
   generate_map();
   // Display terrain
   display_map();
 
   // Start delay time
-  // use with sys_time instead of clock() for cross compiling
-  delay_time = sys_time;
+  delay_time = clock();
 }
 
 inline void update_switches() {

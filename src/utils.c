@@ -294,7 +294,7 @@ void attack() {
 
 void check_interactions(const unsigned char j) {
   // delay non-movement by SENSITIVITY
-  if (sys_time - SENSITIVITY > delay_time) {
+  if (clock() - SENSITIVITY > delay_time) {
     if (j & J_START)
       show_menu();
     if (j & J_SELECT)
@@ -303,9 +303,17 @@ void check_interactions(const unsigned char j) {
       interact();
     if (j & J_B)
       attack();
+    // secret way to change the global SEED
+    // if (j & J_SELECT && j & J_B) {
+    //   if (j & J_RIGHT)
+    //     SEED++;
+    //   if (j & J_LEFT)
+    //     SEED--;
+    //   generate_map();
+    // }
     // reset delay if input is detected
     if (j)
-      delay_time = sys_time;
+      delay_time = clock();
   }
 }
 
@@ -332,20 +340,16 @@ void push_player() {
   unsigned char current_terrain = get_terrain('n');
   if (current_terrain == 1 || current_terrain == 1 + BACKGROUND_COUNT) {
     const unsigned char right_terrain = get_terrain('r');
-    if (right_terrain == 1 || right_terrain == 1 + BACKGROUND_COUNT) {
+    if (right_terrain == 1 || right_terrain == 1 + BACKGROUND_COUNT)
       // push the player right on the water
       // update_position will recursively call if the user is still on water
       update_position(1);
-      generate_map_side();
-    }
     current_terrain = get_terrain('n');
     const unsigned char down_terrain = get_terrain('d');
     if (down_terrain == 1 || down_terrain == 1 + BACKGROUND_COUNT ||
-        current_terrain == 1 || current_terrain == 1 + BACKGROUND_COUNT) {
+        current_terrain == 1 || current_terrain == 1 + BACKGROUND_COUNT)
       // push the player down the water
       update_position(8);
-      generate_map_side();
-    }
   }
 }
 
