@@ -1,5 +1,6 @@
 #include "main.h"
 
+// necessary for recursion
 void update_position(const unsigned char);
 
 // used[used_index][x,y]
@@ -117,6 +118,7 @@ void generate_side(const char side) {
   switch (side) {
   case 'r':
     for (unsigned char y = 0; y < DEVICE_SCREEN_HEIGHT; y++) {
+      // _x and _y came from some logic but mostly trial and error...
       _x = DEVICE_SCREEN_WIDTH - 1 + p.x[0] - CENTER_X;
       _y = y + p.y[0] - CENTER_Y;
       const unsigned char _t = terrain(_x, _y);
@@ -209,15 +211,18 @@ void show_menu() {
   HIDE_SPRITES; // menu is open
   const unsigned char x = p.x[0] - START_POSITION;
   const unsigned char y = p.y[0] - START_POSITION;
-  printf("\n\tgold:\t%u", p.gold);
-  printf("\n\tmaps:\t%u", p.maps);
-  printf("\n\tweapons:\t%d\t%d", p.weapons[0], p.weapons[1]);
+  printf("\ngold:\t%u", p.gold);
+  printf("\nmaps:\t%u", p.maps);
+  printf("\nweapons:\t%d\t%d", p.weapons[0], p.weapons[1]);
 
-  printf("\n\n\tposition:\t(%u, %u)", x, y);
-  printf("\n\tsteps:\t%u", p.steps);
-  printf("\n\tseed:\t%u", SEED);
+  printf("\n\nposition:\t(%u, %u)", x, y);
+  printf("\nsteps:\t%u", p.steps);
+  printf("\nseed:\t%u", SEED);
 
-  printf("\n\n\trandom:\t%u", noise(p.x[0], p.y[0]));
+  printf("\n\nrandom:\t%u", noise(p.x[0], p.y[0]));
+
+  printf("\n\npress start to exit");
+  waitpad(J_START);
 }
 
 void remove_item(const unsigned char x, const unsigned char y) {
@@ -284,6 +289,23 @@ void attack() {
   case 2:
     // printf("\nclink!\n");
     break;
+  }
+}
+
+void check_interactions(const unsigned char j) {
+  // delay non-movement by SENSITIVITY
+  if (sys_time - SENSITIVITY > delay_time) {
+    if (j & J_START)
+      show_menu();
+    if (j & J_SELECT)
+      change_item();
+    if (j & J_A)
+      interact();
+    if (j & J_B)
+      attack();
+    // reset delay if input is detected
+    if (j)
+      delay_time = sys_time;
   }
 }
 
@@ -355,6 +377,7 @@ void adjust_position(const unsigned char terrain_type,
 }
 
 void update_position(const unsigned char j) {
+  check_interactions(joypad());
   // j = right - 1, left - 2, up - 4, down - 8
   unsigned char _x = p.x[0];
   unsigned char _y = p.y[0];

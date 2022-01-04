@@ -12,6 +12,7 @@ void check_input();
 unsigned char buffer[32]; // for decompression
 unsigned char map[DEVICE_SCREEN_WIDTH][DEVICE_SCREEN_HEIGHT];
 struct Player p;
+clock_t delay_time;
 
 void main() {
   init();
@@ -57,6 +58,10 @@ void init() {
   generate_map();
   // Display terrain
   display_map();
+
+  // Start delay time
+  // use with sys_time instead of clock() for cross compiling
+  delay_time = sys_time;
 }
 
 inline void update_switches() {
@@ -66,14 +71,7 @@ inline void update_switches() {
 
 inline void check_input() {
   const unsigned char j = joypad();
-  if (j & J_START)
-    show_menu();
-  if (j & J_SELECT)
-    change_item();
-  if (j & J_A)
-    interact();
-  if (j & J_B)
-    attack();
+  check_interactions(j);
   if (j)
     update_position(j);
 }

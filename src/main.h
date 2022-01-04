@@ -5,6 +5,7 @@
 #include <stdio.h>
 
 // --- CONFIG --- //
+#define SENSITIVITY 12 // CLOCKS_PER_SEC * t(s), so this is 60 * .2(s) = 12
 #define SCALE 2
 #define START_POSITION 127
 #define SEED 57
@@ -34,5 +35,7 @@ extern struct Player {
   unsigned char gold;
   unsigned char maps;
 } p;
+
+extern clock_t delay_time;
 
 #endif
