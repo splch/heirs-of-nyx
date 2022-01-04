@@ -17,7 +17,7 @@ void main() {
   init();
 
   while (1) {
-    check_input();     // Check for user input
+    check_input();     // Check for player input
     update_switches(); // Make sure the SHOW_SPRITES and SHOW_BKG switches are
                        // on each loop
     wait_vbl_done();   // Wait until VBLANK to avoid corrupting memory
@@ -75,5 +75,5 @@ inline void check_input() {
   if (j & J_B)
     attack();
   if (j)
-    update_position(j, true);
+    update_position(j);
 }
