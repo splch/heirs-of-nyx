@@ -308,8 +308,6 @@ unsigned char get_terrain(const char direction) {
 void push_player() {
   // recursive while the player is on water
   unsigned char current_terrain = get_terrain('n');
-  if (current_terrain == 1 || current_terrain == 1 + BACKGROUND_COUNT)
-    display_map();
   if (current_terrain == 1 || current_terrain == 1 + BACKGROUND_COUNT) {
     const unsigned char right_terrain = get_terrain('r');
     if (right_terrain == 1 || right_terrain == 1 + BACKGROUND_COUNT) {
@@ -336,17 +334,22 @@ void adjust_position(const unsigned char terrain_type,
   case 0 + BACKGROUND_COUNT: // item on terrain
   case 2:                    // tree
   case 2 + BACKGROUND_COUNT:
+    display_map();
     break; // ignore grass and tree tiles
   case 1:  // water
   case 1 + BACKGROUND_COUNT:
+    display_map();
     push_player();
     break;
   case 3: // mountain
   case 3 + BACKGROUND_COUNT:
+    // revert to previous position
     p.x[0] = old_x;
+    // generate x and y borders separately
     generate_map_side();
     p.y[0] = old_y;
     generate_map_side();
+    display_map();
     break;
   }
 }
@@ -379,5 +382,4 @@ void update_position(const unsigned char j) {
     generate_map_side();
   }
   adjust_position(get_terrain('n'), old_x, old_y);
-  display_map();
 }
