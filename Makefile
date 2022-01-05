@@ -55,7 +55,6 @@ $(OBJDIR)/%.s:	$(SRCDIR)/%.c
 # Link the compiled object files into a ROM file
 $(BINS):	$(OBJS)
 	$(LCC) $(LCCFLAGS) $(CFLAGS) -o $(BINDIR)/$(PROJECTNAME).$(EXT) $(OBJS)
-	# @if [ "$(EXT)" = "gb" ]; then cp $(BINDIR)/$(PROJECTNAME).$(EXT) ../../
 
 clean:
 	@echo Cleaning

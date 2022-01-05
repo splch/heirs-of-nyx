@@ -75,6 +75,8 @@ inline void update_switches() {
 
 inline void check_input() {
   const unsigned char j = joypad();
+  // check interactions separately from movement
+  // makes delaying simple
   check_interactions(j);
   if (j)
     update_position(j);

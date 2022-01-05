@@ -9,6 +9,7 @@ unsigned char used_index = 0;
 
 inline unsigned char noise(unsigned char x, unsigned char y) {
   // return random number [49, 201]
+  // prng comes from a combination of perlin noise and 8-bit xorshift
   x ^= (y << 7);
   x ^= (x >> 5);
   y ^= (x << 3);
@@ -118,11 +119,14 @@ void generate_side(const char side) {
   switch (side) {
   case 'r':
     for (unsigned char y = 0; y < DEVICE_SCREEN_HEIGHT; y++) {
-      // _x and _y came from some logic but mostly trial and error...
-      _x = DEVICE_SCREEN_WIDTH - 1 + p.x[0] - CENTER_X;
-      _y = y + p.y[0] - CENTER_Y;
+      // _x and _y came from some logic and a lot of trial and error...
+      _x = DEVICE_SCREEN_WIDTH - CENTER_X + p.x[0] - 1;
+      // use old y since generating r/l (no y change yet)
+      _y = y + p.y[1] - CENTER_Y;
       const unsigned char _t = terrain(_x, _y);
       const unsigned char _i = generate_item(_x, _y);
+      // set either a terrain tile or item tile
+      // terrain associated item tiles are stored at terrain + BACKGROUND_COUNT
       map[DEVICE_SCREEN_WIDTH - 1][y] =
           (_i == _t && !is_removed(_x, _y)) ? _i + BACKGROUND_COUNT : _t;
     }
@@ -130,7 +134,7 @@ void generate_side(const char side) {
   case 'l':
     for (unsigned char y = 0; y < DEVICE_SCREEN_HEIGHT; y++) {
       _x = p.x[0] - CENTER_X;
-      _y = y + p.y[0] - CENTER_Y;
+      _y = y + p.y[1] - CENTER_Y;
       const unsigned char _t = terrain(_x, _y);
       const unsigned char _i = generate_item(_x, _y);
       map[0][y] =
@@ -139,6 +143,7 @@ void generate_side(const char side) {
     break;
   case 't':
     for (unsigned char x = 0; x < DEVICE_SCREEN_WIDTH; x++) {
+      // use current x since r/l might have already been updated
       _x = x + p.x[0] - CENTER_X;
       _y = p.y[0] - CENTER_Y;
       const unsigned char _t = terrain(_x, _y);
@@ -150,7 +155,7 @@ void generate_side(const char side) {
   case 'b':
     for (unsigned char x = 0; x < DEVICE_SCREEN_WIDTH; x++) {
       _x = x + p.x[0] - CENTER_X;
-      _y = DEVICE_SCREEN_HEIGHT - 1 + p.y[0] - CENTER_Y;
+      _y = DEVICE_SCREEN_HEIGHT - CENTER_Y + p.y[0] - 1;
       const unsigned char _t = terrain(_x, _y);
       const unsigned char _i = generate_item(_x, _y);
       map[x][DEVICE_SCREEN_HEIGHT - 1] =
@@ -173,7 +178,7 @@ void generate_map() {
     }
 }
 
-void generate_map_side() {
+void generate_map_sides() {
   const char diff_x = p.x[1] - p.x[0];
   const char diff_y = p.y[1] - p.y[0];
   if (diff_x < 0) {
@@ -336,21 +341,15 @@ unsigned char get_terrain(const char direction) {
 }
 
 void push_player() {
-  // recursive while the player is on water
-  unsigned char current_terrain = get_terrain('n');
-  if (current_terrain == 1 || current_terrain == 1 + BACKGROUND_COUNT) {
-    const unsigned char right_terrain = get_terrain('r');
-    if (right_terrain == 1 || right_terrain == 1 + BACKGROUND_COUNT)
-      // push the player right on the water
-      // update_position will recursively call if the user is still on water
-      update_position(1);
-    current_terrain = get_terrain('n');
-    const unsigned char down_terrain = get_terrain('d');
-    if (down_terrain == 1 || down_terrain == 1 + BACKGROUND_COUNT ||
-        current_terrain == 1 || current_terrain == 1 + BACKGROUND_COUNT)
-      // push the player down the water
-      update_position(8);
-  }
+  const unsigned char current_terrain = get_terrain('n');
+  const unsigned char down_terrain = get_terrain('d');
+  if (down_terrain == 1 || down_terrain == 1 + BACKGROUND_COUNT ||
+      current_terrain == 1 || current_terrain == 1 + BACKGROUND_COUNT)
+    // update_position will recursively call if the user is still on water
+    // push the player right on the water (00000001)
+    // push the player down the water (00001000)
+    // right and down = 00001001 = 9
+    update_position(9);
 }
 
 void adjust_position(const unsigned char terrain_type,
@@ -371,10 +370,8 @@ void adjust_position(const unsigned char terrain_type,
   case 3 + BACKGROUND_COUNT:
     // revert to previous position
     p.x[0] = old_x;
-    // generate x and y borders separately
-    generate_map_side();
     p.y[0] = old_y;
-    generate_map_side();
+    generate_map_sides();
     display_map();
     break;
   }
@@ -399,14 +396,13 @@ void update_position(const unsigned char j) {
     p.x[1] = p.x[0];
     p.x[0] = _x;
     p.steps++;
-    generate_map_side();
   }
   if (p.y[0] != _y) {
     // if makes diagonal movement possible
     p.y[1] = p.y[0];
     p.y[0] = _y;
     p.steps++;
-    generate_map_side();
   }
+  generate_map_sides();
   adjust_position(get_terrain('n'), old_x, old_y);
 }
