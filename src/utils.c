@@ -34,7 +34,7 @@ inline unsigned char interpolate(unsigned char v1, unsigned char v2) {
   return (v1 + v2) >> 1; // divide by 2
 }
 
-inline unsigned char interpolate_noise(unsigned char x, unsigned char y) {
+unsigned char interpolate_noise(unsigned char x, unsigned char y) {
   // gets expected noise
   unsigned char v1 = smooth_noise(x, y);
   unsigned char v2 = smooth_noise(x + 1, y);
@@ -45,7 +45,7 @@ inline unsigned char interpolate_noise(unsigned char x, unsigned char y) {
   return interpolate(i1, i2); // average of smoothed sides
 }
 
-inline unsigned char closest(const unsigned char value) {
+unsigned char closest(const unsigned char value) {
   // 49 <= value <= 201
   if (value < 100)
     return 1 + FONT_MEMORY; // water
@@ -228,6 +228,7 @@ void show_menu() {
 
   printf("\n\npress start to exit");
   waitpad(J_START);
+  display_map();
 }
 
 void remove_item(const unsigned char x, const unsigned char y) {
@@ -371,6 +372,7 @@ void adjust_position(const unsigned char terrain_type,
     // revert to previous position
     p.x[0] = old_x;
     p.y[0] = old_y;
+    p.steps--;
     generate_map_sides();
     display_map();
     break;
@@ -392,17 +394,14 @@ void update_position(const unsigned char j) {
     _y++;
   const unsigned char old_x = p.x[1];
   const unsigned char old_y = p.y[1];
-  if (p.x[0] != _x) {
+  if (p.x[0] != _x || p.y[0] != _y) {
     p.x[1] = p.x[0];
     p.x[0] = _x;
-    p.steps++;
-  }
-  if (p.y[0] != _y) {
-    // if makes diagonal movement possible
+    // makes diagonal movement possible
     p.y[1] = p.y[0];
     p.y[0] = _y;
     p.steps++;
+    generate_map_sides();
+    adjust_position(get_terrain('n'), old_x, old_y);
   }
-  generate_map_sides();
-  adjust_position(get_terrain('n'), old_x, old_y);
 }
