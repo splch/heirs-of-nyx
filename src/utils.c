@@ -1,13 +1,13 @@
 #include "main.h"
 
 // necessary for recursion
-void update_position(const unsigned char);
+void update_position(const uint8_t);
 
 // used[used_index][x,y]
-unsigned char used[255][2];
-unsigned char used_index = 0;
+uint8_t used[255][2];
+uint8_t used_index = 0;
 
-inline unsigned char noise(unsigned char x, unsigned char y) {
+inline uint8_t noise(uint8_t x, uint8_t y) {
   // return random number [49, 201]
   // prng comes from a combination of perlin noise and 8-bit xorshift
   x ^= (y << 7);
@@ -17,35 +17,35 @@ inline unsigned char noise(unsigned char x, unsigned char y) {
   return x ^ y * SEED;
 }
 
-inline unsigned char smooth_noise(unsigned char x, unsigned char y) {
+inline uint8_t smooth_noise(uint8_t x, uint8_t y) {
   // gets average noise at (x, y)
-  const unsigned char corners = (noise(x - 1, y - 1) + noise(x + 1, y - 1) +
-                                 noise(x - 1, y + 1) + noise(x + 1, y + 1)) >>
-                                4; // divide by 16
-  const unsigned char sides =
+  const uint8_t corners = (noise(x - 1, y - 1) + noise(x + 1, y - 1) +
+                           noise(x - 1, y + 1) + noise(x + 1, y + 1)) >>
+                          4; // divide by 16
+  const uint8_t sides =
       (noise(x - 1, y) + noise(x + 1, y) + noise(x, y - 1) + noise(x, y + 1)) >>
-      3;                                         // divide by 8
-  const unsigned char center = noise(x, y) >> 2; // divide by 4
-  return corners + sides + center;               // average noise at center
+      3;                                   // divide by 8
+  const uint8_t center = noise(x, y) >> 2; // divide by 4
+  return corners + sides + center;         // average noise at center
 }
 
-inline unsigned char interpolate(unsigned char v1, unsigned char v2) {
+inline uint8_t interpolate(uint8_t v1, uint8_t v2) {
   // linear interpolation is avg of v1 and v2
   return (v1 + v2) >> 1; // divide by 2
 }
 
-unsigned char interpolate_noise(unsigned char x, unsigned char y) {
+uint8_t interpolate_noise(uint8_t x, uint8_t y) {
   // gets expected noise
-  unsigned char v1 = smooth_noise(x, y);
-  unsigned char v2 = smooth_noise(x + 1, y);
-  const unsigned char i1 = interpolate(v1, v2);
+  uint8_t v1 = smooth_noise(x, y);
+  uint8_t v2 = smooth_noise(x + 1, y);
+  const uint8_t i1 = interpolate(v1, v2);
   v1 = smooth_noise(x, y + 1);
   v2 = smooth_noise(x + 1, y + 1);
-  const unsigned char i2 = interpolate(v1, v2);
+  const uint8_t i2 = interpolate(v1, v2);
   return interpolate(i1, i2); // average of smoothed sides
 }
 
-unsigned char closest(const unsigned char value) {
+uint8_t closest(const uint8_t value) {
   // 49 <= value <= 201
   if (value < 100)
     return 1 + FONT_MEMORY; // water
@@ -57,17 +57,17 @@ unsigned char closest(const unsigned char value) {
     return 3 + FONT_MEMORY; // mountains
 }
 
-unsigned char terrain(unsigned char x, unsigned char y) {
+uint8_t terrain(uint8_t x, uint8_t y) {
   // return type of terrain at (x, y)
   // increasing scale increases the map size
-  const unsigned char value = interpolate_noise(x / SCALE, y / SCALE);
+  const uint8_t value = interpolate_noise(x / SCALE, y / SCALE);
   return closest(value);
 }
 
-unsigned char generate_item(unsigned char x, unsigned char y) {
+uint8_t generate_item(uint8_t x, uint8_t y) {
   // return item at (x, y)
   // 49 <= noise(x, y) <= 201
-  const unsigned char _n = noise(x, y);
+  const uint8_t _n = noise(x, y);
   if (_n > 49 && _n < 51)
     return 1 + FONT_MEMORY; // map on water
   else if (_n > 133 && _n < 135)
@@ -80,51 +80,51 @@ unsigned char generate_item(unsigned char x, unsigned char y) {
     return 255; // no item
 }
 
-bool is_removed(const unsigned char x, const unsigned char y) {
+bool is_removed(const uint8_t x, const uint8_t y) {
   // returns true if item has been picked up at (x, y)
-  for (unsigned char i = 0; i < 255; i++)
+  for (uint8_t i = 0; i < 255; i++)
     if (used[i][0] == x && used[i][1] == y)
       return true;
   return false;
 }
 
 void shift_array_right() {
-  for (unsigned char x = DEVICE_SCREEN_WIDTH - 1; x > 0; x--)
-    for (unsigned char y = 0; y < DEVICE_SCREEN_HEIGHT; y++)
+  for (uint8_t x = DEVICE_SCREEN_WIDTH - 1; x > 0; x--)
+    for (uint8_t y = 0; y < DEVICE_SCREEN_HEIGHT; y++)
       map[x][y] = map[x - 1][y];
 }
 
 void shift_array_left() {
-  for (unsigned char x = 0; x < DEVICE_SCREEN_WIDTH - 1; x++)
-    for (unsigned char y = 0; y < DEVICE_SCREEN_HEIGHT; y++)
+  for (uint8_t x = 0; x < DEVICE_SCREEN_WIDTH - 1; x++)
+    for (uint8_t y = 0; y < DEVICE_SCREEN_HEIGHT; y++)
       map[x][y] = map[x + 1][y];
 }
 
 void shift_array_up() {
-  for (unsigned char y = 0; y < DEVICE_SCREEN_HEIGHT - 1; y++)
-    for (unsigned char x = 0; x < DEVICE_SCREEN_WIDTH; x++)
+  for (uint8_t y = 0; y < DEVICE_SCREEN_HEIGHT - 1; y++)
+    for (uint8_t x = 0; x < DEVICE_SCREEN_WIDTH; x++)
       map[x][y] = map[x][y + 1];
 }
 
 void shift_array_down() {
-  for (unsigned char y = DEVICE_SCREEN_HEIGHT - 1; y > 0; y--)
-    for (unsigned char x = 0; x < DEVICE_SCREEN_WIDTH; x++)
+  for (uint8_t y = DEVICE_SCREEN_HEIGHT - 1; y > 0; y--)
+    for (uint8_t x = 0; x < DEVICE_SCREEN_WIDTH; x++)
       map[x][y] = map[x][y - 1];
 }
 
-void generate_side(const char side) {
+void generate_side(const int8_t side) {
   // r - right, l - left, t - top, b - bottom
-  unsigned char _x;
-  unsigned char _y;
+  uint8_t _x;
+  uint8_t _y;
   switch (side) {
   case 'r':
-    for (unsigned char y = 0; y < DEVICE_SCREEN_HEIGHT; y++) {
+    for (uint8_t y = 0; y < DEVICE_SCREEN_HEIGHT; y++) {
       // _x and _y came from some logic and a lot of trial and error...
       _x = DEVICE_SCREEN_WIDTH - CENTER_X + p.x[0] - 1;
       // use old y since generating r/l (no y change yet)
       _y = y + p.y[1] - CENTER_Y;
-      const unsigned char _t = terrain(_x, _y);
-      const unsigned char _i = generate_item(_x, _y);
+      const uint8_t _t = terrain(_x, _y);
+      const uint8_t _i = generate_item(_x, _y);
       // set either a terrain tile or item tile
       // terrain associated item tiles are stored at terrain + BACKGROUND_COUNT
       map[DEVICE_SCREEN_WIDTH - 1][y] =
@@ -132,32 +132,32 @@ void generate_side(const char side) {
     }
     break;
   case 'l':
-    for (unsigned char y = 0; y < DEVICE_SCREEN_HEIGHT; y++) {
+    for (uint8_t y = 0; y < DEVICE_SCREEN_HEIGHT; y++) {
       _x = p.x[0] - CENTER_X;
       _y = y + p.y[1] - CENTER_Y;
-      const unsigned char _t = terrain(_x, _y);
-      const unsigned char _i = generate_item(_x, _y);
+      const uint8_t _t = terrain(_x, _y);
+      const uint8_t _i = generate_item(_x, _y);
       map[0][y] =
           (_i == _t && !is_removed(_x, _y)) ? _i + BACKGROUND_COUNT : _t;
     }
     break;
   case 't':
-    for (unsigned char x = 0; x < DEVICE_SCREEN_WIDTH; x++) {
+    for (uint8_t x = 0; x < DEVICE_SCREEN_WIDTH; x++) {
       // use current x since r/l might have already been updated
       _x = x + p.x[0] - CENTER_X;
       _y = p.y[0] - CENTER_Y;
-      const unsigned char _t = terrain(_x, _y);
-      const unsigned char _i = generate_item(_x, _y);
+      const uint8_t _t = terrain(_x, _y);
+      const uint8_t _i = generate_item(_x, _y);
       map[x][0] =
           (_i == _t && !is_removed(_x, _y)) ? _i + BACKGROUND_COUNT : _t;
     }
     break;
   case 'b':
-    for (unsigned char x = 0; x < DEVICE_SCREEN_WIDTH; x++) {
+    for (uint8_t x = 0; x < DEVICE_SCREEN_WIDTH; x++) {
       _x = x + p.x[0] - CENTER_X;
       _y = DEVICE_SCREEN_HEIGHT - CENTER_Y + p.y[0] - 1;
-      const unsigned char _t = terrain(_x, _y);
-      const unsigned char _i = generate_item(_x, _y);
+      const uint8_t _t = terrain(_x, _y);
+      const uint8_t _i = generate_item(_x, _y);
       map[x][DEVICE_SCREEN_HEIGHT - 1] =
           (_i == _t && !is_removed(_x, _y)) ? _i + BACKGROUND_COUNT : _t;
     }
@@ -167,20 +167,20 @@ void generate_side(const char side) {
 
 void generate_map() {
   // generate entire map on first load
-  for (unsigned char x = 0; x < DEVICE_SCREEN_WIDTH; x++)
-    for (unsigned char y = 0; y < DEVICE_SCREEN_HEIGHT; y++) {
-      const unsigned char _x = x + p.x[0] - CENTER_X;
-      const unsigned char _y = y + p.y[0] - CENTER_Y;
-      const unsigned char _t = terrain(_x, _y);
-      const unsigned char _i = generate_item(_x, _y);
+  for (uint8_t x = 0; x < DEVICE_SCREEN_WIDTH; x++)
+    for (uint8_t y = 0; y < DEVICE_SCREEN_HEIGHT; y++) {
+      const uint8_t _x = x + p.x[0] - CENTER_X;
+      const uint8_t _y = y + p.y[0] - CENTER_Y;
+      const uint8_t _t = terrain(_x, _y);
+      const uint8_t _i = generate_item(_x, _y);
       map[x][y] =
           (_i == _t && !is_removed(_x, _y)) ? _i + BACKGROUND_COUNT : _t;
     }
 }
 
 void generate_map_sides() {
-  const char diff_x = p.x[1] - p.x[0];
-  const char diff_y = p.y[1] - p.y[0];
+  const int8_t diff_x = p.x[1] - p.x[0];
+  const int8_t diff_y = p.y[1] - p.y[0];
   if (diff_x < 0) {
     // moved right
     shift_array_left();
@@ -205,7 +205,7 @@ void generate_map_sides() {
 }
 
 void display_map() {
-  for (unsigned char i = 0; i < DEVICE_SCREEN_WIDTH; i++)
+  for (uint8_t i = 0; i < DEVICE_SCREEN_WIDTH; i++)
     set_bkg_tiles(i, 0, 1, DEVICE_SCREEN_HEIGHT, map[i]);
   SHOW_SPRITES; // menu is closed
 }
@@ -214,8 +214,8 @@ void show_menu() {
   // display map to erase previous menus
   display_map();
   HIDE_SPRITES; // menu is open
-  const unsigned char x = p.x[0] - START_POSITION;
-  const unsigned char y = p.y[0] - START_POSITION;
+  const uint8_t x = p.x[0] - START_POSITION;
+  const uint8_t y = p.y[0] - START_POSITION;
   printf("\ngold:\t%u", p.gold);
   printf("\nmaps:\t%u", p.maps);
   printf("\nweapons:\t%d\t%d", p.weapons[0], p.weapons[1]);
@@ -231,14 +231,14 @@ void show_menu() {
   display_map();
 }
 
-void remove_item(const unsigned char x, const unsigned char y) {
+void remove_item(const uint8_t x, const uint8_t y) {
   // item has been picked up at (x, y)
   used[used_index][0] = x;
   used[used_index][1] = y;
   used_index++;
 }
 
-void add_inventory(unsigned char item) {
+void add_inventory(uint8_t item) {
   // fill primary or replace secondary
   item -= BACKGROUND_COUNT;
   switch (item) {
@@ -261,7 +261,7 @@ void add_inventory(unsigned char item) {
 
 void change_item() {
   // switch primary with secondary weapons
-  const char _w = p.weapons[0];
+  const int8_t _w = p.weapons[0];
   p.weapons[0] = p.weapons[1];
   p.weapons[1] = _w;
 }
@@ -271,11 +271,11 @@ void interact() {
   // -1 <= y - 2 <= 1
   // -1 and -2 are "magic numbers"
   // these loops form a square of interaction around the player
-  for (char x = -2; x <= 0; x++)
-    for (char y = -3; y <= -1; y++) {
-      const unsigned char pos_x = x + CENTER_X;
-      const unsigned char pos_y = y + CENTER_Y;
-      const unsigned char item = map[pos_x][pos_y];
+  for (int8_t x = -2; x <= 0; x++)
+    for (int8_t y = -3; y <= -1; y++) {
+      const uint8_t pos_x = x + CENTER_X;
+      const uint8_t pos_y = y + CENTER_Y;
+      const uint8_t item = map[pos_x][pos_y];
       if (item >= FONT_MEMORY + BACKGROUND_COUNT) {
         add_inventory(item - FONT_MEMORY);
         remove_item(x + p.x[0], y + p.y[0]);
@@ -298,7 +298,7 @@ void attack() {
   }
 }
 
-void check_interactions(const unsigned char j) {
+void check_interactions(const uint8_t j) {
   // delay non-movement by SENSITIVITY
   if (clock() - SENSITIVITY > delay_time) {
     if (j & J_START)
@@ -309,21 +309,13 @@ void check_interactions(const unsigned char j) {
       interact();
     if (j & J_B)
       attack();
-    // secret way to change the global SEED
-    // if (j & J_SELECT && j & J_B) {
-    //   if (j & J_RIGHT)
-    //     SEED++;
-    //   if (j & J_LEFT)
-    //     SEED--;
-    //   generate_map();
-    // }
     // reset delay if input is detected
     if (j)
       delay_time = clock();
   }
 }
 
-unsigned char get_terrain(const char direction) {
+uint8_t get_terrain(const int8_t direction) {
   // n - none, r - right, l - left, u - up, d - down
   switch (direction) {
   // these "magic numbers" are from `interact()`
@@ -342,8 +334,8 @@ unsigned char get_terrain(const char direction) {
 }
 
 void push_player() {
-  const unsigned char current_terrain = get_terrain('n');
-  const unsigned char down_terrain = get_terrain('d');
+  const uint8_t current_terrain = get_terrain('n');
+  const uint8_t down_terrain = get_terrain('d');
   if (down_terrain == 1 || down_terrain == 1 + BACKGROUND_COUNT ||
       current_terrain == 1 || current_terrain == 1 + BACKGROUND_COUNT)
     // update_position will recursively call if the user is still on water
@@ -353,8 +345,8 @@ void push_player() {
     update_position(9);
 }
 
-void adjust_position(const unsigned char terrain_type,
-                     const unsigned char old_x, const unsigned char old_y) {
+void adjust_position(const uint8_t terrain_type, const uint8_t old_x,
+                     const uint8_t old_y) {
   switch (terrain_type) {
   case 0:                    // grass
   case 0 + BACKGROUND_COUNT: // item on terrain
@@ -379,11 +371,11 @@ void adjust_position(const unsigned char terrain_type,
   }
 }
 
-void update_position(const unsigned char j) {
+void update_position(const uint8_t j) {
   check_interactions(joypad());
   // j = right - 1, left - 2, up - 4, down - 8
-  unsigned char _x = p.x[0];
-  unsigned char _y = p.y[0];
+  uint8_t _x = p.x[0];
+  uint8_t _y = p.y[0];
   if (j & J_RIGHT)
     _x++;
   if (j & J_LEFT)
@@ -392,9 +384,9 @@ void update_position(const unsigned char j) {
     _y--;
   if (j & J_DOWN)
     _y++;
-  const unsigned char old_x = p.x[1];
-  const unsigned char old_y = p.y[1];
   if (p.x[0] != _x || p.y[0] != _y) {
+    const uint8_t old_x = p.x[1];
+    const uint8_t old_y = p.y[1];
     p.x[1] = p.x[0];
     p.x[0] = _x;
     // makes diagonal movement possible

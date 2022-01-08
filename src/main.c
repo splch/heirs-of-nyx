@@ -9,9 +9,9 @@ void init();
 void update_switches();
 void check_input();
 
-// unsigned char SEED;
-unsigned char buffer[32]; // for decompression
-unsigned char map[DEVICE_SCREEN_WIDTH][DEVICE_SCREEN_HEIGHT];
+// uint8_t SEED;
+uint8_t buffer[32]; // for decompression
+uint8_t map[DEVICE_SCREEN_WIDTH][DEVICE_SCREEN_HEIGHT];
 struct Player p;
 clock_t delay_time;
 
@@ -74,7 +74,7 @@ inline void update_switches() {
 }
 
 inline void check_input() {
-  const unsigned char j = joypad();
+  const uint8_t j = joypad();
   // check interactions separately from movement
   // makes delaying simple
   check_interactions(j);
