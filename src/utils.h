@@ -1,6 +1,7 @@
 #ifndef UTILS
 #define UTILS
 
+void load_save_data();
 void generate_map();
 void display_map();
 void show_menu();

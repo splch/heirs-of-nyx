@@ -18,7 +18,7 @@ clock_t delay_time;
 void main() {
   init();
 
-  while (1) {
+  while (true) {
     check_input();     // Check for player input
     update_switches(); // Make sure the SHOW_SPRITES and SHOW_BKG switches are
                        // on each loop
@@ -27,8 +27,6 @@ void main() {
 }
 
 void init() {
-  DISPLAY_ON; // Turn on the display
-
   font_init();                   // Initialize font system
   font_set(font_load(font_ibm)); // Set and load the font
 
@@ -44,12 +42,12 @@ void init() {
   // the center of the screen
   move_sprite(0, CENTER_X_PX, CENTER_Y_PX);
 
-  // Starting position for map generation
-  p.x[0] = p.x[1] = p.y[0] = p.y[1] = START_POSITION;
+  ENABLE_RAM; // For loading save data
 
-  // Player item initialization
-  p.steps = p.gold = p.maps = 0;
-  p.weapons[0] = p.weapons[1] = -1;
+  // Load and initialize save data
+  load_save_data();
+
+  DISPLAY_ON; // Turn on the display
 
   // --- LOADING TEXT --- //
   printf("\n\tWelcome to\n\tPirate's Folly");
