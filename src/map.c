@@ -176,5 +176,4 @@ void generate_map_sides() {
 void display_map() {
   for (uint8_t i = 0; i < DEVICE_SCREEN_WIDTH; i++)
     set_bkg_tiles(i, 0, 1, DEVICE_SCREEN_HEIGHT, map[i]);
-  SHOW_SPRITES; // menu is closed
 }

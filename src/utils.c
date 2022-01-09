@@ -8,7 +8,6 @@ void update_position(const uint8_t);
 
 void show_menu() {
   // display map to erase previous menus
-  display_map();
   HIDE_SPRITES; // menu is open
   const uint8_t x = p.x[0] - START_POSITION;
   const uint8_t y = p.y[0] - START_POSITION;
@@ -23,9 +22,11 @@ void show_menu() {
   printf("\n\nrandom:\t%u", noise(p.x[0], p.y[0]));
 
   printf("\n\npress start to exit");
-  save_data(); // Save data on menu press (temp)
+  save_data();                  // Save data on menu press (temp)
+  delay(100 / 6 * SENSITIVITY); // 100 / 6 comes from macro definition
   waitpad(J_START);
   display_map();
+  SHOW_SPRITES; // menu is closed
 }
 
 void add_inventory(uint8_t item) {

@@ -2,8 +2,8 @@
 #include "map.h"
 
 // Check if save data exists
-bool *has_save = (bool *)0xa000;    // Pointer to memory address
-uint16_t *vals = (int16_t *)0xa001; // 16 bit for p.steps
+static bool *has_save = (bool *)0xa000;    // Pointer to memory address
+static uint16_t *vals = (int16_t *)0xa001; // 16 bit for p.steps
 
 void load_save_data() {
   if (has_save[0] == true) {

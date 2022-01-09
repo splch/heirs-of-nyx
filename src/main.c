@@ -9,8 +9,6 @@ void init();
 void update_switches();
 void check_input();
 
-// uint8_t SEED;
-uint8_t buffer[256]; // for decompression
 uint8_t map[DEVICE_SCREEN_WIDTH][DEVICE_SCREEN_HEIGHT];
 struct Player p;
 clock_t delay_time;
@@ -19,10 +17,8 @@ void main() {
   init();
 
   while (true) {
-    check_input();     // Check for player input
-    update_switches(); // Make sure the SHOW_SPRITES and SHOW_BKG switches are
-                       // on each loop
-    wait_vbl_done();   // Wait until VBLANK to avoid corrupting memory
+    check_input();   // Check for player input
+    wait_vbl_done(); // Wait until VBLANK to avoid corrupting memory
   }
 }
 
@@ -35,6 +31,7 @@ void init() {
 
   // Decompress background and sprite data
   // and load them into memory
+  uint8_t buffer[256];
   set_bkg_data(FONT_MEMORY, gb_decompress(landscape, buffer) >> 4, buffer);
   set_sprite_data(0, gb_decompress(player_sprite, buffer) >> 4, buffer);
 
@@ -56,22 +53,14 @@ void init() {
   printf("\n\tWelcome to\n\tPirate's Folly");
   // -------------------- //
 
-  // Set SEED
-  // uncomment the SEED lines to let player change SEED
-  // SEED = 57;
-
   // Generate terrain
   generate_map();
   // Display terrain
   display_map();
+  SHOW_SPRITES; // Show player
 
   // Start delay time
   delay_time = clock();
-}
-
-inline void update_switches() {
-  HIDE_WIN;
-  SHOW_BKG;
 }
 
 inline void check_input() {
