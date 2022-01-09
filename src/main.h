@@ -10,7 +10,6 @@
 typedef int8_t bool;
 
 // --- CONFIG --- //
-// extern uint8_t SEED; // defined in init()
 #define SEED 57        // Macro is ~2x faster
 #define SENSITIVITY 12 // CLOCKS_PER_SEC * t(s), so this is 60 * .2(s) = 12
 #define START_POSITION 0

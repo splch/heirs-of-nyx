@@ -10,7 +10,7 @@ void update_switches();
 void check_input();
 
 // uint8_t SEED;
-uint8_t buffer[32]; // for decompression
+uint8_t buffer[256]; // for decompression
 uint8_t map[DEVICE_SCREEN_WIDTH][DEVICE_SCREEN_HEIGHT];
 struct Player p;
 clock_t delay_time;
@@ -29,6 +29,9 @@ void main() {
 void init() {
   font_init();                   // Initialize font system
   font_set(font_load(font_ibm)); // Set and load the font
+
+  // Set color palette for compatible ROMs
+  set_default_palette();
 
   // Decompress background and sprite data
   // and load them into memory
