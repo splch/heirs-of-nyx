@@ -36,7 +36,7 @@ extern struct Player {
 } p;
 
 extern uint8_t map[DEVICE_SCREEN_WIDTH][DEVICE_SCREEN_HEIGHT];
-extern uint16_t used[256]; // for used items and decompression
+extern uint16_t arr_4kb[256]; // for used items and decompression
 extern uint8_t used_index;
 extern clock_t delay_time;
 

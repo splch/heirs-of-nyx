@@ -21,7 +21,7 @@ void load_save_data() {
     // Item history data
     used_index = (uint8_t)vals[7];
     for (uint8_t i = 0; i < 255; i++)
-      used[i] = vals[i + 8];
+      arr_4kb[i] = vals[i + 8];
   } else {
     // Starting position for map generation
     p.x[0] = p.x[1] = p.y[0] = p.y[1] = START_POSITION;
@@ -50,7 +50,7 @@ void save_data() {
   // Save item history
   vals[7] = used_index;
   for (uint8_t i = 0; i < 255; i++)
-    vals[i + 8] = used[i];
+    vals[i + 8] = arr_4kb[i];
 
   // Save is now true
   has_save[0] = true;

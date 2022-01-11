@@ -26,8 +26,8 @@ void init() {
 
   // Decompress background and sprite data
   // and load them into memory
-  set_bkg_data(FONT_MEMORY, gb_decompress(landscape, used) >> 4, used);
-  set_sprite_data(0, gb_decompress(player_sprite, used) >> 4, used);
+  set_bkg_data(FONT_MEMORY, gb_decompress(landscape, arr_4kb) >> 4, arr_4kb);
+  set_sprite_data(0, gb_decompress(player_sprite, arr_4kb) >> 4, arr_4kb);
 
   // Set first movable sprite (0) to be first tile in sprite memory (0)
   set_sprite_tile(0, 0);

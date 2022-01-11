@@ -1,7 +1,7 @@
 #include "main.h"
 #include "noise.h"
 
-uint16_t used[256];
+uint16_t arr_4kb[256];
 uint8_t used_index;
 uint8_t map[DEVICE_SCREEN_WIDTH][DEVICE_SCREEN_HEIGHT];
 
@@ -42,17 +42,19 @@ uint8_t generate_item(uint8_t x, uint8_t y) {
 
 bool is_removed(const uint8_t x, const uint8_t y) {
   // returns true if item has been picked up at (x, y)
-  // checks 16-bit int for low (y) and high (x) bytes
-  for (uint8_t i = 0; i < 255; i++)
-    if (used[i] >> 8 == x && used[i] & 0x00ff == y)
+  for (uint8_t i = 0; i < 255; i++) {
+    const uint8_t used_x = arr_4kb[i] >> 8;     // high byte
+    const uint8_t used_y = arr_4kb[i] & 0x00ff; // low byte
+    if (used_x == x && used_y == y)
       return true;
+  }
   return false;
 }
 
 void remove_item(const uint8_t x, const uint8_t y) {
   // item has been picked up at (x, y)
   // store x in high byte and y in low byte
-  used[used_index] = ((uint16_t)x << 8) | y;
+  arr_4kb[used_index] = ((uint16_t)x << 8) | y;
   used_index++;
 }
 
