@@ -6,12 +6,7 @@
 #include <gbdk/gbdecompress.h>
 
 void init();
-void update_switches();
 void check_input();
-
-uint8_t map[DEVICE_SCREEN_WIDTH][DEVICE_SCREEN_HEIGHT];
-struct Player p;
-clock_t delay_time;
 
 void main() {
   init();
@@ -31,9 +26,8 @@ void init() {
 
   // Decompress background and sprite data
   // and load them into memory
-  uint8_t buffer[256];
-  set_bkg_data(FONT_MEMORY, gb_decompress(landscape, buffer) >> 4, buffer);
-  set_sprite_data(0, gb_decompress(player_sprite, buffer) >> 4, buffer);
+  set_bkg_data(FONT_MEMORY, gb_decompress(landscape, used) >> 4, used);
+  set_sprite_data(0, gb_decompress(player_sprite, used) >> 4, used);
 
   // Set first movable sprite (0) to be first tile in sprite memory (0)
   set_sprite_tile(0, 0);

@@ -6,6 +6,9 @@
 // necessary for recursion
 void update_position(const uint8_t);
 
+struct Player p;
+clock_t delay_time;
+
 void show_menu() {
   // display map to erase previous menus
   HIDE_SPRITES; // menu is open
@@ -35,11 +38,10 @@ void add_inventory(uint8_t item) {
   switch (item) {
   case 0:
   case 2:
-    if (p.weapons[0] == -1) {
+    if (p.weapons[0] == -1)
       p.weapons[0] = item;
-    } else {
+    else
       p.weapons[1] = item;
-    }
     break;
   case 1:
     p.maps++;
@@ -81,10 +83,8 @@ void interact() {
 void attack() {
   switch (p.weapons[0]) {
   case 0:
-    // printf("\nbang!\n");
     break;
   case 2:
-    // printf("\nclink!\n");
     break;
   }
 }
