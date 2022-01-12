@@ -30,6 +30,7 @@ extern struct Player {
   uint8_t x[2];
   uint8_t y[2];
   uint16_t steps;
+  uint8_t hearts;
   int8_t weapons[2];
   uint8_t gold;
   uint8_t maps;

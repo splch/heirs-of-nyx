@@ -83,8 +83,10 @@ void interact() {
 void attack() {
   switch (p.weapons[0]) {
   case 0:
+    // gun
     break;
   case 2:
+    // sword
     break;
   }
 }
