@@ -1,7 +1,2 @@
-build/*/*.ihx
-build/*/*.map
-build/*/*.noi
-build/*/*.sav
-build/*/*.sym
-
-.obj/*
+*.swp
+build/*
