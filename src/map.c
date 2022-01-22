@@ -43,8 +43,8 @@ uint8_t generate_item(uint8_t x, uint8_t y) {
 bool is_removed(const uint8_t x, const uint8_t y) {
   // returns true if item has been picked up at (x, y)
   for (uint8_t i = 0; i < 255; i++) {
-    const uint8_t used_x = arr_4kb[i] >> 8;     // high byte
-    const uint8_t used_y = arr_4kb[i] & 0x00ff; // low byte
+    const uint8_t used_x = arr_4kb[i] >> 8;     // high nibble
+    const uint8_t used_y = arr_4kb[i] & 0x00ff; // low nibble
     if (used_x == x && used_y == y)
       return true;
   }
@@ -53,7 +53,7 @@ bool is_removed(const uint8_t x, const uint8_t y) {
 
 void remove_item(const uint8_t x, const uint8_t y) {
   // item has been picked up at (x, y)
-  // store x in high byte and y in low byte
+  // store x in high nibble and y in low nibble
   arr_4kb[used_index] = ((uint16_t)x << 8) | y;
   used_index++;
 }

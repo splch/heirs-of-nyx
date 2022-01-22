@@ -4,6 +4,7 @@
 #include "utils.h"
 #include <gbdk/font.h>
 #include <gbdk/gbdecompress.h>
+#include <gbdk/metasprites.h>
 
 void init();
 void check_input();

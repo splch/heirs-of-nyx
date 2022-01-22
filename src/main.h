@@ -15,7 +15,6 @@
 // --- GB VALUES --- //
 #define FONT_MEMORY 102 // prevents writing over font memory
 #define BACKGROUND_COUNT 4
-#define SPRITE_SIZE 8
 #define CENTER_X DEVICE_SCREEN_WIDTH / 2
 #define CENTER_Y DEVICE_SCREEN_HEIGHT / 2
 #define CENTER_X_PX DEVICE_SCREEN_WIDTH * 4
