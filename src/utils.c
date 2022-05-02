@@ -9,7 +9,8 @@ void update_position(const uint8_t);
 struct Player p;
 clock_t delay_time;
 
-void show_menu() {
+void show_menu()
+{
   // display map to erase previous menus
   HIDE_SPRITES; // menu is open
   const uint8_t x = p.x[0] - START_POSITION;
@@ -32,10 +33,12 @@ void show_menu() {
   SHOW_SPRITES; // menu is closed
 }
 
-void add_inventory(uint8_t item) {
+void add_inventory(uint8_t item)
+{
   // fill primary or replace secondary
   item -= BACKGROUND_COUNT;
-  switch (item) {
+  switch (item)
+  {
   case 0:
   case 2:
     if (p.weapons[0] == -1)
@@ -52,24 +55,28 @@ void add_inventory(uint8_t item) {
   }
 }
 
-void change_item() {
+void change_item()
+{
   // switch primary with secondary weapons
   const int8_t _w = p.weapons[0];
   p.weapons[0] = p.weapons[1];
   p.weapons[1] = _w;
 }
 
-void interact() {
+void interact()
+{
   // -1 <= x - 1 <= 1
   // -1 <= y - 2 <= 1
   // -1 and -2 are "magic numbers"
   // these loops form a square of interaction around the player
   for (int8_t x = -2; x <= 0; x++)
-    for (int8_t y = -3; y <= -1; y++) {
+    for (int8_t y = -3; y <= -1; y++)
+    {
       const uint8_t pos_x = x + CENTER_X;
       const uint8_t pos_y = y + CENTER_Y;
       const uint8_t item = map[pos_x][pos_y];
-      if (item >= FONT_MEMORY + BACKGROUND_COUNT) {
+      if (item >= FONT_MEMORY + BACKGROUND_COUNT)
+      {
         add_inventory(item - FONT_MEMORY);
         remove_item(x + p.x[0], y + p.y[0]);
         // (item - BACKGROUND_COUNT) is the terrain tile
@@ -80,8 +87,10 @@ void interact() {
     }
 }
 
-void attack() {
-  switch (p.weapons[0]) {
+void attack()
+{
+  switch (p.weapons[0])
+  {
   case 0:
     // gun
     break;
@@ -91,9 +100,11 @@ void attack() {
   }
 }
 
-void check_interactions(const uint8_t j) {
+void check_interactions(const uint8_t j)
+{
   // delay non-movement by SENSITIVITY
-  if (clock() - SENSITIVITY > delay_time) {
+  if (clock() - SENSITIVITY > delay_time)
+  {
     if (j & J_START)
       show_menu();
     if (j & J_SELECT)
@@ -108,9 +119,11 @@ void check_interactions(const uint8_t j) {
   }
 }
 
-uint8_t get_terrain(const int8_t direction) {
+uint8_t get_terrain(const int8_t direction)
+{
   // n - none, r - right, l - left, u - up, d - down
-  switch (direction) {
+  switch (direction)
+  {
   // these "magic numbers" are from `interact()`
   case 'n':
     return map[CENTER_X - 1][CENTER_Y - 2] - FONT_MEMORY;
@@ -126,7 +139,8 @@ uint8_t get_terrain(const int8_t direction) {
   return 255;
 }
 
-void push_player() {
+void push_player()
+{
   const uint8_t current_terrain = get_terrain('n');
   const uint8_t down_terrain = get_terrain('d');
   if (down_terrain == 1 || down_terrain == 1 + BACKGROUND_COUNT ||
@@ -139,8 +153,10 @@ void push_player() {
 }
 
 void adjust_position(const uint8_t terrain_type, const uint8_t old_x,
-                     const uint8_t old_y) {
-  switch (terrain_type) {
+                     const uint8_t old_y)
+{
+  switch (terrain_type)
+  {
   case 0:                    // grass
   case 0 + BACKGROUND_COUNT: // item on terrain
   case 2:                    // tree
@@ -164,7 +180,8 @@ void adjust_position(const uint8_t terrain_type, const uint8_t old_x,
   }
 }
 
-void update_position(const uint8_t j) {
+void update_position(const uint8_t j)
+{
   check_interactions(joypad());
   // j = right - 1, left - 2, up - 4, down - 8
   uint8_t _x = p.x[0];
@@ -177,7 +194,8 @@ void update_position(const uint8_t j) {
     _y--;
   if (j & J_DOWN)
     _y++;
-  if (p.x[0] != _x || p.y[0] != _y) {
+  if (p.x[0] != _x || p.y[0] != _y)
+  {
     const uint8_t old_x = p.x[1];
     const uint8_t old_y = p.y[1];
     p.x[1] = p.x[0];

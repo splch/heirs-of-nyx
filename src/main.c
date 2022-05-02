@@ -9,16 +9,19 @@
 void init();
 void check_input();
 
-void main() {
+void main()
+{
   init();
 
-  while (true) {
+  while (true)
+  {
     check_input();   // Check for player input
     wait_vbl_done(); // Wait until VBLANK to avoid corrupting memory
   }
 }
 
-void init() {
+void init()
+{
   font_init();                   // Initialize font system
   font_set(font_load(font_ibm)); // Set and load the font
 
@@ -58,7 +61,8 @@ void init() {
   delay_time = clock();
 }
 
-inline void check_input() {
+inline void check_input()
+{
   const uint8_t j = joypad();
   // check interactions separately from movement
   // makes delaying simple

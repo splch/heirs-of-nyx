@@ -2,10 +2,10 @@
 #include "noise.h"
 
 uint16_t arr_4kb[256];
-uint8_t used_index;
-uint8_t map[DEVICE_SCREEN_WIDTH][DEVICE_SCREEN_HEIGHT];
+uint8_t map[SCREEN_WIDTH][SCREEN_HEIGHT];
 
-uint8_t closest(const uint8_t value) {
+uint8_t closest(const uint8_t value)
+{
   // 49 <= value <= 201
   if (value < 100)
     return 1 + FONT_MEMORY; // water
@@ -17,14 +17,16 @@ uint8_t closest(const uint8_t value) {
     return 3 + FONT_MEMORY; // mountains
 }
 
-uint8_t terrain(uint8_t x, uint8_t y) {
+uint8_t terrain(uint8_t x, uint8_t y)
+{
   // return type of terrain at (x, y)
   // increasing scale increases the map size
-  const uint8_t value = interpolate_noise(x / SCALE, y / SCALE);
+  const uint8_t value = interpolate_noise(x, y);
   return closest(value);
 }
 
-uint8_t generate_item(uint8_t x, uint8_t y) {
+uint8_t generate_item(uint8_t x, uint8_t y)
+{
   // return item at (x, y)
   // 49 <= noise(x, y) <= 201
   const uint8_t _n = noise(x, y);
@@ -40,69 +42,73 @@ uint8_t generate_item(uint8_t x, uint8_t y) {
     return 255; // no item
 }
 
-bool is_removed(const uint8_t x, const uint8_t y) {
+bool is_removed(const uint8_t x, const uint8_t y)
+{
   // returns true if item has been picked up at (x, y)
-  for (uint8_t i = 0; i < 255; i++) {
-    const uint8_t used_x = arr_4kb[i] >> 8;     // high nibble
-    const uint8_t used_y = arr_4kb[i] & 0x00ff; // low nibble
-    if (used_x == x && used_y == y)
-      return true;
-  }
+  if (arr_4kb[x] == y)
+    return true;
   return false;
 }
 
-void remove_item(const uint8_t x, const uint8_t y) {
+void remove_item(const uint8_t x, const uint8_t y)
+{
   // item has been picked up at (x, y)
-  // store x in high nibble and y in low nibble
-  arr_4kb[used_index] = ((uint16_t)x << 8) | y;
-  used_index++;
+  arr_4kb[x] = y;
 }
 
-void shift_array_right() {
-  for (uint8_t x = DEVICE_SCREEN_WIDTH - 1; x > 0; x--)
-    for (uint8_t y = 0; y < DEVICE_SCREEN_HEIGHT; y++)
+void shift_array_right()
+{
+  for (uint8_t x = SCREEN_WIDTH - 1; x > 0; x--)
+    for (uint8_t y = 0; y < SCREEN_HEIGHT; y++)
       map[x][y] = map[x - 1][y];
 }
 
-void shift_array_left() {
-  for (uint8_t x = 0; x < DEVICE_SCREEN_WIDTH - 1; x++)
-    for (uint8_t y = 0; y < DEVICE_SCREEN_HEIGHT; y++)
+void shift_array_left()
+{
+  for (uint8_t x = 0; x < SCREEN_WIDTH - 1; x++)
+    for (uint8_t y = 0; y < SCREEN_HEIGHT; y++)
       map[x][y] = map[x + 1][y];
 }
 
-void shift_array_up() {
-  for (uint8_t y = 0; y < DEVICE_SCREEN_HEIGHT - 1; y++)
-    for (uint8_t x = 0; x < DEVICE_SCREEN_WIDTH; x++)
+void shift_array_up()
+{
+  for (uint8_t y = 0; y < SCREEN_HEIGHT - 1; y++)
+    for (uint8_t x = 0; x < SCREEN_WIDTH; x++)
       map[x][y] = map[x][y + 1];
 }
 
-void shift_array_down() {
-  for (uint8_t y = DEVICE_SCREEN_HEIGHT - 1; y > 0; y--)
-    for (uint8_t x = 0; x < DEVICE_SCREEN_WIDTH; x++)
+void shift_array_down()
+{
+  for (uint8_t y = SCREEN_HEIGHT - 1; y > 0; y--)
+    for (uint8_t x = 0; x < SCREEN_WIDTH; x++)
       map[x][y] = map[x][y - 1];
 }
 
-void generate_side(const int8_t side) {
+void generate_side(const int8_t side)
+{
   // r - right, l - left, t - top, b - bottom
   uint8_t _x;
   uint8_t _y;
-  switch (side) {
+  switch (side)
+  {
   case 'r':
-    for (uint8_t y = 0; y < DEVICE_SCREEN_HEIGHT; y++) {
+    for (uint8_t y = 0; y < SCREEN_HEIGHT; y++)
+    {
       // _x and _y came from some logic and a lot of trial and error...
-      _x = DEVICE_SCREEN_WIDTH - CENTER_X + p.x[0] - 1;
+      _x = SCREEN_WIDTH - CENTER_X + p.x[0] - 1;
       // use old y since generating r/l (no y change yet)
       _y = y + p.y[1] - CENTER_Y;
       const uint8_t _t = terrain(_x, _y);
       const uint8_t _i = generate_item(_x, _y);
       // set either a terrain tile or item tile
       // terrain associated item tiles are stored at terrain + BACKGROUND_COUNT
-      map[DEVICE_SCREEN_WIDTH - 1][y] =
+      map[SCREEN_WIDTH - 1][y] =
           (_i == _t && !is_removed(_x, _y)) ? _i + BACKGROUND_COUNT : _t;
     }
     break;
   case 'l':
-    for (uint8_t y = 0; y < DEVICE_SCREEN_HEIGHT; y++) {
+    for (uint8_t y = 0; y < SCREEN_HEIGHT; y++)
+    {
       _x = p.x[0] - CENTER_X;
       _y = y + p.y[1] - CENTER_Y;
       const uint8_t _t = terrain(_x, _y);
@@ -112,7 +118,8 @@ void generate_side(const int8_t side) {
     }
     break;
   case 't':
-    for (uint8_t x = 0; x < DEVICE_SCREEN_WIDTH; x++) {
+    for (uint8_t x = 0; x < SCREEN_WIDTH; x++)
+    {
       // use current x since r/l might have already been updated
       _x = x + p.x[0] - CENTER_X;
       _y = p.y[0] - CENTER_Y;
@@ -123,22 +130,25 @@ void generate_side(const int8_t side) {
     }
     break;
   case 'b':
-    for (uint8_t x = 0; x < DEVICE_SCREEN_WIDTH; x++) {
+    for (uint8_t x = 0; x < SCREEN_WIDTH; x++)
+    {
       _x = x + p.x[0] - CENTER_X;
-      _y = DEVICE_SCREEN_HEIGHT - CENTER_Y + p.y[0] - 1;
+      _y = SCREEN_HEIGHT - CENTER_Y + p.y[0] - 1;
       const uint8_t _t = terrain(_x, _y);
       const uint8_t _i = generate_item(_x, _y);
-      map[x][DEVICE_SCREEN_HEIGHT - 1] =
+      map[x][SCREEN_HEIGHT - 1] =
           (_i == _t && !is_removed(_x, _y)) ? _i + BACKGROUND_COUNT : _t;
     }
     break;
   }
 }
 
-void generate_map() {
+void generate_map()
+{
   // generate entire map on first load
-  for (uint8_t x = 0; x < DEVICE_SCREEN_WIDTH; x++)
-    for (uint8_t y = 0; y < DEVICE_SCREEN_HEIGHT; y++) {
+  for (uint8_t x = 0; x < SCREEN_WIDTH; x++)
+    for (uint8_t y = 0; y < SCREEN_HEIGHT; y++)
+    {
       const uint8_t _x = x + p.x[0] - CENTER_X;
       const uint8_t _y = y + p.y[0] - CENTER_Y;
       const uint8_t _t = terrain(_x, _y);
@@ -148,23 +158,30 @@ void generate_map() {
     }
 }
 
-void generate_map_sides() {
+void generate_map_sides()
+{
   const int8_t diff_x = p.x[1] - p.x[0];
   const int8_t diff_y = p.y[1] - p.y[0];
-  if (diff_x < 0) {
+  if (diff_x < 0)
+  {
     // moved right
     shift_array_left();
     generate_side('r');
-  } else if (diff_x > 0) {
+  }
+  else if (diff_x > 0)
+  {
     // moved left
     shift_array_right();
     generate_side('l');
   }
-  if (diff_y > 0) {
+  if (diff_y > 0)
+  {
     // moved up
     shift_array_down();
     generate_side('t');
-  } else if (diff_y < 0) {
+  }
+  else if (diff_y < 0)
+  {
     // moved down
     shift_array_up();
     generate_side('b');
@@ -174,7 +191,9 @@ void generate_map_sides() {
   p.y[1] = p.y[0];
 }
 
-void display_map() {
-  for (uint8_t i = 0; i < DEVICE_SCREEN_WIDTH; i++)
-    set_bkg_tiles(i, 0, 1, DEVICE_SCREEN_HEIGHT, map[i]);
+void display_map()
+{
+  for (uint8_t i = 0; i < SCREEN_WIDTH; i++)
+    set_bkg_tiles(i, 0, 1, SCREEN_HEIGHT, map[i]);
+  wait_vbl_done(); // wait due to recursion
 }

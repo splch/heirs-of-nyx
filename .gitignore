@@ -5,3 +5,4 @@ build/*/*.sav
 build/*/*.sym
 
 .obj/*
+GBTD/*

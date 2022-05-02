@@ -18,9 +18,9 @@ Travel through procedural lands, across plains, through forests, over mountains,
 
 1. To play the game, move the `build/gb/Pirates Folly.gb` file into your emulator / flash cart.
 
-2. To build it from source, follow [GBDK's guide](https://github.com/gbdk-2020/gbdk-2020#build-instructions).
+2. To build it from source, follow [GBDK's guide](https://github.com/gbdk-2020/gbdk-2020#build-instructions) or use a [release](https://github.com/gbdk-2020/gbdk-2020/releases).
 
-3. Run `export GBDK_HOME=/path/to/gbdk-2020`
+3. Run `export GBDK_HOME=/path/to/gbdk`
 
 Once the environment has been built, run:
 
