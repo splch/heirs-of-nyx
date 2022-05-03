@@ -4,7 +4,7 @@
 #include "save.h"
 
 // necessary for recursion
-void update_position(const uint8_t);
+void check_movement(const uint8_t);
 
 struct Player p;
 clock_t delay_time;
@@ -26,9 +26,9 @@ void show_menu()
   printf("\n\nrandom:\t%u", noise(p.x[0], p.y[0]));
 
   printf("\n\npress start to exit");
-  save_data();                  // Save data on menu press (temp)
-  delay(100 / 6 * SENSITIVITY); // 100 / 6 comes from macro definition
-  waitpad(J_START);
+  save_data();             // Save data on menu press (temp)
+  delay(33 * SENSITIVITY); // (100 / 6) * 2 comes from macro definition
+  waitpad(0b11111111);
   display_map();
   SHOW_SPRITES; // menu is closed
 }
@@ -100,23 +100,16 @@ void attack()
   }
 }
 
-void check_interactions(const uint8_t j)
+void check_interaction(const uint8_t j)
 {
-  // delay non-movement by SENSITIVITY
-  if (clock() - SENSITIVITY > delay_time)
-  {
-    if (j & J_START)
-      show_menu();
-    if (j & J_SELECT)
-      change_item();
-    if (j & J_A)
-      interact();
-    if (j & J_B)
-      attack();
-    // reset delay if input is detected
-    if (j)
-      delay_time = clock();
-  }
+  if (j & J_START)
+    show_menu();
+  if (j & J_SELECT)
+    change_item();
+  if (j & J_A)
+    interact();
+  if (j & J_B)
+    attack();
 }
 
 uint8_t get_terrain(const int8_t direction)
@@ -145,11 +138,10 @@ void push_player()
   const uint8_t down_terrain = get_terrain('d');
   if (down_terrain == 1 || down_terrain == 1 + BACKGROUND_COUNT ||
       current_terrain == 1 || current_terrain == 1 + BACKGROUND_COUNT)
-    // update_position will recursively call if the user is still on water
-    // push the player right on the water (00000001)
-    // push the player down the water (00001000)
-    // right and down = 00001001 = 9
-    update_position(9);
+    // check_movement will recursively call if the user is still on water
+    // left (00000010), right (00000001), down (00001000)
+    // randomly push down right or left
+    check_movement(noise(p.x[0], p.y[0]) % 2 + 0b00001001);
 }
 
 void adjust_position(const uint8_t terrain_type, const uint8_t old_x,
@@ -180,9 +172,9 @@ void adjust_position(const uint8_t terrain_type, const uint8_t old_x,
   }
 }
 
-void update_position(const uint8_t j)
+void check_movement(const uint8_t j)
 {
-  check_interactions(joypad());
+  check_interaction(joypad());
   // j = right - 1, left - 2, up - 4, down - 8
   uint8_t _x = p.x[0];
   uint8_t _y = p.y[0];

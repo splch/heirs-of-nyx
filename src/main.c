@@ -64,9 +64,14 @@ void init()
 inline void check_input()
 {
   const uint8_t j = joypad();
-  // check interactions separately from movement
-  // makes delaying simple
-  check_interactions(j);
-  if (j)
-    update_position(j);
+  // delay input by SENSITIVITY
+  if (clock() - SENSITIVITY > delay_time && j)
+  {
+    // non-movement press
+    check_interaction(j);
+    // movement press
+    check_movement(j);
+    // reset delay
+    delay_time = clock();
+  }
 }

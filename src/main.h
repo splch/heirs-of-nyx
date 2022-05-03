@@ -6,16 +6,16 @@
 #include <time.h>
 
 // --- CONFIG --- //
-#define SEED 57        // Macro is ~2x faster
-#define SENSITIVITY 24 // CLOCKS_PER_SEC * t(s), so this is 60 * .2(s) = 12
+#define SEED 57       // Macro is ~2x faster
+#define SENSITIVITY 6 // CLOCKS_PER_SEC * t(s), so this is 60 * .1(s) = 6
 #define START_POSITION 0
 // -------------- //
 
 // --- GB VALUES --- //
 #define FONT_MEMORY 102 // prevents writing over font memory
 #define BACKGROUND_COUNT 4
-#define SCREEN_WIDTH 10
-#define SCREEN_HEIGHT 9
+#define SCREEN_WIDTH DEVICE_SCREEN_WIDTH / 2
+#define SCREEN_HEIGHT DEVICE_SCREEN_HEIGHT / 2
 #define CENTER_X SCREEN_WIDTH / 2
 #define CENTER_Y SCREEN_HEIGHT / 2
 #define CENTER_X_PX SCREEN_WIDTH * 4

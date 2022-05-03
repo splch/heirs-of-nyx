@@ -1,0 +1,12 @@
+{
+    "configurations": [
+        {
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/../gbdk/include/**" // change to correct directory
+            ],
+            "compilerPath": "${workspaceFolder}/../gbdk/bin/lcc"
+        }
+    ],
+    "version": 4
+}
