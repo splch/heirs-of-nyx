@@ -26,7 +26,7 @@ void show_menu()
   printf("\n\nrandom:\t%u", noise(p.x[0], p.y[0]));
 
   printf("\n\npress start to exit");
-  save_data();             // Save data on menu press (temp)
+  save_data();             // save data on menu press (temp)
   delay(33 * SENSITIVITY); // (100 / 6) * 2 comes from macro definition
   waitpad(0b11111111);
   display_map();

@@ -6,7 +6,7 @@
 #include <time.h>
 
 // --- CONFIG --- //
-#define SEED 57       // Macro is ~2x faster
+#define SEED 57       // macro is ~2x faster
 #define SENSITIVITY 6 // CLOCKS_PER_SEC * t(s), so this is 60 * .1(s) = 6
 #define START_POSITION 0
 // -------------- //

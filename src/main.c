@@ -13,51 +13,55 @@ void main()
 {
   init();
 
+  // main game loop
   while (true)
   {
-    check_input();   // Check for player input
-    wait_vbl_done(); // Wait until VBLANK to avoid corrupting memory
+    check_input();   // check for player input
+    wait_vbl_done(); // wait until VBLANK to avoid corrupting memory
   }
 }
 
 void init()
 {
-  font_init();                   // Initialize font system
-  font_set(font_load(font_ibm)); // Set and load the font
+  font_init();                   // initialize font system
+  font_set(font_load(font_ibm)); // set and load the font
 
-  // Set color palette for compatible ROMs
+  // set color palette for compatible ROMs
   set_default_palette();
 
-  // Decompress background and sprite data
+  // decompress background and sprite data
   // and load them into memory
   set_bkg_data(FONT_MEMORY, gb_decompress(landscape, arr_4kb) >> 4, arr_4kb);
   set_sprite_data(0, gb_decompress(player_sprite, arr_4kb) >> 4, arr_4kb);
 
-  // Set first movable sprite (0) to be first tile in sprite memory (0)
+  // use metasprite sizes
+  SPRITES_8x16;
+
+  // set first movable sprite (0) to be first tile in sprite memory (0)
   set_sprite_tile(0, 0);
 
-  // Move the sprite in the first movable sprite list (0)
+  // move the sprite in the first movable sprite list (0)
   // the center of the screen
   move_sprite(0, CENTER_X_PX, CENTER_Y_PX);
 
-  ENABLE_RAM; // For loading save data
+  ENABLE_RAM; // for loading save data
 
-  // Load and initialize save data
+  // load and initialize save data
   load_save_data();
 
-  DISPLAY_ON; // Turn on the display
+  DISPLAY_ON; // turn on the display
 
-  // --- LOADING TEXT --- //
+  // --- loading text --- //
   printf("\n\tWelcome to\n\tPirate's Folly");
   // -------------------- //
 
-  // Generate terrain
+  // generate terrain
   generate_map();
-  // Display terrain
+  // display terrain
   display_map();
-  SHOW_SPRITES; // Show player
+  SHOW_SPRITES; // show player
 
-  // Start delay time
+  // start delay time
   delay_time = clock();
 }
 
