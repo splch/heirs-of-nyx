@@ -8,13 +8,13 @@ uint8_t closest(const uint8_t value)
 {
   // 49 <= value <= 201
   if (value < 100)
-    return 1 + FONT_MEMORY; // water
+    return 2 + FONT_MEMORY; // water
   else if (value < 135)
     return 0 + FONT_MEMORY; // grass
   else if (value < 160)
-    return 2 + FONT_MEMORY; // trees
+    return 4 + FONT_MEMORY; // trees
   else
-    return 3 + FONT_MEMORY; // mountains
+    return 6 + FONT_MEMORY; // mountains
 }
 
 uint8_t terrain(uint8_t x, uint8_t y)
@@ -193,7 +193,10 @@ void generate_map_sides()
 
 void display_map()
 {
-  for (uint8_t i = 0; i < SCREEN_WIDTH; i++)
-    set_bkg_tiles(i, 0, 1, SCREEN_HEIGHT, map[i]);
+  for (uint8_t i = 0; i < 2 * SCREEN_WIDTH; i++)
+  {
+    set_bkg_tiles(i / 2, 0, 1, 2 * SCREEN_HEIGHT, map[i / 2]);
+    set_bkg_tiles(i / 2 + 8, 0, 1, 2 * SCREEN_HEIGHT, map[i / 2]);
+  }
   wait_vbl_done(); // wait due to recursion
 }

@@ -1,6 +1,7 @@
 {
     "configurations": [
         {
+            "name": "*",
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/../gbdk/include/**" // change to correct directory

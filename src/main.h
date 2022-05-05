@@ -16,15 +16,15 @@
 #define BACKGROUND_COUNT 4
 #define SCREEN_WIDTH DEVICE_SCREEN_WIDTH / 2
 #define SCREEN_HEIGHT DEVICE_SCREEN_HEIGHT / 2
-#define CENTER_X SCREEN_WIDTH / 2
-#define CENTER_Y SCREEN_HEIGHT / 2
-#define CENTER_X_PX SCREEN_WIDTH * 4
-#define CENTER_Y_PX SCREEN_HEIGHT * 4
+#define CENTER_X SCREEN_WIDTH
+#define CENTER_Y SCREEN_HEIGHT
+#define CENTER_X_PX SCREEN_WIDTH * 8
+#define CENTER_Y_PX SCREEN_HEIGHT * 8
 // ----------------- //
 
 #define true 1
 #define false 0
-typedef int8_t bool;
+typedef uint8_t bool;
 
 extern struct Player
 {

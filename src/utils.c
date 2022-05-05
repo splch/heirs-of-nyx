@@ -2,12 +2,31 @@
 #include "map.h"
 #include "noise.h"
 #include "save.h"
+#include <string.h>
 
 // necessary for recursion
 void check_movement(const uint8_t);
 
 struct Player p;
 clock_t delay_time;
+
+void load_sprite(char *name)
+{
+  if (strcmp(name, "player") == 0)
+  {
+    set_sprite_tile(0, 0);
+    set_sprite_tile(1, 2);
+  }
+}
+
+void position_sprite(char *name, uint8_t x, uint8_t y)
+{
+  if (strcmp(name, "player") == 0)
+  {
+    move_sprite(0, x, y);
+    move_sprite(1, x + 8, y);
+  }
+}
 
 void show_menu()
 {

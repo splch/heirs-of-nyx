@@ -38,11 +38,11 @@ void init()
   SPRITES_8x16;
 
   // set first movable sprite (0) to be first tile in sprite memory (0)
-  set_sprite_tile(0, 0);
+  load_sprite("player");
 
   // move the sprite in the first movable sprite list (0)
   // the center of the screen
-  move_sprite(0, CENTER_X_PX, CENTER_Y_PX);
+  position_sprite("player", CENTER_X_PX, CENTER_Y_PX);
 
   ENABLE_RAM; // for loading save data
 
