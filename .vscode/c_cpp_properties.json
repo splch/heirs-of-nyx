@@ -4,7 +4,7 @@
             "name": "*",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/../gbdk/include/**" // change to correct directory
+                "${workspaceFolder}/../gbdk/include/**" // TODO change to correct directory
             ],
             "compilerPath": "${workspaceFolder}/../gbdk/bin/lcc"
         }

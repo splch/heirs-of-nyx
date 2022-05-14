@@ -10,7 +10,9 @@ Travel through procedural lands, across plains, through forests, over mountains,
 
 2. `res/` contains all the visual resources in the game
 
-3. `GBTD/` is the [tile designer](https://github.com/gbdk-2020/GBTD_GBMB/releases/) used to edit the `res/*.gbr` files
+3. `tools/` stores various development tools:
+  - [tile designer](https://github.com/gbdk-2020/GBTD_GBMB/releases/) to edit the `res/*.gbr` files
+  - [emulicious](https://emulicious.net/) to run the gameboy rom.
 
 4. `build/` has the most recent ROMS for different systems
 
@@ -18,9 +20,9 @@ Travel through procedural lands, across plains, through forests, over mountains,
 
 1. To play the game, move the `build/gb/Pirates Folly.gb` file into your emulator / flash cart.
 
-2. To build it from source, follow [GBDK's guide](https://github.com/gbdk-2020/gbdk-2020#build-instructions) or use a [release](https://github.com/gbdk-2020/gbdk-2020/releases).
+2. To build it from source, follow [GBDK's guide](https://github.com/gbdk-2020/gbdk-2020#build-instructions).
 
-3. Run `export GBDK_HOME=/path/to/gbdk`
+3. Run `export GBDK_HOME=/path/to/gbdk-2020`
 
 Once the environment has been built, run:
 
@@ -30,7 +32,7 @@ make gb
 
 There should now be a new `Pirates Folly.gb` file in the `build/gb/` directory.
 
-Alternatively, you can upload the ROM to an emulator site like @Juchi's [Gameboy emulator](https://juchi.github.io/gameboy.js/) and run it.
+Alternatively, you can upload the ROM to an emulator site like @Juchi's [Gameboy emulator](https://juchi.github.io/gameboy.js/) and run it. To use `Emulicious.jar`, install the Java runtime (`openjdk-*-jre`) and run `java -jar Emulicious.jar`.
 
 ## This game is in development
 
