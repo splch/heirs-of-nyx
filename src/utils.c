@@ -59,16 +59,16 @@ void add_inventory(uint8_t item)
   switch (item)
   {
   case 0:
-  case 2:
+  case 8:
     if (p.weapons[0] == -1)
       p.weapons[0] = item;
     else
       p.weapons[1] = item;
     break;
-  case 1:
+  case 4:
     p.maps++;
     break;
-  case 3:
+  case 12:
     p.gold++;
     break;
   }
@@ -94,16 +94,18 @@ void interact()
       const uint8_t pos_x = x + CENTER_X;
       const uint8_t pos_y = y + CENTER_Y;
       const uint8_t item = map[pos_x][pos_y];
-      if (item >= FONT_MEMORY + BACKGROUND_COUNT)
-      {
-        add_inventory(item - FONT_MEMORY);
-        remove_item(x + p.x[0], y + p.y[0]);
-        // (item - BACKGROUND_COUNT) is the terrain tile
-        map[pos_x][pos_y] = item - BACKGROUND_COUNT;
-        display_map();
-        return; // only pick up one item per interaction
-      }
+      // if (item >= FONT_MEMORY + BACKGROUND_COUNT)
+      // {
+      //   add_inventory(item - FONT_MEMORY);
+      //   remove_item(x + p.x[0], y + p.y[0]);
+      //   // (item - BACKGROUND_COUNT) is the terrain tile
+      //   map[pos_x][pos_y] = item - BACKGROUND_COUNT;
+      //   display_map();
+      //   return; // only pick up one item per interaction
+      // }
+      map[pos_x][pos_y] = 0;
     }
+  display_map();
 }
 
 void attack()
@@ -170,17 +172,17 @@ void adjust_position(const uint8_t terrain_type, const uint8_t old_x,
   {
   case 0:                    // grass
   case 0 + BACKGROUND_COUNT: // item on terrain
-  case 2:                    // tree
-  case 2 + BACKGROUND_COUNT:
+  case 8:                    // tree
+  case 8 + BACKGROUND_COUNT:
     display_map();
     break; // ignore grass and tree tiles
-  case 1:  // water
-  case 1 + BACKGROUND_COUNT:
+  case 4:  // water
+  case 4 + BACKGROUND_COUNT:
     display_map();
     push_player();
     break;
-  case 3: // mountain
-  case 3 + BACKGROUND_COUNT:
+  case 12: // mountain
+  case 12 + BACKGROUND_COUNT:
     // revert to previous position
     p.x[0] = old_x;
     p.y[0] = old_y;

@@ -7,7 +7,7 @@ uint8_t map[SCREEN_WIDTH][SCREEN_HEIGHT];
 uint8_t closest(const uint8_t value)
 {
   // 49 <= value <= 201
-  if (value < 100)
+  if (value < 90)
     return 4 + FONT_MEMORY; // water
   else if (value < 135)
     return 0 + FONT_MEMORY; // grass
@@ -31,13 +31,13 @@ uint8_t generate_item(uint8_t x, uint8_t y)
   // 49 <= noise(x, y) <= 201
   const uint8_t _n = noise(x, y);
   if (_n > 49 && _n < 51)
-    return 1 + FONT_MEMORY; // map on water
+    return 4 + FONT_MEMORY; // map on water
   else if (_n > 133 && _n < 135)
     return 0 + FONT_MEMORY; // gun on grass
   else if (_n > 158 && _n < 160)
-    return 2 + FONT_MEMORY; // sword in trees
+    return 8 + FONT_MEMORY; // sword in trees
   else if (_n > 190 && _n < 201)
-    return 3 + FONT_MEMORY; // gold on mountains
+    return 12 + FONT_MEMORY; // gold on mountains
   else
     return 255; // no item
 }
