@@ -94,18 +94,16 @@ void interact()
       const uint8_t pos_x = x + CENTER_X;
       const uint8_t pos_y = y + CENTER_Y;
       const uint8_t item = map[pos_x][pos_y];
-      // if (item >= FONT_MEMORY + BACKGROUND_COUNT)
-      // {
-      //   add_inventory(item - FONT_MEMORY);
-      //   remove_item(x + p.x[0], y + p.y[0]);
-      //   // (item - BACKGROUND_COUNT) is the terrain tile
-      //   map[pos_x][pos_y] = item - BACKGROUND_COUNT;
-      //   display_map();
-      //   return; // only pick up one item per interaction
-      // }
-      map[pos_x][pos_y] = 0;
+      if (item >= FONT_MEMORY + BACKGROUND_COUNT)
+      {
+        add_inventory(item - FONT_MEMORY);
+        remove_item(x + p.x[0], y + p.y[0]);
+        // (item - BACKGROUND_COUNT) is the terrain tile
+        map[pos_x][pos_y] = item - BACKGROUND_COUNT;
+        display_map();
+        return; // only pick up one item per interaction
+      }
     }
-  display_map();
 }
 
 void attack()
@@ -157,8 +155,8 @@ void push_player()
 {
   const uint8_t current_terrain = get_terrain('n');
   const uint8_t down_terrain = get_terrain('d');
-  if (down_terrain == 1 || down_terrain == 1 + BACKGROUND_COUNT ||
-      current_terrain == 1 || current_terrain == 1 + BACKGROUND_COUNT)
+  if (down_terrain == 4 || down_terrain == 4 + BACKGROUND_COUNT ||
+      current_terrain == 4 || current_terrain == 4 + BACKGROUND_COUNT)
     // check_movement will recursively call if the user is still on water
     // left (00000010), right (00000001), down (00001000)
     // randomly push down right or left

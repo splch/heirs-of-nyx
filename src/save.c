@@ -31,7 +31,7 @@ void load_save_data()
     p.x[0] = p.x[1] = p.y[0] = p.y[1] = START_POSITION;
 
     // player item initialization
-    p.steps = p.gold = p.maps = 250;
+    p.steps = p.gold = p.maps = 0;
     p.hearts = 3;
     p.weapons[0] = p.weapons[1] = -1;
   }
