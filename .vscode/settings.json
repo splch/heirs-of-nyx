@@ -2,6 +2,7 @@
   "C_Cpp.errorSquiggles": "Disabled",
   "files.associations": {
     "*.pl": "prolog",
-    "platform.h": "c"
+    "platform.h": "c",
+    "prng.h": "c"
   }
 }

@@ -1,27 +1,17 @@
 #include "main.h"
-
-uint8_t noise(uint8_t x, uint8_t y)
-{
-  // return random number [49, 201]
-  // prng comes from a combination of perlin noise and 8-bit xorshift
-  x ^= (y << 7);
-  x ^= (x >> 5);
-  y ^= (x << 3);
-  y ^= (y >> 1);
-  return x ^ y * SEED;
-}
+#include "noise.h"
 
 uint8_t smooth_noise(uint8_t x, uint8_t y)
 {
   // gets average noise at (x, y)
-  const uint8_t corners = (noise(x - 1, y - 1) + noise(x + 1, y - 1) +
-                           noise(x - 1, y + 1) + noise(x + 1, y + 1)) >>
+  const uint8_t corners = (prng(x - 1, y - 1) + prng(x + 1, y - 1) +
+                           prng(x - 1, y + 1) + prng(x + 1, y + 1)) >>
                           4; // divide by 16
   const uint8_t sides =
-      (noise(x - 1, y) + noise(x + 1, y) + noise(x, y - 1) + noise(x, y + 1)) >>
-      3;                                   // divide by 8
-  const uint8_t center = noise(x, y) >> 2; // divide by 4
-  return corners + sides + center;         // average noise at center
+      (prng(x - 1, y) + prng(x + 1, y) + prng(x, y - 1) + prng(x, y + 1)) >>
+      3;                                  // divide by 8
+  const uint8_t center = prng(x, y) >> 2; // divide by 4
+  return corners + sides + center;        // average noise at center
 }
 
 uint8_t interpolate(uint8_t v1, uint8_t v2)

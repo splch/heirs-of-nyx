@@ -1,5 +1,5 @@
-#ifndef CONFIG
-#define CONFIG
+#ifndef MAIN_H
+#define MAIN_H
 
 #include <gbdk/platform.h>
 #include <stdio.h>
@@ -7,7 +7,6 @@
 #include <stdbool.h>
 
 // --- CONFIG --- //
-#define SEED 57       // macro is ~2x faster
 #define SENSITIVITY 6 // CLOCKS_PER_SEC * t(s), so this is 60 * .1(s) = 6
 #define START_POSITION 0
 // -------------- //

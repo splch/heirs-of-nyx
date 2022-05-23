@@ -1,7 +1,7 @@
 #include "main.h"
 #include "map.h"
-#include "noise.h"
 #include "save.h"
+#include "noise.h"
 #include <string.h>
 
 // necessary for recursion
@@ -40,9 +40,8 @@ void show_menu()
 
   printf("\n\nposition:\t(%u, %u)", x, y);
   printf("\nsteps:\t%u", p.steps);
-  printf("\nseed:\t%u", SEED);
 
-  printf("\n\nrandom:\t%u", noise(p.x[0], p.y[0]));
+  printf("\n\nrandom:\t%u", prng(p.x[0], p.y[0]));
 
   printf("\n\npress start to exit");
   save_data();             // save data on menu press (temp)
@@ -59,17 +58,17 @@ void add_inventory(uint8_t item)
   switch (item)
   {
   case 0:
+    p.maps++;
+    break;
   case 8:
+    p.gold++;
+    break;
+  case 4:
+  case 12:
     if (p.weapons[0] == -1)
       p.weapons[0] = item;
     else
       p.weapons[1] = item;
-    break;
-  case 4:
-    p.maps++;
-    break;
-  case 12:
-    p.gold++;
     break;
   }
 }
@@ -160,7 +159,7 @@ void push_player()
     // check_movement will recursively call if the user is still on water
     // left (00000010), right (00000001), down (00001000)
     // randomly push down right or left
-    check_movement(noise(p.x[0], p.y[0]) % 2 + 0b00001001);
+    check_movement(prng(p.x[0], p.y[0]) % 2 + 0b00001001);
 }
 
 void adjust_position(const uint8_t terrain_type, const uint8_t old_x,

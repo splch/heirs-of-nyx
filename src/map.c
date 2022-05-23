@@ -28,8 +28,8 @@ uint8_t terrain(uint8_t x, uint8_t y)
 uint8_t generate_item(uint8_t x, uint8_t y)
 {
   // return item at (x, y)
-  // 49 <= noise(x, y) <= 201
-  const uint8_t _n = noise(x, y);
+  // 49 <= prng(x, y) <= 201
+  const uint8_t _n = prng(x, y);
   if (_n > 49 && _n < 51)
     return 4 + FONT_MEMORY; // map on water
   else if (_n > 133 && _n < 135)

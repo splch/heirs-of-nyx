@@ -60,6 +60,6 @@ https://replit.com/@splch/gb-procedural-generation#main.c
 
 Using unsigned 8-bit integers, (x, y), as seeds means that there are 2^8 x 2^8 pixels of landscape possible.
 
-I'm using a global seed found in `main.h`, so much like No Man's Sky, everyone can see the same world; however, the starting positions can be varied.
+I'm using a global seed found in `prng.s`, so much like No Man's Sky, everyone can see the same world; however, the starting positions can be varied.
 
 Items and enemies will generate randomly, though, pirates will more likely gather around gold and valuables. The random spawning of items and enemies is inspired by Minecraft's similar generation as conditions need to be met for varying occurrences.
