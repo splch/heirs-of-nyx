@@ -1,8 +1,11 @@
+.obj/*
+
 build/*/*.ihx
 build/*/*.map
 build/*/*.noi
 build/*/*.sav
 build/*/*.sym
 
-.obj/*
-GBTD/*
+tools/cheats/
+tools/lib/
+tools/projects/

@@ -4,6 +4,7 @@
 #include <gbdk/platform.h>
 #include <stdio.h>
 #include <time.h>
+#include <stdbool.h>
 
 // --- CONFIG --- //
 #define SEED 57       // macro is ~2x faster
@@ -21,10 +22,6 @@
 #define CENTER_X_PX SCREEN_WIDTH * 8
 #define CENTER_Y_PX SCREEN_HEIGHT * 8
 // ----------------- //
-
-#define true 1
-#define false 0
-typedef uint8_t bool;
 
 extern struct Player
 {

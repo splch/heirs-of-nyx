@@ -8,13 +8,13 @@ uint8_t closest(const uint8_t value)
 {
   // 49 <= value <= 201
   if (value < 100)
-    return 2 + FONT_MEMORY; // water
+    return 4 + FONT_MEMORY; // water
   else if (value < 135)
     return 0 + FONT_MEMORY; // grass
   else if (value < 160)
-    return 4 + FONT_MEMORY; // trees
+    return 8 + FONT_MEMORY; // trees
   else
-    return 6 + FONT_MEMORY; // mountains
+    return 12 + FONT_MEMORY; // mountains
 }
 
 uint8_t terrain(uint8_t x, uint8_t y)
@@ -45,9 +45,7 @@ uint8_t generate_item(uint8_t x, uint8_t y)
 bool is_removed(const uint8_t x, const uint8_t y)
 {
   // returns true if item has been picked up at (x, y)
-  if (arr_4kb[x] == y)
-    return true;
-  return false;
+  return arr_4kb[x] == y;
 }
 
 void remove_item(const uint8_t x, const uint8_t y)
@@ -193,10 +191,16 @@ void generate_map_sides()
 
 void display_map()
 {
-  for (uint8_t i = 0; i < 2 * SCREEN_WIDTH; i++)
+  for (uint8_t x = 0; x < SCREEN_WIDTH; x++)
   {
-    set_bkg_tiles(i / 2, 0, 1, 2 * SCREEN_HEIGHT, map[i / 2]);
-    set_bkg_tiles(i / 2 + 8, 0, 1, 2 * SCREEN_HEIGHT, map[i / 2]);
+    for (uint8_t y = 0; y < SCREEN_HEIGHT; y++)
+    {
+      set_bkg_tile_xy(2 * x, 2 * y, map[x][y]);
+      set_bkg_tile_xy(2 * x, 2 * y + 1, map[x][y] + 1);
+      set_bkg_tile_xy(2 * x + 1, 2 * y, map[x][y] + 2);
+      set_bkg_tile_xy(2 * x + 1, 2 * y + 1, map[x][y] + 3);
+    }
   }
+
   wait_vbl_done(); // wait due to recursion
 }

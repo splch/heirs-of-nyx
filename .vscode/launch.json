@@ -6,8 +6,8 @@
   "configurations": [
     {
       "type": "emulicious-debugger",
-      "request": "attach",
-      "name": "Attach to Emulicious",
+      "request": "launch",
+      "name": "Launch in Emulicious",
       "emuliciousPath": "${workspaceFolder}/tools/Emulicious.jar",
       "program": "${workspaceFolder}/build/gb/Pirates Folly.gb",
       "port": 58870,
@@ -15,8 +15,8 @@
     },
     {
       "type": "emulicious-debugger",
-      "request": "launch",
-      "name": "Launch in Emulicious",
+      "request": "attach",
+      "name": "Attach to Emulicious",
       "emuliciousPath": "${workspaceFolder}/tools/Emulicious.jar",
       "program": "${workspaceFolder}/build/gb/Pirates Folly.gb",
       "port": 58870,

@@ -6,7 +6,8 @@
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/../gbdk/include/**" // TODO change to correct directory
             ],
-            "compilerPath": "${workspaceFolder}/../gbdk/bin/lcc"
+            "compilerPath": "${workspaceFolder}/../gbdk/bin/lcc",
+            "configurationProvider": "ms-vscode.makefile-tools"
         }
     ],
     "version": 4

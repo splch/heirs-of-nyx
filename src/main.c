@@ -65,7 +65,7 @@ void init()
   delay_time = clock();
 }
 
-inline void check_input()
+void check_input()
 {
   const uint8_t j = joypad();
   // delay input by SENSITIVITY
