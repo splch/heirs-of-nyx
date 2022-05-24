@@ -34,6 +34,7 @@ void show_menu()
   HIDE_SPRITES; // menu is open
   const uint8_t x = p.x[0] - START_POSITION;
   const uint8_t y = p.y[0] - START_POSITION;
+
   printf("\ngold:\t%u", p.gold);
   printf("\nmaps:\t%u", p.maps);
   printf("\nweapons:\t%d\t%d", p.weapons[0], p.weapons[1]);
@@ -44,11 +45,31 @@ void show_menu()
   printf("\n\nrandom:\t%u", prng(p.x[0], p.y[0]));
 
   printf("\n\npress start to exit");
+
   save_data();             // save data on menu press (temp)
   delay(33 * SENSITIVITY); // (100 / 6) * 2 comes from macro definition
   waitpad(0b11111111);
   display_map();
   SHOW_SPRITES; // menu is closed
+}
+
+void treasure_search()
+{
+  for (uint8_t x = 0; x < p.maps; x++)
+  {
+    for (uint8_t y = 0; y < p.maps; y++)
+    {
+      const uint8_t noise = prng(x, y);
+      if (noise == 255)
+      {
+        // 255 is the "magic number" for the treasure
+        // this is the only place where the treasure is generated
+        printf("treasure found at (%u, %u)", x, y);
+        waitpad(0b11111111);
+        return;
+      }
+    }
+  }
 }
 
 void add_inventory(uint8_t item)
@@ -59,6 +80,7 @@ void add_inventory(uint8_t item)
   {
   case 0:
     p.maps++;
+    treasure_search();
     break;
   case 8:
     p.gold++;
