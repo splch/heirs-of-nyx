@@ -1,0 +1,15 @@
+itWaveinst1: db 0,32,0,128
+itWaveinst2: db 0,32,1,128
+itWaveinst3: db 0,32,0,128
+itWaveinst4: db 0,32,3,128
+itWaveinst5: db 0,32,4,128
+itWaveinst6: db 0,32,5,128
+itWaveinst7: db 0,32,6,128
+itWaveinst8: db 0,32,7,128
+itWaveinst9: db 0,32,8,128
+itWaveinst10: db 0,32,9,128
+itWaveinst11: db 0,32,10,128
+itWaveinst12: db 0,32,11,128
+itWaveinst13: db 0,32,12,128
+itWaveinst14: db 0,32,13,128
+itWaveinst15: db 0,32,14,128
