@@ -28,16 +28,19 @@ uint8_t generate_item(uint8_t x, uint8_t y)
 {
   // return item at (x, y)
   const uint8_t _n = prng(x, y);
-  if (_n > 49 && _n < 51)
+  switch (_n)
+  {
+  case 0:
     return 4 + FONT_MEMORY; // map on water
-  else if (_n > 133 && _n < 135)
+  case 90:
     return 0 + FONT_MEMORY; // gun on grass
-  else if (_n > 158 && _n < 160)
+  case 140:
     return 8 + FONT_MEMORY; // sword in trees
-  else if (_n > 190 && _n < 201)
+  case 160:
     return 12 + FONT_MEMORY; // gold on mountains
-  else
+  default:
     return 255; // no item
+  }
 }
 
 bool is_removed(const uint8_t x, const uint8_t y)
