@@ -16,9 +16,9 @@
 #define SCREEN_WIDTH DEVICE_SCREEN_WIDTH / 2 // metatiles are 16x16
 #define SCREEN_HEIGHT DEVICE_SCREEN_HEIGHT / 2
 #define CENTER_X SCREEN_WIDTH / 2
-#define CENTER_Y SCREEN_HEIGHT / 2 + 1
-#define CENTER_X_PX SCREEN_WIDTH * 8 + 8  // 8 pixels per tile, move right 8 pixels
-#define CENTER_Y_PX SCREEN_HEIGHT * 8 + 8 // move down 8 pixels
+#define CENTER_Y SCREEN_HEIGHT / 2 + 2
+#define CENTER_X_PX SCREEN_WIDTH * 8 - 8  // 8 pixels per tile, move right 8 pixels
+#define CENTER_Y_PX SCREEN_HEIGHT * 8 + 8 // move up 8 pixels
 // ----------------- //
 
 #define bool uint8_t
