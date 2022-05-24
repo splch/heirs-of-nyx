@@ -12,6 +12,5 @@ void interact();
 void attack();
 void check_interaction(const uint8_t);
 void check_movement(const uint8_t);
-void beep();
 
 #endif
