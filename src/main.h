@@ -4,7 +4,6 @@
 #include <gbdk/platform.h>
 #include <stdio.h>
 #include <time.h>
-#include <stdbool.h>
 
 // --- CONFIG --- //
 #define SENSITIVITY 6 // CLOCKS_PER_SEC * t(s), so this is 60 * .1(s) = 6
@@ -16,11 +15,15 @@
 #define BACKGROUND_COUNT 16
 #define SCREEN_WIDTH DEVICE_SCREEN_WIDTH / 2 // metatiles are 16x16
 #define SCREEN_HEIGHT DEVICE_SCREEN_HEIGHT / 2
-#define CENTER_X SCREEN_WIDTH / 2 + 1
-#define CENTER_Y SCREEN_HEIGHT / 2 + 2
+#define CENTER_X SCREEN_WIDTH / 2
+#define CENTER_Y SCREEN_HEIGHT / 2 + 1
 #define CENTER_X_PX SCREEN_WIDTH * 8 + 8  // 8 pixels per tile, move right 8 pixels
 #define CENTER_Y_PX SCREEN_HEIGHT * 8 + 8 // move down 8 pixels
 // ----------------- //
+
+#define bool uint8_t
+#define true 1
+#define false 0
 
 extern struct Player
 {

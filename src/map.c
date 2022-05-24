@@ -46,13 +46,18 @@ uint8_t generate_item(uint8_t x, uint8_t y)
 bool is_removed(const uint8_t x, const uint8_t y)
 {
   // returns true if item has been picked up at (x, y)
-  return arr_4kb[x] == y;
+  printf("%u, %u\n", x + 1, arr_4kb[x + 1]);
+  waitpad(0b11111111);
+  return arr_4kb[x + 1] == y + 2;
 }
 
 void remove_item(const uint8_t x, const uint8_t y)
 {
   // item has been picked up at (x, y)
-  arr_4kb[x] = y;
+  printf("%u, %u\n", x + 1, y + 2);
+  delay(1000);
+  waitpad(0b11111111);
+  arr_4kb[x + 1] = y + 2;
 }
 
 void shift_array_right()

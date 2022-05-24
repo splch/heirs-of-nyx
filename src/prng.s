@@ -4,6 +4,8 @@
 
     ; opcode operand ; cycle count
 
+    .area _CODE
+
 _prng::
 
 ; x ^= (y << 7);
