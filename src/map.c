@@ -6,10 +6,9 @@ uint8_t map[SCREEN_WIDTH][SCREEN_HEIGHT];
 
 uint8_t closest(const uint8_t value)
 {
-  // 49 <= value <= 201
   if (value < 90)
     return 4 + FONT_MEMORY; // water
-  else if (value < 135)
+  else if (value < 140)
     return 0 + FONT_MEMORY; // grass
   else if (value < 160)
     return 8 + FONT_MEMORY; // trees
@@ -28,7 +27,6 @@ uint8_t terrain(uint8_t x, uint8_t y)
 uint8_t generate_item(uint8_t x, uint8_t y)
 {
   // return item at (x, y)
-  // 49 <= prng(x, y) <= 201
   const uint8_t _n = prng(x, y);
   if (_n > 49 && _n < 51)
     return 4 + FONT_MEMORY; // map on water
