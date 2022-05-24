@@ -6,14 +6,15 @@ LCCFLAGS_gb     = -Wl-yt0x1B # Set an MBC for banking (1B-ROM+MBC5+RAM+BATT)
 LCCFLAGS_gbc    = -Wl-yt0x1B -Wm-yc # Same as .gb with: -Wm-yc (gb & gbc) or Wm-yC (gbc exclusive)
 LCCFLAGS_pocket = -Wl-yt0x1B # Usually the same as required for .gb
 LCCFLAGS_duck   = -Wl-yt0x1B # Usually the same as required for .gb
-LCCFLAGS_sms    =
-LCCFLAGS_gg     =
+# LCCFLAGS_sms    =
+# LCCFLAGS_gg     =
 
 LCCFLAGS += $(LCCFLAGS_$(EXT)) # This adds the current platform specific LCC Flags
 LCCFLAGS += -Wl-j -Wm-yS -Wm-yoA -Wm-ya4 -autobank -Wb-ext=.rel -Wb-v # MBC + Autobanking related flags
-LCCFLAGS += -Wf--opt-code-speed -Wf--peep-asm -Wf--peep-return -Wf--allow-unsafe-read # Optimization flags
-# LCCFLAGS += -debug   # Uncomment to enable debug output
-# LCCFLAGS += -v     # Uncomment for lcc verbose output
+LCCFLAGS += -Wf--opt-code-speed -Wf'--max-allocs-per-node 200000' -Wf--peep-asm -Wf--peep-return -Wf--allow-unsafe-read # Optimization flags
+LCCFLAGS += -Wl-klib -Wl-l'res/hUGEDriver.lib' # hugedriver library for music
+# LCCFLAGS += -debug # Uncomment to enable debug output
+# LCCFLAGS += -v # Uncomment for lcc verbose output
 
 # You can set the name of the ROM file here
 PROJECTNAME = Pirates\ Folly
@@ -69,6 +70,6 @@ include Makefile.targets
 
 # create necessary directories after Makefile is parsed but before build
 # info prevents the command from being pasted into the makefile
-ifneq ($(strip $(EXT)),)           # Only make the directories if EXT has been set by a target
+ifneq ($(strip $(EXT)),) # Only make the directories if EXT has been set by a target
 $(info $(shell mkdir -p $(MKDIRS)))
 endif

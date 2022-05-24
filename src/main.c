@@ -1,4 +1,5 @@
 #include "main.h"
+#include "music.h"
 #include "../res/sprites.h"
 #include "../res/tiles.h"
 #include "utils.h"
@@ -43,6 +44,9 @@ void init()
   // move the sprite in the first movable sprite list (0)
   // the center of the screen
   position_sprite("player", CENTER_X_PX, CENTER_Y_PX);
+
+  // initialize audio
+  init_sound();
 
   ENABLE_RAM; // for loading save data
 

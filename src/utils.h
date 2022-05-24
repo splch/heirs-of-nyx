@@ -1,5 +1,5 @@
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef UTILS_H_INCLUDE
+#define UTILS_H_INCLUDE
 
 void load_save_data();
 void generate_map();
