@@ -2,9 +2,9 @@
 ; and 8-bit xorshift.
 ; inspired by Hugo Elias and Michael Martin.
 
-    ; opcode operand ; cycle count
+    .area _CODE ; not necessary but safer
 
-    .area _CODE
+    ; opcode operand ; cycle count
 
 _prng::
 

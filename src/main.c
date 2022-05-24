@@ -8,6 +8,7 @@
 
 void init();
 void check_input();
+void beep();
 
 void main()
 {
@@ -44,6 +45,11 @@ void init()
   // the center of the screen
   position_sprite("player", CENTER_X_PX, CENTER_Y_PX);
 
+  // prepare sound
+  NR50_REG = 0xFF;
+  NR51_REG = 0xFF;
+  NR52_REG = 0x80;
+
   ENABLE_RAM; // for loading save data
 
   // load and initialize save data
@@ -75,6 +81,8 @@ void check_input()
     check_interaction(j);
     // movement press
     check_movement(j);
+    // make sound
+    beep();
     // reset delay
     delay_time = clock();
   }
