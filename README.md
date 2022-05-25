@@ -40,7 +40,7 @@ Features:
 
 - [x] Custom tileset
   - [ ] Color palette
-- [ ] 16×16 Metasprites
+- [x] 16×16 Metasprites
 - [x] Procedurally-generated map
 - [x] Menu
 - [x] Items
