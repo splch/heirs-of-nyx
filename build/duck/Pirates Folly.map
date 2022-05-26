@@ -69,11 +69,11 @@ _CODE                  00000200    00003182 =       12674. bytes (REL,CON)
      000004E0  _generate |    000006E6  _generate |    0000076B  _generate
      000007F2  _display_ |    00000885  _init_sou |    000008B2  _smooth_n
      0000098B  _interpol |    0000099B  _interpol |    000009EB  _pirate_s
-     00000A16  _load_sav |    00000B13  _save_dat |    00000BF8  _load_spr
-     00000C3E  _position |    00000C99  _show_men |    00000DC4  _treasure
-     00000E4D  _add_inve |    00000E90  _change_i |    00000E9C  _interact
-     00000F67  _attack   |    00000F68  _check_in |    00000F8C  _get_terr
-     00000FD7  _push_pla |    00001015  _adjust_p |    00001077  _check_mo
+     00000A16  _load_spr |    00000A5C  _position |    00000AB7  _show_men
+     00000BE2  _treasure |    00000C6B  _add_inve |    00000CAE  _change_i
+     00000CBA  _interact |    00000D85  _attack   |    00000D86  _check_in
+     00000DAA  _get_terr |    00000DF5  _push_pla |    00000E33  _adjust_p
+     00000E95  _check_mo |    00000F23  _load_sav |    00001020  _save_dat
      00001105  _player_s |    00001167  _landscap |    000012BC  _phrase_l
      00002643  _wellerma |    00002658  _prng     |    0000267D  _hUGE_ini
      00002681  _hUGE_ini |    0000268C  _hUGE_mut |    00002690  _hUGE_mut
@@ -240,7 +240,7 @@ _DATA                  0000C0A0    000002EC =         748. bytes (REL,CON)
         -----  ------            -----  ------            -----  ------    
      0000C0A0  __cpu     |    0000C0A1  __is_GBA  |    0000C0A2  .mode    
      0000C0A3  .sys_time |    0000C0A3  _sys_time |    0000C0A5  .int_0x40
-     0000C0B9  _arr_4kb  |    0000C2B9  _map      |    0000C313  _p       
+     0000C0B9  _p        |    0000C0C4  _arr_4kb  |    0000C2C4  _map     
      0000C31E  _delay_ti |    0000C320  font_curr |    0000C323  font_firs
      0000C324  font_tabl |    0000C35B  _hUGE_cur |    0000C37C  .int_0x48
 ASxxxx Linker V03.00 + NoICE + sdld,  page 16.
@@ -294,8 +294,8 @@ Files Linked                              [ module(s) ]
 .obj/duck/music.rel                       [ music ]
 .obj/duck/noise.rel                       [ noise ]
 .obj/duck/pirate.rel                      [ pirate ]
+.obj/duck/player.rel                      [ player ]
 .obj/duck/save.rel                        [ save ]
-.obj/duck/utils.rel                       [ utils ]
 .obj/duck/sprites.rel                     [ sprites ]
 .obj/duck/tiles.rel                       [ tiles ]
 .obj/duck/vocab.rel                       [ vocab ]

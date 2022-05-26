@@ -1,6 +1,6 @@
 #include "main.h"
-#include "../res/vocab.h"
 #include "noise.h"
+#include "../res/vocab.h"
 
 const char *pirate_speak()
 {

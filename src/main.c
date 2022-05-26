@@ -1,11 +1,15 @@
-#include "main.h"
-#include "music.h"
-#include "../res/sprites.h"
-#include "../res/tiles.h"
-#include "utils.h"
 #include <gbdk/font.h>
 #include <gbdk/gbdecompress.h>
 #include <gbdk/metasprites.h>
+#include "main.h"
+#include "map.h"
+#include "music.h"
+#include "player.h"
+#include "save.h"
+#include "../res/sprites.h"
+#include "../res/tiles.h"
+
+struct Player p;
 
 void init();
 void check_input();

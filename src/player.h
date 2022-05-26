@@ -1,9 +1,6 @@
-#ifndef UTILS_H_INCLUDE
-#define UTILS_H_INCLUDE
+#ifndef PLAYER_H_INCLUDE
+#define PLAYER_H_INCLUDE
 
-void load_save_data();
-void generate_map();
-void display_map();
 void load_sprite(char *);
 void position_sprite(char *, uint8_t, uint8_t);
 void show_menu();

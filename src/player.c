@@ -1,14 +1,13 @@
 #include "main.h"
 #include "map.h"
-#include "save.h"
 #include "noise.h"
 #include "pirate.h"
+#include "save.h"
 #include <string.h>
 
 // necessary for recursion
 void check_movement(const uint8_t);
 
-struct Player p;
 clock_t delay_time;
 
 void load_sprite(char *name)

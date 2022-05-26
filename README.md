@@ -41,7 +41,7 @@ make gb
 
 There should now be a new `Pirates Folly.gb` file in the `build/gb/` directory.
 
-Alternatively, you can upload the ROM to an emulator site like @Juchi's [Gameboy emulator](https://juchi.github.io/gameboy.js/) and run it. To use `Emulicious.jar`, install the Java runtime (`openjdk-*-jre`) and run `java -jar Emulicious.jar`.
+Alternatively, you can upload the ROM to an emulator site like @Juchi's [GameBoy emulator](https://juchi.github.io/gameboy.js/) and run it. To use `Emulicious.jar`, install the Java runtime (`openjdk-*-jre`) and run `java -jar Emulicious.jar`.
 
 ## This game is in development
 
@@ -49,7 +49,7 @@ Features:
 
 - [x] Custom tileset
   - [ ] Color palette
-- [x] 16×16 Metasprites
+- [x] 16×16 Metatiles (sprites and backgrounds)
 - [x] Procedurally-generated map
 - [x] Menu
 - [x] Items

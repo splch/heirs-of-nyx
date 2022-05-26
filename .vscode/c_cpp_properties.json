@@ -1,14 +1,22 @@
 {
-    "configurations": [
-        {
-            "name": "*",
-            "includePath": [
-                "${workspaceFolder}/**",
-                "${workspaceFolder}/../gbdk/include/**" // TODO change to correct directory
-            ],
-            "compilerPath": "${workspaceFolder}/../gbdk/bin/lcc",
-            "configurationProvider": "ms-vscode.makefile-tools"
-        }
-    ],
-    "version": 4
+  "configurations": [
+    {
+      "name": "gameboy",
+      "includePath": [
+        "${workspaceFolder}/src/**",
+        "${workspaceFolder}/res/**",
+        "${workspaceFolder}/../gbdk/include/**"
+      ],
+      "defines": ["__PORT_gbz80", "__TARGET_gb", "__SDCC", "NINTENDO"],
+      "compilerPath": "${workspaceFolder}/../gbdk/bin/lcc",
+      "cStandard": "c11",
+      "intelliSenseMode": "${default}",
+      "compilerArgs": [],
+      "browse": {
+        "limitSymbolsToIncludedHeaders": true
+      },
+      "configurationProvider": "ms-vscode.makefile-tools"
+    }
+  ],
+  "version": 4
 }

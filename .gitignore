@@ -11,3 +11,5 @@ build/*/*.sym
 tools/cheats/
 tools/lib/
 tools/projects/
+
+.vscode/settings.json
