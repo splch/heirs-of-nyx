@@ -4,7 +4,7 @@
 
     .area _CODE ; not necessary but safer
 
-    ; opcode operand ; cycle count
+    ; operation operand ; cycle count
 
 _prng::
 
