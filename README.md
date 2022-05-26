@@ -13,6 +13,15 @@ Travel through procedural lands, across plains, through forests, over mountains,
 3. `tools/` stores various development tools:
   - [tile designer](https://github.com/gbdk-2020/GBTD_GBMB/releases/) to edit the `res/*.gbr` files
   - [emulicious](https://emulicious.net/) to run the gameboy rom.
+  - [hUGETracker]() to edit `res/wellerman.uge`
+  - [romusage]() to view the gameboy rom space `./romusage game.map -gA`
+
+```shell
+Bank           Range             Size   Used   Used%  Free   Free% 
+----------     ----------------  -----  -----  -----  -----  -----
+ROM            0x0000 -> 0x3FFF  16384  15449    94%    935     5% |░██████████████████████████_|
+WRAM           0xC000 -> 0xCFFF   4096    791    19%   3305    80% |_▓████▒_____________________|
+```
 
 4. `build/` has the most recent ROMS for different systems
 
