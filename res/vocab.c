@@ -5,9 +5,8 @@ const char *phrases[] = {
     "A pirate plunders the high seas. A pie-rat plunders the pantry.",
     "We set sail on the high seas at the kraken of dawn.",
     "Watch out for pirate ships; they're assailing vessels.",
-    "You can abso-loot-ly trust me with the treasure map."};
-
-const char *jokes[] = {
+    "You can abso-loot-ly trust me with the treasure map.",
+    // jokes
     "What's it called when two pirates draw? A stale-matey!",
     "Why did the pirate go to rehab? Because he got hooked!",
     "Why did the pirate quit his plundering ways? He was a pegleg in a square hole.",
@@ -18,3 +17,5 @@ const char *jokes[] = {
     "Do pirates like to fight? Sword of...",
     "What grades do future pirates strive for in school? High C's!",
     "Why do pirates drink to excess? Pier pressure."};
+
+const int phrase_len = sizeof(phrases) / sizeof(phrases[0]);

@@ -2,7 +2,7 @@
 #include "map.h"
 #include "save.h"
 #include "noise.h"
-#include "../res/vocab.h"
+#include "pirate.h"
 #include <string.h>
 
 // necessary for recursion
@@ -53,10 +53,11 @@ void show_menu()
   printf("\n\nposition:\t(%u, %u)", x, y);
   printf("\nsteps:\t%u", p.steps);
 
-  uint8_t rnd = prng(p.x[0], p.y[0]);
-  printf("\n\nrandom:\t%u\n", rnd);
-  const char *str = rnd % 2 ? phrases[rnd % 7] : jokes[rnd % 10];
-  printf(str);
+  printf("\n\nrandom:\t%u\n\n", prng(p.x[0], p.y[0]));
+
+  printf(pirate_speak());
+
+  printf("\n\npress any key to continue...");
 
   save_data();             // save data on menu press (temp)
   delay(33 * SENSITIVITY); // (100 / 6) * 2 comes from macro definition

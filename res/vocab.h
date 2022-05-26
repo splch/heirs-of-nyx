@@ -2,6 +2,6 @@
 #define VOCAB_H_INCLUDE
 
 extern const char *phrases[];
-extern const char *jokes[];
+extern const int phrase_len;
 
 #endif
