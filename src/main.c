@@ -40,10 +40,12 @@ void init()
 
   // set first movable sprite (0) to be first tile in sprite memory (0)
   load_sprite("player");
+  load_sprite("cat");
 
   // move the sprite in the first movable sprite list (0)
   // the center of the screen
   position_sprite("player", CENTER_X_PX, CENTER_Y_PX);
+  position_sprite("cat", CENTER_X_PX + 16, CENTER_Y_PX + 16);
 
   // initialize audio
   init_sound();

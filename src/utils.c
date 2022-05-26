@@ -17,6 +17,11 @@ void load_sprite(char *name)
     set_sprite_tile(0, 0);
     set_sprite_tile(1, 2);
   }
+  else if (strcmp(name, "cat") == 0)
+  {
+    set_sprite_tile(2, 5);
+    set_sprite_tile(3, 7);
+  }
 }
 
 void position_sprite(char *name, uint8_t x, uint8_t y)
@@ -25,6 +30,11 @@ void position_sprite(char *name, uint8_t x, uint8_t y)
   {
     move_sprite(0, x, y);
     move_sprite(1, x + 8, y);
+  }
+  if (strcmp(name, "cat") == 0)
+  {
+    move_sprite(2, x, y);
+    move_sprite(3, x + 8, y);
   }
 }
 
