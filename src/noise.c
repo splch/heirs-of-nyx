@@ -1,7 +1,7 @@
 #include "main.h"
 #include "noise.h"
 
-static uint8_t smooth_noise(uint8_t x, uint8_t y)
+static inline uint8_t smooth_noise(uint8_t x, uint8_t y)
 {
   // gets average noise at (x, y)
   const uint8_t corners = (prng(x - 1, y - 1) + prng(x + 1, y - 1) +
@@ -14,7 +14,7 @@ static uint8_t smooth_noise(uint8_t x, uint8_t y)
   return corners + sides + center;        // average noise at center
 }
 
-static uint8_t interpolate(uint8_t v1, uint8_t v2)
+static inline uint8_t interpolate(uint8_t v1, uint8_t v2)
 {
   // linear interpolation is avg of v1 and v2
   return (v1 + v2) >> 1; // divide by 2

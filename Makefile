@@ -12,6 +12,7 @@ LCCFLAGS_duck   = -Wl-yt0x03 # Usually the same as required for .gb
 # LCCFLAGS_gg     =
 
 LCCFLAGS += $(LCCFLAGS_$(EXT)) # This adds the current platform specific LCC Flags
+LCCFLAGS += -Wm-yn"Pirates Folly"
 LCCFLAGS += -Wm-yo2 # simple 32KB (2 x 16KB ROM banks) game
 LCCFLAGS += -Wm-ya1 # 1 RAM bank for saving
 LCCFLAGS += -Wf--opt-code-speed -Wf'--max-allocs-per-node 200000' # Optimization flags

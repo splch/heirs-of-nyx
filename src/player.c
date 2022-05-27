@@ -65,7 +65,7 @@ void show_menu()
   SHOW_SPRITES; // menu is closed
 }
 
-static void treasure_search()
+static inline void treasure_search()
 {
   for (uint8_t x = 0; x < p.maps; x++)
   {
@@ -84,7 +84,7 @@ static void treasure_search()
   }
 }
 
-static void add_inventory(uint8_t item)
+static inline void add_inventory(uint8_t item)
 {
   // fill primary or replace secondary
   item -= BACKGROUND_COUNT;
@@ -164,7 +164,7 @@ void check_interaction(const uint8_t j)
     attack();
 }
 
-static void push_player()
+static inline void push_player()
 {
   const uint8_t current_terrain = get_terrain('n');
   const uint8_t down_terrain = get_terrain('d');
