@@ -21,7 +21,7 @@ _prng::
     ld (hl), a         ; 2 cycles: hl = a
     swap a             ; 2 cycles: 
     rrca               ; 1 cycle: a = a >> 1
-    and a, #0x07       ; 2 cycles: a = a & 7
+    and a, #7          ; 2 cycles: a = a & 7
     xor a, (hl)        ; 2 cycles: a = a ^ hl
 
 ; y ^= (x << 3);

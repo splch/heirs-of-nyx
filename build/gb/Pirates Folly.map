@@ -79,16 +79,11 @@ _CODE                  00000200    00003182 =       12674. bytes (REL,CON)
         Value  Global            Value  Global            Value  Global    
         -----  ------            -----  ------            -----  ------    
      00000200  _main     |    0000020B  _init     |    000002FC  _check_in
-     0000032D  _closest  |    0000034E  _terrain  |    00000360  _generate
-     0000038B  _is_remov |    000003B1  _remove_i |    000003CA  _shift_ar
-     00000423  _shift_ar |    0000047D  _shift_ar |    000004AF  _shift_ar
-     000004E0  _generate |    000006E6  _generate |    0000076B  _generate
-     000007F2  _display_ |    00000885  _init_sou |    000008B2  _smooth_n
-     0000098B  _interpol |    0000099B  _interpol |    000009EB  _pirate_s
-     00000A16  _load_spr |    00000A5C  _position |    00000AB7  _show_men
-     00000BE2  _treasure |    00000C6B  _add_inve |    00000CAE  _change_i
-     00000CBA  _interact |    00000D85  _attack   |    00000D86  _check_in
-     00000DAA  _get_terr |    00000DF5  _push_pla |    00000E33  _adjust_p
+     00000360  _get_terr |    000003FC  _remove_i |    00000731  _generate
+     000007B6  _generate |    0000083D  _display_ |    000008D0  _init_sou
+     000009E6  _interpol |    00000A36  _pirate_s |    00000A61  _load_spr
+     00000AA7  _position |    00000B02  _show_men |    00000CF9  _change_i
+     00000D05  _interact |    00000DD0  _attack   |    00000DD1  _check_in
      00000E95  _check_mo |    00000F23  _load_sav |    00001020  _save_dat
      00001105  _player_s |    00001167  _landscap |    000012BC  _phrase_l
      00002643  _wellerma |    00002658  _prng     |    0000267D  _hUGE_ini
@@ -395,18 +390,18 @@ Files Linked                              [ module(s) ]
 
 /home/spence/GitHub/gbdk/lib/small/asxxxx/gb/crt0.o
                                           [ Runtime ]
-.obj/gb/main.rel                          [ main ]
-.obj/gb/map.rel                           [ map ]
-.obj/gb/music.rel                         [ music ]
-.obj/gb/noise.rel                         [ noise ]
-.obj/gb/pirate.rel                        [ pirate ]
-.obj/gb/player.rel                        [ player ]
-.obj/gb/save.rel                          [ save ]
-.obj/gb/sprites.rel                       [ sprites ]
-.obj/gb/tiles.rel                         [ tiles ]
-.obj/gb/vocab.rel                         [ vocab ]
-.obj/gb/wellerman.rel                     [ wellerman ]
-.obj/gb/prng.rel                          [  ]
+.obj/gb/main.o                            [ main ]
+.obj/gb/map.o                             [ map ]
+.obj/gb/music.o                           [ music ]
+.obj/gb/noise.o                           [ noise ]
+.obj/gb/pirate.o                          [ pirate ]
+.obj/gb/player.o                          [ player ]
+.obj/gb/save.o                            [ save ]
+.obj/gb/sprites.o                         [ sprites ]
+.obj/gb/tiles.o                           [ tiles ]
+.obj/gb/vocab.o                           [ vocab ]
+.obj/gb/wellerman.o                       [ wellerman ]
+.obj/gb/prng.o                            [  ]
 
 
 Libraries Linked                          [ object file ]

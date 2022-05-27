@@ -65,7 +65,7 @@ void show_menu()
   SHOW_SPRITES; // menu is closed
 }
 
-void treasure_search()
+static void treasure_search()
 {
   for (uint8_t x = 0; x < p.maps; x++)
   {
@@ -84,7 +84,7 @@ void treasure_search()
   }
 }
 
-void add_inventory(uint8_t item)
+static void add_inventory(uint8_t item)
 {
   // fill primary or replace secondary
   item -= BACKGROUND_COUNT;
@@ -164,27 +164,7 @@ void check_interaction(const uint8_t j)
     attack();
 }
 
-uint8_t get_terrain(const int8_t direction)
-{
-  // n - none, r - right, l - left, u - up, d - down
-  switch (direction)
-  {
-  // these "magic numbers" are from `interact()`
-  case 'n':
-    return map[CENTER_X - 1][CENTER_Y - 2] - FONT_MEMORY;
-  case 'r':
-    return map[CENTER_X][CENTER_Y - 2] - FONT_MEMORY;
-  case 'l':
-    return map[CENTER_X - 2][CENTER_Y - 2] - FONT_MEMORY;
-  case 'u':
-    return map[CENTER_X - 1][CENTER_Y - 3] - FONT_MEMORY;
-  case 'd':
-    return map[CENTER_X - 1][CENTER_Y - 1] - FONT_MEMORY;
-  }
-  return 255;
-}
-
-void push_player()
+static void push_player()
 {
   const uint8_t current_terrain = get_terrain('n');
   const uint8_t down_terrain = get_terrain('d');
@@ -196,7 +176,7 @@ void push_player()
     check_movement(prng(p.x[0], p.y[0]) % 2 + 0b00001001);
 }
 
-void adjust_position(const uint8_t terrain_type, const uint8_t old_x,
+static void adjust_position(const uint8_t terrain_type, const uint8_t old_x,
                      const uint8_t old_y)
 {
   switch (terrain_type)
