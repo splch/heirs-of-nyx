@@ -60,6 +60,7 @@ void show_menu()
 
   save_data();             // save data on menu press (temp)
   delay(33 * SENSITIVITY); // (100 / 6) * 2 comes from macro definition
+  wait_vbl_done(); // put system in low power mode
   waitpad(0b11111111);
   display_map();
   SHOW_SPRITES; // menu is closed
