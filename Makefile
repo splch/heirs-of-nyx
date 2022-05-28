@@ -1,21 +1,19 @@
 LCC=$(GBDK_HOME)/bin/lcc
 
-TARGETS=gb gbc pocket megaduck # sms gg
+TARGETS=gb gbc pocket megaduck
 
 # https://gbdk-2020.github.io/gbdk-2020/docs/api/docs_toolchain_settings.html
-LCCFLAGS_gb     = -Wl-yt0x03 -Wm-yc -Wm-ys -Wm-yj # Set an MBC for banking (1B-ROM+MBC5+RAM+BATT)
+LCCFLAGS_gb     = -Wl-yt0x03 -Wm-yc -Wm-ys -Wm-yj # Set an MBC for banking
 LCCFLAGS_gbc    = -Wl-yt0x03 -Wm-yc -Wm-ys -Wm-yj # Same as .gb with: -Wm-yc (gb & gbc) or Wm-yC (gbc exclusive)
 LCCFLAGS_pocket = -Wl-yt0x03 # Usually the same as required for .gb
 LCCFLAGS_duck   = -Wl-yt0x03 # Usually the same as required for .gb
-# LCCFLAGS_sms    =
-# LCCFLAGS_gg     =
 
 LCCFLAGS += $(LCCFLAGS_$(EXT)) # This adds the current platform specific LCC Flags
 LCCFLAGS += -Wm-yn"PIRATEFOLLY"
 LCCFLAGS += -Wm-yo2 # simple 32KB (2 x 16KB ROM banks) game
 LCCFLAGS += -Wm-ya1 # 1 RAM bank for saving
 LCCFLAGS += -Wf--opt-code-speed -Wf--max-allocs-per-node200000 # Optimization flags
-LCCFLAGS += -Wl-l'res/hUGEDriver.lib' # hugedriver library for music
+LCCFLAGS += -Wl-l"res/hUGEDriver.lib" # hugedriver library for music
 
 # Debugging flags
 LCCFLAGS += -Wl-j # Creates .map files
@@ -36,9 +34,6 @@ BINS       = $(OBJDIR)/$(PROJECTNAME).$(EXT)
 CSOURCES   = $(foreach dir,$(SRCDIR),$(notdir $(wildcard $(dir)/*.c))) $(foreach dir,$(RESDIR),$(notdir $(wildcard $(dir)/*.c)))
 ASMSOURCES = $(foreach dir,$(SRCDIR),$(notdir $(wildcard $(dir)/*.s)))
 OBJS       = $(CSOURCES:%.c=$(OBJDIR)/%.o) $(ASMSOURCES:%.s=$(OBJDIR)/%.o)
-
-# GB      = sameboy
-# GBFLAGS = --nogl
 
 # Builds all targets sequentially
 all: $(TARGETS)

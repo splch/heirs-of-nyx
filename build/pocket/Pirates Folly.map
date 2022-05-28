@@ -30,10 +30,10 @@ Area                       Addr        Size        Decimal Bytes (Attributes)
      0000002B  l__INITIA |    0000002B  l__INITIA |    00000030  l__HEADER
      0000004E  l__HEADER |    00000082  l__HEADER |    00000200  s__CODE  
      000002EC  l__DATA   |    00000A1D  l__HOME   |    00002000  _rROMB0  
-     00003000  _rROMB1   |    0000399A  l__CODE   |    00003B9A  s__HOME  
-     00004000  _rRAMB    |    000045B7  s__BASE   |    000045B7  s__CODE_0
-     000045B7  s__INITIA |    000045B7  s__LIT    |    000045E2  s__GSINIT
-     000045EE  s__GSFINA |    00008000  __VRAM    |    00008000  __VRAM800
+     00002E92  l__CODE   |    00003000  _rROMB1   |    00003092  s__HOME  
+     00003AAF  s__BASE   |    00003AAF  s__CODE_0 |    00003AAF  s__INITIA
+     00003AAF  s__LIT    |    00003ADA  s__GSINIT |    00003AE6  s__GSFINA
+     00004000  _rRAMB    |    00008000  __VRAM    |    00008000  __VRAM800
      00008800  __VRAM880 |    00009000  __VRAM900 |    00009800  __SCRN0  
      00009C00  __SCRN1   |    0000A000  __SRAM    |    0000C000  __RAM    
      0000C000  _shadow_O |    0000C0A0  s__DATA   |    0000C38C  s__BSS   
@@ -74,7 +74,7 @@ Hexadecimal  [32-Bits]
 
 Area                       Addr        Size        Decimal Bytes (Attributes)
 --------------------       ----        ----        ------- ----- ------------
-_CODE                  00000200    0000399A =       14746. bytes (REL,CON)
+_CODE                  00000200    00002E92 =       11922. bytes (REL,CON)
 
         Value  Global            Value  Global            Value  Global    
         -----  ------            -----  ------            -----  ------    
@@ -86,16 +86,16 @@ _CODE                  00000200    0000399A =       14746. bytes (REL,CON)
      0000141B  _interact |    000015AD  _attack   |    000015AE  _check_in
      000016AD  _check_mo |    0000173B  _load_sav |    00001838  _save_dat
      0000191D  _player_s |    0000197F  _landscap |    00001AD4  _phrase_l
-     00002E5B  _wellerma |    00002E70  _prng     |    00002E95  _hUGE_ini
-     00002E99  _hUGE_ini |    00002EA4  _hUGE_mut |    00002EA8  _hUGE_mut
-     00002EB5  hUGE_mute |    00002ECF  _hUGE_set |    00002ED3  _hUGE_set
-     00002EDC  hUGE_init |    00003157  hUGE_set_ |    00003300  _hUGE_dos
-     00003300  _hUGE_dos |    00003614  _set_vram |    00003623  _set_win_
-     0000362B  _set_bkg_ |    00003655  _printf   |    0000366E  _gb_decom
-     00003677  gb_decomp |    000036D4  _cgb_comp |    000036D4  _set_defa
-     000036ED  _set_spri |    000036F2  _set_bkg_ |    000036F5  .set_pale
-     00003714  _set_spri |    00003719  _set_bkg_ |    0000371C  .set_pale
-     000037E2  ___printf |    00003B79  _sprintf 
+     00002353  _wellerma |    00002368  _prng     |    0000238D  _hUGE_ini
+     00002391  _hUGE_ini |    0000239C  _hUGE_mut |    000023A0  _hUGE_mut
+     000023AD  hUGE_mute |    000023C7  _hUGE_set |    000023CB  _hUGE_set
+     000023D4  hUGE_init |    0000264F  hUGE_set_ |    000027F8  _hUGE_dos
+     000027F8  _hUGE_dos |    00002B0C  _set_vram |    00002B1B  _set_win_
+     00002B23  _set_bkg_ |    00002B4D  _printf   |    00002B66  _gb_decom
+     00002B6F  gb_decomp |    00002BCC  _cgb_comp |    00002BCC  _set_defa
+     00002BE5  _set_spri |    00002BEA  _set_bkg_ |    00002BED  .set_pale
+     00002C0C  _set_spri |    00002C11  _set_bkg_ |    00002C14  .set_pale
+     00002CDA  ___printf |    00003071  _sprintf 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 4.
 Hexadecimal  [32-Bits]
 
@@ -270,44 +270,44 @@ Hexadecimal  [32-Bits]
 
 Area                       Addr        Size        Decimal Bytes (Attributes)
 --------------------       ----        ----        ------- ----- ------------
-_HOME                  00003B9A    00000A1D =        2589. bytes (REL,CON)
+_HOME                  00003092    00000A1D =        2589. bytes (REL,CON)
 
         Value  Global            Value  Global            Value  Global    
         -----  ------            -----  ------            -----  ------    
-     00003B9A  .memset_s |    00003BA3  .memcpy_s |    00003BC0  .remove_V
-     00003BC3  .remove_i |    00003BE0  .add_VBL  |    00003BE3  .add_int 
-     00003BEE  .wait_vbl |    00003BEE  _wait_vbl |    00003BFE  .display_
-     00003BFE  _display_ |    00003C16  _remove_V |    00003C21  _add_VBL 
-     00003C2C  _font_loa |    00003C33  font_load |    00003C7B  font_copy
-     00003CB1  font_set  |    00003CBE  .put_char |    00003CD6  .out_char
-     00003CDC  .del_char |    00003D32  _putchar  |    00003D3B  _setchar 
-     00003D44  _font_loa |    00003D52  _font_set |    00003D61  _font_ini
-     00003D80  .cls      |    00003D80  _cls      |    00003DA2  _gotoxy  
-     00003DAD  _posx     |    00003DBE  _posy     |    00003DE6  .cr_curs 
-     00003DFB  .adv_curs |    00003E57  .tmode    |    00003E80  .tmode_ou
-     00003E89  _set_bkg_ |    00003E89  _set_win_ |    00003E91  _set_spri
-     00003EE9  .padup    |    00003EE9  _waitpadu |    00003EF9  .jpad    
-     00003EF9  _joypad   |    00003F21  _waitpad  |    00003F24  .wait_pad
-     00003F2B  _set_tile |    00003F30  _set_bkg_ |    00003F30  _set_win_
-     00003F38  _set_spri |    00003F68  _color    |    00003F68  _set_1bpp
-     00003F77  _clock    |    00003F80  .drawing_ |    00003F8B  .drawing_
-     00003FC7  _add_LCD  |    00003FD2  .add_LCD  |    00003FD8  _remove_L
-     00003FE3  .remove_L |    00003FE9  _font_ibm |    0000439B  _delay   
-     000043A0  .delay    |    000043CC  _strcmp   |    000043E9  __divsuch
-     000043F6  __modsuch |    00004400  __divusch |    00004412  __modusch
-     00004422  __divscha |    0000442E  __modscha |    00004438  __divsint
-     00004449  __modsint |    00004458  __divucha |    00004464  __moducha
-     0000446E  __divuint |    0000447F  __moduint |    0000448E  .div8    
-     0000448E  .mod8     |    00004496  .div16    |    00004496  .mod16   
-     000044CC  .divu8    |    000044CC  .modu8    |    000044CF  .divu16  
-     000044CF  .modu16   |    00004510  _uitoa    |    0000451F  _itoa    
-     0000452E  .itoa     |    00004542  .utoa     |    000045B6  ___sdcc_c
+     00003092  .memset_s |    0000309B  .memcpy_s |    000030B8  .remove_V
+     000030BB  .remove_i |    000030D8  .add_VBL  |    000030DB  .add_int 
+     000030E6  .wait_vbl |    000030E6  _wait_vbl |    000030F6  .display_
+     000030F6  _display_ |    0000310E  _remove_V |    00003119  _add_VBL 
+     00003124  _font_loa |    0000312B  font_load |    00003173  font_copy
+     000031A9  font_set  |    000031B6  .put_char |    000031CE  .out_char
+     000031D4  .del_char |    0000322A  _putchar  |    00003233  _setchar 
+     0000323C  _font_loa |    0000324A  _font_set |    00003259  _font_ini
+     00003278  .cls      |    00003278  _cls      |    0000329A  _gotoxy  
+     000032A5  _posx     |    000032B6  _posy     |    000032DE  .cr_curs 
+     000032F3  .adv_curs |    0000334F  .tmode    |    00003378  .tmode_ou
+     00003381  _set_bkg_ |    00003381  _set_win_ |    00003389  _set_spri
+     000033E1  .padup    |    000033E1  _waitpadu |    000033F1  .jpad    
+     000033F1  _joypad   |    00003419  _waitpad  |    0000341C  .wait_pad
+     00003423  _set_tile |    00003428  _set_bkg_ |    00003428  _set_win_
+     00003430  _set_spri |    00003460  _color    |    00003460  _set_1bpp
+     0000346F  _clock    |    00003478  .drawing_ |    00003483  .drawing_
+     000034BF  _add_LCD  |    000034CA  .add_LCD  |    000034D0  _remove_L
+     000034DB  .remove_L |    000034E1  _font_ibm |    00003893  _delay   
+     00003898  .delay    |    000038C4  _strcmp   |    000038E1  __divsuch
+     000038EE  __modsuch |    000038F8  __divusch |    0000390A  __modusch
+     0000391A  __divscha |    00003926  __modscha |    00003930  __divsint
+     00003941  __modsint |    00003950  __divucha |    0000395C  __moducha
+     00003966  __divuint |    00003977  __moduint |    00003986  .div8    
+     00003986  .mod8     |    0000398E  .div16    |    0000398E  .mod16   
+     000039C4  .divu8    |    000039C4  .modu8    |    000039C7  .divu16  
+     000039C7  .modu16   |    00003A08  _uitoa    |    00003A17  _itoa    
+     00003A26  .itoa     |    00003A3A  .utoa     |    00003AAE  ___sdcc_c
 ASxxxx Linker V03.00 + NoICE + sdld,  page 23.
 Hexadecimal  [32-Bits]
 
 Area                       Addr        Size        Decimal Bytes (Attributes)
 --------------------       ----        ----        ------- ----- ------------
-_INITIALIZER           000045B7    0000002B =          43. bytes (REL,CON)
+_INITIALIZER           00003AAF    0000002B =          43. bytes (REL,CON)
 
         Value  Global            Value  Global            Value  Global    
         -----  ------            -----  ------            -----  ------    
@@ -316,17 +316,17 @@ Hexadecimal  [32-Bits]
 
 Area                       Addr        Size        Decimal Bytes (Attributes)
 --------------------       ----        ----        ------- ----- ------------
-_GSINIT                000045E2    0000000C =          12. bytes (REL,CON)
+_GSINIT                00003ADA    0000000C =          12. bytes (REL,CON)
 
         Value  Global            Value  Global            Value  Global    
         -----  ------            -----  ------            -----  ------    
-     000045E2  gsinit   
+     00003ADA  gsinit   
 ASxxxx Linker V03.00 + NoICE + sdld,  page 25.
 Hexadecimal  [32-Bits]
 
 Area                       Addr        Size        Decimal Bytes (Attributes)
 --------------------       ----        ----        ------- ----- ------------
-_GSFINAL               000045EE    00000001 =           1. bytes (REL,CON)
+_GSFINAL               00003AE6    00000001 =           1. bytes (REL,CON)
 
         Value  Global            Value  Global            Value  Global    
         -----  ------            -----  ------            -----  ------    
@@ -388,7 +388,7 @@ _HEADER_LCD0           00000000    00000003 =           3. bytes (ABS,CON)
 
 Files Linked                              [ module(s) ]
 
-/home/spence/GitHub/gbdk/lib/small/asxxxx/ap/crt0.o
+/home/spence/GitHub/gbdk//lib/small/asxxxx/ap/crt0.o
                                           [ Runtime ]
 .obj/pocket/main.o                        [ main ]
 .obj/pocket/map.o                         [ map ]
@@ -406,48 +406,48 @@ Files Linked                              [ module(s) ]
 
 Libraries Linked                          [ object file ]
 
-/home/spence/GitHub/gbdk/lib/small/asxxxx/ap/ap.lib
+/home/spence/GitHub/gbdk//lib/small/asxxxx/ap/ap.lib
                                           [ font.o ]
 res/hUGEDriver.lib                        [ hUGEDriver.obj.o ]
-/home/spence/GitHub/gbdk/lib/small/asxxxx/ap/ap.lib
+/home/spence/GitHub/gbdk//lib/small/asxxxx/ap/ap.lib
                                           [ sfr.o ]
-/home/spence/GitHub/gbdk/lib/small/asxxxx/ap/ap.lib
+/home/spence/GitHub/gbdk//lib/small/asxxxx/ap/ap.lib
                                           [ set_1bit_data.o ]
-/home/spence/GitHub/gbdk/lib/small/asxxxx/ap/ap.lib
+/home/spence/GitHub/gbdk//lib/small/asxxxx/ap/ap.lib
                                           [ pad.o ]
-/home/spence/GitHub/gbdk/lib/small/asxxxx/ap/ap.lib
+/home/spence/GitHub/gbdk//lib/small/asxxxx/ap/ap.lib
                                           [ set_data.o ]
-/home/spence/GitHub/gbdk/lib/small/asxxxx/ap/ap.lib
+/home/spence/GitHub/gbdk//lib/small/asxxxx/ap/ap.lib
                                           [ set_tile.o ]
-/home/spence/GitHub/gbdk/lib/small/asxxxx/ap/ap.lib
+/home/spence/GitHub/gbdk//lib/small/asxxxx/ap/ap.lib
                                           [ color.o ]
-/home/spence/GitHub/gbdk/lib/small/asxxxx/ap/ap.lib
+/home/spence/GitHub/gbdk//lib/small/asxxxx/ap/ap.lib
                                           [ clock.o ]
-/home/spence/GitHub/gbdk/lib/small/asxxxx/ap/ap.lib
+/home/spence/GitHub/gbdk//lib/small/asxxxx/ap/ap.lib
                                           [ drawing_isr.o ]
-/home/spence/GitHub/gbdk/lib/small/asxxxx/ap/ap.lib
+/home/spence/GitHub/gbdk//lib/small/asxxxx/ap/ap.lib
                                           [ lcd.o ]
-/home/spence/GitHub/gbdk/lib/small/asxxxx/ap/ap.lib
+/home/spence/GitHub/gbdk//lib/small/asxxxx/ap/ap.lib
                                           [ f_ibm_sh.o ]
-/home/spence/GitHub/gbdk/lib/small/asxxxx/ap/ap.lib
+/home/spence/GitHub/gbdk//lib/small/asxxxx/ap/ap.lib
                                           [ delay.o ]
-/home/spence/GitHub/gbdk/lib/small/asxxxx/gbz80/gbz80.lib
+/home/spence/GitHub/gbdk//lib/small/asxxxx/gbz80/gbz80.lib
                                           [ printf.o ]
-/home/spence/GitHub/gbdk/lib/small/asxxxx/gbz80/gbz80.lib
+/home/spence/GitHub/gbdk//lib/small/asxxxx/gbz80/gbz80.lib
                                           [ _strcmp.o ]
-/home/spence/GitHub/gbdk/lib/small/asxxxx/gbz80/gbz80.lib
+/home/spence/GitHub/gbdk//lib/small/asxxxx/gbz80/gbz80.lib
                                           [ div.o ]
-/home/spence/GitHub/gbdk/lib/small/asxxxx/ap/ap.lib
+/home/spence/GitHub/gbdk//lib/small/asxxxx/ap/ap.lib
                                           [ gb_decompress.o ]
-/home/spence/GitHub/gbdk/lib/small/asxxxx/ap/ap.lib
+/home/spence/GitHub/gbdk//lib/small/asxxxx/ap/ap.lib
                                           [ cgb_compat.o ]
-/home/spence/GitHub/gbdk/lib/small/asxxxx/ap/ap.lib
+/home/spence/GitHub/gbdk//lib/small/asxxxx/ap/ap.lib
                                           [ cgb_palettes.o ]
-/home/spence/GitHub/gbdk/lib/small/asxxxx/gbz80/gbz80.lib
+/home/spence/GitHub/gbdk//lib/small/asxxxx/gbz80/gbz80.lib
                                           [ sprintf.o ]
-/home/spence/GitHub/gbdk/lib/small/asxxxx/gbz80/gbz80.lib
+/home/spence/GitHub/gbdk//lib/small/asxxxx/gbz80/gbz80.lib
                                           [ itoa.o ]
-/home/spence/GitHub/gbdk/lib/small/asxxxx/gbz80/gbz80.lib
+/home/spence/GitHub/gbdk//lib/small/asxxxx/gbz80/gbz80.lib
                                           [ __sdcc_call_hl.o ]
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 32.
