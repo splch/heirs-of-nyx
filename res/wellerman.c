@@ -1,11 +1,11 @@
 #include "hUGEDriver.h"
 #include <stddef.h>
 
-static const unsigned char order_cnt = 6;
+static const unsigned char order_cnt = 10;
 
 static const unsigned char P0[] = {
-    DN(As3,1,0x000),
     DN(___,1,0x000),
+    DN(As3,1,0x000),
     DN(___,1,0x000),
     DN(___,1,0x000),
     DN(___,1,0x000),
@@ -399,7 +399,7 @@ static const unsigned char P5[] = {
     DN(___,0,0x000),
     DN(___,0,0x000),
 };
-static const unsigned char P8[] = {
+static const unsigned char P7[] = {
     DN(___,0,0x000),
     DN(___,0,0x000),
     DN(___,0,0x000),
@@ -424,52 +424,52 @@ static const unsigned char P8[] = {
     DN(Gs4,1,0x000),
     DN(___,1,0x000),
     DN(F_4,1,0x000),
-    DN(F_4,1,0x000),
+    DN(___,0,0x000),
     DN(F_4,1,0x000),
     DN(___,1,0x000),
     DN(F_4,1,0x000),
     DN(G_4,1,0x000),
-    DN(Gs4,1,0x000),
-    DN(C_5,1,0x000),
+    DN(Gs4,0,0x000),
+    DN(___,0,0x000),
+    DN(G_4,0,0x000),
+    DN(___,0,0x000),
+    DN(G_4,0,0x000),
+    DN(___,0,0x000),
+    DN(___,0,0x000),
+    DN(___,0,0x000),
+    DN(C_4,1,0x000),
+    DN(___,0,0x000),
+    DN(C_4,1,0x000),
+    DN(___,0,0x000),
+    DN(C_4,1,0x000),
+    DN(___,0,0x000),
+    DN(Ds4,1,0x000),
+    DN(___,0,0x000),
+    DN(G_4,1,0x000),
+    DN(___,0,0x000),
+    DN(G_4,1,0x000),
+    DN(___,0,0x000),
+    DN(G_4,1,0x000),
+    DN(___,0,0x000),
+    DN(G_4,1,0x000),
+    DN(___,0,0x000),
     DN(G_4,1,0x000),
     DN(___,1,0x000),
-    DN(G_4,1,0x000),
+    DN(F_4,1,0x000),
     DN(___,0,0x000),
+    DN(Ds4,1,0x000),
+    DN(___,1,0x000),
+    DN(D_4,1,0x000),
     DN(___,0,0x000),
-    DN(___,0,0x000),
-    DN(___,0,0x000),
-    DN(___,0,0x000),
-    DN(___,0,0x000),
-    DN(___,0,0x000),
-    DN(___,0,0x000),
-    DN(___,0,0x000),
-    DN(___,0,0x000),
-    DN(___,0,0x000),
-    DN(___,0,0x000),
-    DN(___,0,0x000),
-    DN(___,0,0x000),
-    DN(___,0,0x000),
-    DN(___,0,0x000),
-    DN(___,0,0x000),
-    DN(___,0,0x000),
-    DN(___,0,0x000),
-    DN(___,0,0x000),
-    DN(___,0,0x000),
-    DN(___,0,0x000),
-    DN(___,0,0x000),
-    DN(___,0,0x000),
-    DN(___,0,0x000),
-    DN(___,0,0x000),
-    DN(___,0,0x000),
-    DN(___,0,0x000),
+    DN(C_4,1,0x000),
     DN(___,0,0x000),
     DN(___,0,0x000),
 };
 
-static const unsigned char* const order1[] = {P0,P4,P8};
-static const unsigned char* const order2[] = {P1,P5,P5};
-static const unsigned char* const order3[] = {P2,P5,P5};
-static const unsigned char* const order4[] = {P3,P3,P3};
+static const unsigned char* const order1[] = {P0,P4,P7,P4,P4};
+static const unsigned char* const order2[] = {P1,P5,P5,P5,P5};
+static const unsigned char* const order3[] = {P2,P5,P5,P5,P5};
+static const unsigned char* const order4[] = {P3,P3,P3,P3,P3};
 
 static const unsigned char duty_instruments[] = {
 8,0,240,128,
