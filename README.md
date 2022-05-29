@@ -13,13 +13,13 @@ Travel through procedural lands, across plains, through forests, over mountains,
 3. `tools/` stores various development tools:
   - [tile designer](https://github.com/gbdk-2020/GBTD_GBMB/releases/) to edit the `res/*.gbr` files
   - [emulicious](https://emulicious.net/) to run the gameboy rom.
-  - [hUGETracker]() to edit `res/wellerman.uge`
-  - [romusage]() to view the gameboy rom space `./romusage game.map -gA`
+  - [hUGETracker](https://nickfa.ro/index.php/HUGETracker) to edit `res/wellerman.uge`
+  - [romusage](https://github.com/bbbbbr/romusage) to view the gameboy rom space `./romusage game.map -gA`
 
 ```shell
 Bank           Range             Size   Used   Used%  Free   Free% 
 ----------     ----------------  -----  -----  -----  -----  -----
-ROM            0x0000 -> 0x3FFF  16384  15449    94%    935     5% |░██████████████████████████_|
+ROM            0x0000 -> 0x3FFF  16384  15497    94%    887     5% |░██████████████████████████_|
 WRAM           0xC000 -> 0xCFFF   4096    791    19%   3305    80% |_▓████▒_____________________|
 ```
 
@@ -51,13 +51,14 @@ Features:
   - [ ] Color palette
 - [x] 16×16 Metatiles (sprites and backgrounds)
 - [x] Procedurally-generated map
+  - [ ] 16-bit generation
 - [x] Menu
 - [x] Items
   - [x] Gold / Maps
   - [x] Weapons
   - [ ] Equipment
 - [ ] Enemies
-- [ ] Music
+- [x] Music
 
 ## Generation
 
@@ -69,6 +70,6 @@ https://replit.com/@splch/gb-procedural-generation#main.c
 
 Using unsigned 8-bit integers, (x, y), as seeds means that there are 2^8 x 2^8 pixels of landscape possible.
 
-I'm using a global seed found in `prng.s`, so much like No Man's Sky, everyone can see the same world; however, the starting positions can be varied.
+I'm using a global seed found in `prng.s`, so much like No Man's Sky, everyone can see the same world; however, the starting positions can be varied. Additionally, everything from enemies to items are spawned via the same algorithm. This is useful since optimizing `prng.s` further will lead to an entirely faster game.
 
-Items and enemies will generate randomly, though, pirates will more likely gather around gold and valuables. The random spawning of items and enemies is inspired by Minecraft's similar generation as conditions need to be met for varying occurrences.
+Please enjoy the grand adventure this game offers in only 36KB!
