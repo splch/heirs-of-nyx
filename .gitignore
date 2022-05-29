@@ -8,8 +8,6 @@ build/*/*.noi
 build/*/*.sav
 build/*/*.sym
 
-tools/cheats/
-tools/lib/
-tools/projects/
-
 .vscode/settings.json
+
+tools/
