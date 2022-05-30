@@ -2,7 +2,7 @@
 
 Travel through procedural lands, across plains, through forests, over mountains, and around water. All the while, searching for treasure and defeating pirates.
 
-![Game](https://slc.is/images/piratesFolly1.webp)
+![Game](https://user-images.githubusercontent.com/25377399/171068749-1d08ecc7-fb5a-4da0-88fe-a23ad7738371.png)
 
 ## File Structure
 
@@ -19,8 +19,9 @@ Travel through procedural lands, across plains, through forests, over mountains,
 ```shell
 Bank           Range             Size   Used   Used%  Free   Free% 
 ----------     ----------------  -----  -----  -----  -----  -----
-ROM            0x0000 -> 0x3FFF  16384  15497    94%    887     5% |░██████████████████████████_|
-WRAM           0xC000 -> 0xCFFF   4096    791    19%   3305    80% |_▓████▒_____________________|
+ROM            0x0000 -> 0x3FFF  16384  16002    97%    382     2% |░███████████████████████████|
+ROM_0          0x4000 -> 0x7FFF  16384   9399    57%   6985    42% |████████████████____________|
+WRAM           0xC000 -> 0xCFFF   4096    792    19%   3304    80% |_▓████▒_____________________|
 ```
 
 4. `build/` has the most recent ROMS for different systems
@@ -49,6 +50,7 @@ Features:
 
 - [x] Custom tileset
   - [ ] Color palette
+  - [x] SuperGameBoy Background
 - [x] 16×16 Metatiles (sprites and backgrounds)
 - [x] Procedurally-generated map
   - [ ] 16-bit generation

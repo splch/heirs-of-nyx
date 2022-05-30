@@ -6,6 +6,8 @@
 #include "music.h"
 #include "player.h"
 #include "save.h"
+#include "sgb_border.h"
+#include "../res/border_data.h"
 #include "../res/sprites.h"
 #include "../res/tiles.h"
 
@@ -28,6 +30,13 @@ void main()
 
 void init()
 {
+  // Wait 4 frames
+  // For SGB on PAL SNES this delay is required on startup, otherwise borders don't show up
+  for (uint8_t i = 4; i != 0; i--)
+    wait_vbl_done();
+  SHOW_BKG;
+  set_sgb_border(border_data_tiles, sizeof(border_data_tiles), border_data_map, sizeof(border_data_map), border_data_palettes, sizeof(border_data_palettes));
+
   font_init();                   // initialize font system
   font_set(font_load(font_ibm)); // set and load the font
 
