@@ -10,14 +10,14 @@
 #define border_data_TILE_H 8
 #define border_data_WIDTH 256
 #define border_data_HEIGHT 224
-#define border_data_TILE_COUNT 222
+#define border_data_TILE_COUNT 2
 #define border_data_MAP_ATTRIBUTES 0
 #define border_data_TILE_PALS 0
 
 BANKREF_EXTERN(border_data)
 
-extern const palette_color_t border_data_palettes[32];
-extern const uint8_t border_data_tiles[7104];
+extern const palette_color_t border_data_palettes[16];
+extern const uint8_t border_data_tiles[64];
 
 extern const unsigned char border_data_map[1792];
 
