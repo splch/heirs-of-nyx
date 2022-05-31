@@ -3,7 +3,6 @@
 #include "noise.h"
 #include "pirate.h"
 #include "save.h"
-#include <string.h>
 
 // necessary for recursion
 void check_movement(const uint8_t);
@@ -60,7 +59,7 @@ void show_menu()
 
   save_data();             // save data on menu press (temp)
   delay(33 * SENSITIVITY); // (100 / 6) * 2 comes from macro definition
-  wait_vbl_done(); // put system in low power mode
+  wait_vbl_done();         // put system in low power mode
   waitpad(0b11111111);
   display_map();
   SHOW_SPRITES; // menu is closed
@@ -178,7 +177,7 @@ static inline void push_player()
 }
 
 static void adjust_position(const uint8_t terrain_type, const uint8_t old_x,
-                     const uint8_t old_y)
+                            const uint8_t old_y)
 {
   switch (terrain_type)
   {
