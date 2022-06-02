@@ -6,11 +6,11 @@ uint8_t map[SCREEN_WIDTH][SCREEN_HEIGHT];
 
 static uint8_t closest(const uint8_t value)
 {
-  if (value < 90)
+  if (value < 50)
     return 4 + FONT_MEMORY; // water
-  else if (value < 140)
+  else if (value < 150)
     return 0 + FONT_MEMORY; // grass
-  else if (value < 160)
+  else if (value < 200)
     return 8 + FONT_MEMORY; // trees
   else
     return 12 + FONT_MEMORY; // mountains
@@ -52,11 +52,11 @@ static inline uint8_t generate_item(uint8_t x, uint8_t y)
   {
   case 0:
     return 4 + FONT_MEMORY; // map on water
-  case 90:
+  case 50:
     return 0 + FONT_MEMORY; // gun on grass
-  case 140:
+  case 150:
     return 8 + FONT_MEMORY; // sword in trees
-  case 160:
+  case 200:
     return 12 + FONT_MEMORY; // gold on mountains
   default:
     return 255; // no item

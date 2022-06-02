@@ -1,12 +1,14 @@
 LCC=$(GBDK_HOME)/bin/lcc
 
-TARGETS=gb gbc pocket megaduck
+TARGETS=gb gbc pocket megaduck # sms gg
 
 # https://gbdk-2020.github.io/gbdk-2020/docs/api/docs_toolchain_settings.html
 LCCFLAGS_gb     = -Wl-yt0x03 -Wm-yc -Wm-ys -Wm-yj # Set an MBC for banking
 LCCFLAGS_gbc    = -Wl-yt0x03 -Wm-yc -Wm-ys -Wm-yj # Same as .gb with: -Wm-yc (gb & gbc) or Wm-yC (gbc exclusive)
 LCCFLAGS_pocket = -Wl-yt0x03 # Usually the same as required for .gb
 LCCFLAGS_duck   = -Wl-yt0x03 # Usually the same as required for .gb
+LCCFLAGS_sms    =
+LCCFLAGS_gg     =
 
 LCCFLAGS += $(LCCFLAGS_$(EXT)) # This adds the current platform specific LCC Flags
 LCCFLAGS += -Wm-yn"PIRATEFOLLY"

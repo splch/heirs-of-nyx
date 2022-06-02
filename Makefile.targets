@@ -31,3 +31,13 @@ megaduck-clean:
 	${MAKE} clean-target EXT=duck
 megaduck:
 	${MAKE} build-target PORT=gbz80 PLAT=duck EXT=duck
+
+sms-clean:
+	${MAKE} clean-target EXT=sms
+sms:
+	${MAKE} build-target PORT=z80 PLAT=sms EXT=sms
+
+gg-clean:
+	${MAKE} clean-target EXT=gg
+gg:
+	${MAKE} build-target PORT=z80 PLAT=gg EXT=gg

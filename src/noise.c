@@ -1,6 +1,13 @@
 #include "main.h"
 #include "noise.h"
 
+uint8_t prng(uint8_t x, uint8_t y)
+{
+  x ^= (y << 1);
+  y ^= (x >> 1);
+  return (x + y) ^ 0b10101010;
+}
+
 static inline uint8_t smooth_noise(uint8_t x, uint8_t y)
 {
   // gets average noise at (x, y)
