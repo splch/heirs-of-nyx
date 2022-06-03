@@ -3,9 +3,10 @@
 
 uint8_t prng(uint8_t x, uint8_t y)
 {
+  // https://github.com/splch/pirates-folly/blob/master/tools/noise.ipynb
   x ^= (y << 1);
   y ^= (x >> 1);
-  return (x + y) ^ 0b10101010;
+  return (x ^ y) * 3;
 }
 
 static inline uint8_t smooth_noise(uint8_t x, uint8_t y)
