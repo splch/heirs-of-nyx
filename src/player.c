@@ -173,7 +173,7 @@ static inline void push_player()
     // check_movement will recursively call if the user is still on water
     // left (00000010), right (00000001), down (00001000)
     // randomly push down right or left
-    check_movement(prng(p.x[0], p.y[0]) % 2 + 0b00001001);
+    check_movement((prng(p.x[0], p.y[0]) & 1) + 0b00001001);
 }
 
 void adjust_position(const uint8_t terrain_type, const uint8_t old_x,
