@@ -4,9 +4,9 @@
 uint8_t prng(uint8_t x, uint8_t y)
 {
   // https://github.com/splch/pirates-folly/blob/master/tools/noise.ipynb
-  x ^= y << 1;
+  x ^= y >> 1;
   y ^= x << 3;
-  return x + y;
+  return (x + y);
 }
 
 static inline uint8_t smooth_noise(uint8_t x, uint8_t y)

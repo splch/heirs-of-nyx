@@ -6,11 +6,11 @@ uint8_t map[SCREEN_WIDTH][SCREEN_HEIGHT];
 
 static uint8_t closest(const uint8_t value)
 {
-  if (value < 50)
+  if (value < 34)
     return 4 + FONT_MEMORY; // water
-  else if (value < 150)
+  else if (value < 165)
     return 0 + FONT_MEMORY; // grass
-  else if (value < 200)
+  else if (value < 205)
     return 8 + FONT_MEMORY; // trees
   else
     return 12 + FONT_MEMORY; // mountains
@@ -52,11 +52,11 @@ static inline uint8_t generate_item(uint8_t x, uint8_t y)
   {
   case 0:
     return 4 + FONT_MEMORY; // map on water
-  case 50:
+  case 34:
     return 0 + FONT_MEMORY; // gun on grass
-  case 150:
+  case 165:
     return 8 + FONT_MEMORY; // sword in trees
-  case 200:
+  case 205:
     return 12 + FONT_MEMORY; // gold on mountains
   default:
     return 255; // no item
@@ -216,6 +216,7 @@ void display_map()
   {
     for (uint8_t y = 0; y < SCREEN_HEIGHT; y++)
     {
+      // sets a 16x16 metatile
       set_bkg_tile_xy(2 * x, 2 * y, map[x][y]);
       set_bkg_tile_xy(2 * x, 2 * y + 1, map[x][y] + 1);
       set_bkg_tile_xy(2 * x + 1, 2 * y, map[x][y] + 2);
