@@ -44,7 +44,8 @@ static inline void init()
   generate_map();
   // display terrain
   display_map();
-  SHOW_SPRITES; // show player
+  SHOW_SPRITES;                                      // show player
+  adjust_position(get_terrain('n'), p.x[1], p.y[1]); // if player loads on water
 
   // start delay time
   delay_time = clock();

@@ -57,9 +57,9 @@ void show_menu()
 
   printf("\n\npress any key to continue...");
 
-  save_data();             // save data on menu press (temp)
-  delay(33 * SENSITIVITY); // (100 / 6) * 2 comes from macro definition
-  wait_vbl_done();         // put system in low power mode
+  save_data();                 // save data on menu press (temp)
+  delay(33 * SENSITIVITY + 1); // (100 / 6) * 2 comes from macro definition
+  wait_vbl_done();             // put system in low power mode
   waitpad(0b11111111);
   display_map();
   SHOW_SPRITES; // menu is closed
@@ -176,8 +176,8 @@ static inline void push_player()
     check_movement(prng(p.x[0], p.y[0]) % 2 + 0b00001001);
 }
 
-static void adjust_position(const uint8_t terrain_type, const uint8_t old_x,
-                            const uint8_t old_y)
+void adjust_position(const uint8_t terrain_type, const uint8_t old_x,
+                     const uint8_t old_y)
 {
   switch (terrain_type)
   {
