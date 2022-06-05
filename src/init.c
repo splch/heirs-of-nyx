@@ -31,8 +31,15 @@ void init_font()
 void init_palette()
 {
     // set color palette for compatible ROMs
-    set_bkg_palette(0, 8, RGB(15, 15, 15));
-    set_sprite_palette(0, 8, RGB(30, 20, 15));
+    set_bkg_palette_entry(0, 0, RGB8(255, 255, 255)); // lightest color
+    set_bkg_palette_entry(0, 1, RGB8(0, 255, 0));
+    set_bkg_palette_entry(0, 2, RGB8(0, 0, 255));
+    set_bkg_palette_entry(0, 3, RGB8(0, 0, 0)); // darkest color
+
+    set_sprite_palette_entry(0, 0, RGB8(255, 255, 255));
+    set_sprite_palette_entry(0, 1, RGB8(127, 127, 127));
+    set_sprite_palette_entry(0, 2, RGB8(255, 0, 0));
+    set_sprite_palette_entry(0, 3, RGB8(0, 0, 0));
 }
 
 void init_tiles()

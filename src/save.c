@@ -7,7 +7,7 @@ static uint16_t *vals = (int16_t *)0xa001; // 16 bit for p.steps
 
 void load_save_data()
 {
-  if (has_save[0])
+  if (has_save[0] == true) // needs true since any non-zero is true
   {
     // starting position for map generation
     p.x[0] = p.x[1] = (uint8_t)vals[0];
