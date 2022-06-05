@@ -1,3 +1,4 @@
+#include <gb/cgb.h>
 #include <gbdk/font.h>
 #include <gbdk/gbdecompress.h>
 #include <gbdk/metasprites.h>
@@ -30,7 +31,8 @@ void init_font()
 void init_palette()
 {
     // set color palette for compatible ROMs
-    set_default_palette();
+    set_bkg_palette(0, 8, RGB(15, 15, 15));
+    set_sprite_palette(0, 8, RGB(30, 20, 15));
 }
 
 void init_tiles()

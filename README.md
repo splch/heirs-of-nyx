@@ -14,9 +14,9 @@ Travel through vast terrains, searching for ancient evils while defeating pirate
 
 3. `tools/` clones various development tools:
   - [tile designer](https://github.com/gbdk-2020/GBTD_GBMB/releases/) to edit the `res/*.gbr` files
-  - [emulicious](https://emulicious.net/) to run the gameboy rom.
+  - [emulicious](https://emulicious.net/) to run the GameBoy ROM.
   - [hUGETracker](https://nickfa.ro/index.php/HUGETracker) to edit `res/wellerman.uge`
-  - [romusage](https://github.com/bbbbbr/romusage) to view the gameboy rom space `./romusage game.map -gA`
+  - [romusage](https://github.com/bbbbbr/romusage) to view the GameBoy ROM bank space `./romusage game.map -gA`
 
 ```shell
 Bank           Range             Size   Used   Used%  Free   Free% 
@@ -28,7 +28,7 @@ WRAM           0xC000 -> 0xCFFF   4096    792    19%   3304    80% |_▓██�
 
 4. `build/` has the most recent ROMS for different systems
 
-## Install
+## Installation
 
 1. To play the game, move the release or `build/gb/Pirates Folly.gb` ROM into your emulator / flash cart.
 
@@ -46,13 +46,13 @@ There should now be a new `Pirates Folly.gb` file in the `build/gb/` directory.
 
 Alternatively, you can upload the ROM to an emulator site like @Juchi's [GameBoy emulator](https://juchi.github.io/gameboy.js/) and run it. To use `Emulicious.jar`, install the Java runtime (`openjdk-*-jre`) and run `java -jar Emulicious.jar`.
 
-## This game is in development
+## Features
 
 Features:
 
 - [x] Custom tileset
-  - [ ] Color palette
-  - [x] SuperGameBoy Background
+  - [x] Color palette
+  - [x] Super Game Boy Background
 - [x] 16×16 Metatiles (sprites and backgrounds)
 - [x] Procedurally-generated map
   - [ ] 16-bit generation
@@ -68,11 +68,7 @@ Features:
 
 This game uses [xorshift](https://wikipedia.org/wiki/Xorshift) noise to generate its landscapes. The algorithm is based on [Hugo Elias'](https://web.archive.org/web/20160303203643/http://freespace.virgin.net/hugo.elias/models/m_perlin.htm) tutorial.
 
-Here is an example of the map array generated:
-
-https://replit.com/@splch/gb-procedural-generation#main.c
-
-Using unsigned 8-bit integers, (x, y), as seeds means that there are 2^8 x 2^8 pixels of landscape possible.
+Here is an example of the [map array](https://github.com/splch/pirates-folly/blob/master/tools/noise.ipynb) generated. Using unsigned 8-bit integers, (x, y), as seeds means that there are 2^8 x 2^8 pixels of landscape.
 
 I'm using a global seed found in `prng.s`, so much like No Man's Sky, everyone can see the same world; however, the starting positions can be varied. Additionally, everything from enemies to items are spawned via the same algorithm. This is useful since optimizing `prng.s` further will lead to an entirely faster game.
 
