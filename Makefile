@@ -14,7 +14,7 @@ LCCFLAGS += $(LCCFLAGS_$(EXT)) # This adds the current platform specific LCC Fla
 LCCFLAGS += -Wm-yn"PIRATEFOLLY"
 LCCFLAGS += -Wm-yo2 # simple 32KB (2 x 16KB ROM banks) game
 LCCFLAGS += -Wm-ya1 # 1 RAM bank for saving
-LCCFLAGS += -Wf--opt-code-speed -Wf--max-allocs-per-node200000 # Optimization flags
+LCCFLAGS += -Wf--opt-code-size -Wf--max-allocs-per-node200000 # Optimization flags
 LCCFLAGS += -Wl-l"res/hUGEDriver.lib" # hugedriver library for music
 
 # Debugging flags

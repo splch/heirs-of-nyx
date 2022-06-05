@@ -44,7 +44,7 @@ uint8_t get_terrain(const int8_t direction)
   return 255;
 }
 
-static inline uint8_t generate_item(uint8_t x, uint8_t y)
+static uint8_t generate_item(uint8_t x, uint8_t y)
 {
   // return item at (x, y)
   const uint8_t _n = prng(x, y);
