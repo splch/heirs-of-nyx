@@ -4,7 +4,7 @@ Pirates once circled the world's waters, commanding the seas and seizing its bou
 
 Travel through vast terrains, searching for ancient evils while defeating pirates, forming friendships, and plundering treasures. Restore peace, so trade routes prosper and provide livelihood for hardworking thieving pirates.
 
-![Game](https://user-images.githubusercontent.com/25377399/171068749-1d08ecc7-fb5a-4da0-88fe-a23ad7738371.png)
+![Game](https://user-images.githubusercontent.com/25377399/172053980-c3f2679d-a197-48eb-8b48-7f0d4c334005.png)
 
 ## File Structure
 
@@ -68,7 +68,7 @@ Features:
 
 This game uses [xorshift](https://wikipedia.org/wiki/Xorshift) noise to generate its landscapes. The algorithm is based on [Hugo Elias'](https://web.archive.org/web/20160303203643/http://freespace.virgin.net/hugo.elias/models/m_perlin.htm) tutorial.
 
-Here is an example of the [map array](https://github.com/splch/pirates-folly/blob/master/tools/noise.ipynb) generated. Using unsigned 8-bit integers, (x, y), as seeds means that there are 2^8 x 2^8 pixels of landscape.
+Here is an example of the [map array](https://github.com/splch/pirates-folly/blob/master/tools/noise.pdf) generated. Using unsigned 8-bit integers, (x, y), as seeds means that there are 2^8 x 2^8 pixels of landscape.
 
 I'm using a global seed found in `prng.s`, so much like No Man's Sky, everyone can see the same world; however, the starting positions can be varied. Additionally, everything from enemies to items are spawned via the same algorithm. This is useful since optimizing `prng.s` further will lead to an entirely faster game.
 

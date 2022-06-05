@@ -2,7 +2,7 @@
 
 uint8_t prng(uint8_t x, uint8_t y)
 {
-  // https://github.com/splch/pirates-folly/blob/master/tools/noise.ipynb
+  // https://github.com/splch/pirates-folly/blob/master/tools/noise.pdf
   x ^= y >> 1;
   y ^= x << 3;
   return x + y;
