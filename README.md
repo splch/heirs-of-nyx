@@ -26,7 +26,7 @@ ROM_0          0x4000 -> 0x7FFF  16384   8446    51%   7938    48% |████
 WRAM           0xC000 -> 0xCFFF   4096    792    19%   3304    80% |_▓████▒_____________________|
 ```
 
-4. `build/` has the most recent ROMS for different systems
+4. `build/` has the most recent ROMs for different systems
 
 ## Installation
 
