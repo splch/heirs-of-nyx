@@ -45,7 +45,7 @@ static inline void init()
   // display terrain
   display_map();
   SHOW_SPRITES;                                      // show player
-  adjust_position(get_terrain('n'), p.x[1], p.y[1]); // if player loads on water
+  adjust_position(get_terrain('n'), p.x[0], p.y[0]); // if player loads on water
 
   // start delay time
   delay_time = clock();
@@ -55,7 +55,7 @@ static inline void check_input()
 {
   const uint8_t j = joypad();
   // delay input by SENSITIVITY
-  if (clock() - SENSITIVITY > delay_time && j)
+  if (clock() - delay_time > SENSITIVITY && j)
   {
     // non-movement press
     check_interaction(j);

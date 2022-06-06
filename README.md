@@ -30,7 +30,7 @@ WRAM           0xC000 -> 0xCFFF   4096    792    19%   3304    80% |_▓██�
 
 ## Installation
 
-1. To play the game, move the release or `build/gb/Pirates Folly.gb` ROM into your emulator / flash cart.
+1. To play the gamae, move the release or `build/gb/Pirates Folly.gb` ROM into your emulator / flash cart.
 
 2. To build it from source, follow [GBDK's guide](https://github.com/gbdk-2020/gbdk-2020#build-instructions).
 
@@ -55,8 +55,9 @@ Features:
   - [x] Super Game Boy Background
 - [x] 16×16 Metatiles (sprites and backgrounds)
 - [x] Procedurally-generated map
-  - [ ] 16-bit generation
+  - [x] 16-bit generation
 - [x] Menu
+- [ ] Start screen
 - [x] Items
   - [x] Gold / Maps
   - [x] Weapons
@@ -68,8 +69,8 @@ Features:
 
 This game uses [xorshift](https://wikipedia.org/wiki/Xorshift) noise to generate its landscapes. The algorithm is based on [Hugo Elias'](https://web.archive.org/web/20160303203643/http://freespace.virgin.net/hugo.elias/models/m_perlin.htm) tutorial.
 
-Here is an example of the [map array](https://github.com/splch/pirates-folly/blob/master/tools/noise.pdf) generated. Using unsigned 8-bit integers, (x, y), as seeds means that there are 2^8 x 2^8 pixels of landscape.
+Here is an example of the [map array](https://github.com/splch/pirates-folly/blob/master/tools/noise.pdf) generated. Using unsigned 16-bit integers, (x, y), as seeds means that there are 2^16 x 2^16 tiles of landscape. The map is so large, in fact, that walking from one end to the other takes over 3 hours.
 
-I'm using a global seed found in `prng.s`, so much like No Man's Sky, everyone can see the same world; however, the starting positions can be varied. Additionally, everything from enemies to items are spawned via the same algorithm. This is useful since optimizing `prng.s` further will lead to an entirely faster game.
+I'm using a global function found in `noise.c`, so much like No Man's Sky, everyone can see the same world; however, the starting positions can be varied. Additionally, everything from enemies to items are spawned via the same algorithm. This is useful since optimizing `noise.c` further will lead to an entirely faster game.
 
 Please enjoy the grand adventure this game offers in only 32KB!

@@ -3,24 +3,25 @@
 
 uint16_t arr_4kb[256];
 uint8_t map[SCREEN_WIDTH][SCREEN_HEIGHT];
+uint8_t sprites[SCREEN_WIDTH][SCREEN_HEIGHT];
 
-static uint8_t closest(const uint8_t value)
+static uint8_t closest(const pos_t value)
 {
-  if (value < 34)
+  // TODO: set automatic ratios by max pos_t value
+  if (value < 5000)
     return 4 + FONT_MEMORY; // water
-  else if (value < 165)
+  else if (value < 15000)
     return 0 + FONT_MEMORY; // grass
-  else if (value < 205)
+  else if (value < 20000)
     return 8 + FONT_MEMORY; // trees
   else
     return 12 + FONT_MEMORY; // mountains
 }
 
-static inline uint8_t terrain(uint8_t x, uint8_t y)
+static inline uint8_t terrain(pos_t x, pos_t y)
 {
   // return type of terrain at (x, y)
-  // increasing scale increases the map size
-  const uint8_t value = interpolate_noise(x, y);
+  const pos_t value = interpolate_noise(x, y);
   return closest(value);
 }
 
@@ -44,32 +45,40 @@ uint8_t get_terrain(const int8_t direction)
   return 255;
 }
 
-static uint8_t generate_item(uint8_t x, uint8_t y)
+static uint8_t generate_sprite(pos_t x, pos_t y)
+{
+  // return sprite at (x, y)
+  const pos_t _n = prng(x, y);
+  return 255;
+}
+
+static uint8_t generate_item(pos_t x, pos_t y)
 {
   // return item at (x, y)
-  const uint8_t _n = prng(x, y);
+  const pos_t _n = prng(x, y);
   switch (_n)
   {
+    // TODO: use variables for cases
   case 0:
     return 4 + FONT_MEMORY; // map on water
-  case 34:
+  case 5000:
     return 0 + FONT_MEMORY; // gun on grass
-  case 165:
+  case 15000:
     return 8 + FONT_MEMORY; // sword in trees
-  case 205:
+  case 20000:
     return 12 + FONT_MEMORY; // gold on mountains
   default:
     return 255; // no item
   }
 }
 
-static inline bool is_removed(const uint8_t x, const uint8_t y)
+static inline bool is_removed(const pos_t x, const pos_t y)
 {
   // returns true if item has been picked up at (x, y)
   return arr_4kb[x] == y - 4;
 }
 
-void remove_item(const uint8_t x, const uint8_t y)
+void remove_item(const pos_t x, const pos_t y)
 {
   // item has been picked up at (x, y)
   arr_4kb[x] = y;
@@ -79,35 +88,47 @@ static inline void shift_array_right()
 {
   for (uint8_t x = SCREEN_WIDTH - 1; x > 0; x--)
     for (uint8_t y = 0; y < SCREEN_HEIGHT; y++)
+    {
       map[x][y] = map[x - 1][y];
+      sprites[x][y] = sprites[x - 1][y];
+    }
 }
 
 static inline void shift_array_left()
 {
   for (uint8_t x = 0; x < SCREEN_WIDTH - 1; x++)
     for (uint8_t y = 0; y < SCREEN_HEIGHT; y++)
+    {
       map[x][y] = map[x + 1][y];
+      sprites[x][y] = map[x + 1][y];
+    }
 }
 
 static inline void shift_array_up()
 {
   for (uint8_t y = 0; y < SCREEN_HEIGHT - 1; y++)
     for (uint8_t x = 0; x < SCREEN_WIDTH; x++)
+    {
       map[x][y] = map[x][y + 1];
+      sprites[x][y] = sprites[x][y + 1];
+    }
 }
 
 static inline void shift_array_down()
 {
   for (uint8_t y = SCREEN_HEIGHT - 1; y > 0; y--)
     for (uint8_t x = 0; x < SCREEN_WIDTH; x++)
+    {
       map[x][y] = map[x][y - 1];
+      sprites[x][y] = sprites[x][y - 1];
+    }
 }
 
 static void generate_side(const int8_t side)
 {
   // r - right, l - left, t - top, b - bottom
-  uint8_t _x;
-  uint8_t _y;
+  pos_t _x;
+  pos_t _y;
   switch (side)
   {
   case 'r':
@@ -168,12 +189,15 @@ void generate_map()
   for (uint8_t x = 0; x < SCREEN_WIDTH; x++)
     for (uint8_t y = 0; y < SCREEN_HEIGHT; y++)
     {
-      const uint8_t _x = x + p.x[0] - CENTER_X;
-      const uint8_t _y = y + p.y[0] - CENTER_Y;
+      const pos_t _x = x + p.x[0] - CENTER_X;
+      const pos_t _y = y + p.y[0] - CENTER_Y;
       const uint8_t _t = terrain(_x, _y);
       const uint8_t _i = generate_item(_x, _y);
       map[x][y] =
           (_i == _t && !is_removed(_x, _y)) ? _i + BACKGROUND_COUNT : _t;
+      const uint8_t _s = generate_sprite(_x, _y);
+      sprites[x][y] =
+          (_s == _t) ? _s : 255;
     }
 }
 

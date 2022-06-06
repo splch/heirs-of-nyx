@@ -41,8 +41,8 @@ void show_menu()
 {
   // display map to erase previous menus
   HIDE_SPRITES; // menu is open
-  const uint8_t x = p.x[0] - START_POSITION;
-  const uint8_t y = p.y[0] - START_POSITION;
+  const pos_t x = p.x[0] - START_POSITION;
+  const pos_t y = p.y[0] - START_POSITION;
 
   printf("\ngold:\t%u", p.gold);
   printf("\nmaps:\t%u", p.maps);
@@ -50,10 +50,6 @@ void show_menu()
 
   printf("\n\nposition:\t(%u, %u)", x, y);
   printf("\nsteps:\t%u", p.steps);
-
-  printf("\n\nrandom:\t%u\n\n", prng(p.x[0], p.y[0]));
-
-  printf(pirate_speak());
 
   printf("\n\npress any key to continue...");
 
@@ -67,11 +63,11 @@ void show_menu()
 
 static inline void treasure_search()
 {
-  for (uint8_t x = 0; x < p.maps; x++)
+  for (uint16_t x = 0; x < p.maps; x++)
   {
-    for (uint8_t y = 0; y < p.maps; y++)
+    for (uint16_t y = 0; y < p.maps; y++)
     {
-      const uint8_t noise = prng(x, y);
+      const pos_t noise = prng(x, y);
       if (noise == 255)
       {
         // 255 is the "magic number" for the treasure
@@ -110,9 +106,9 @@ static inline void add_inventory(uint8_t item)
 void change_item()
 {
   // switch primary with secondary weapons
-  const int8_t _w = p.weapons[0];
+  const int8_t _t = p.weapons[0];
   p.weapons[0] = p.weapons[1];
-  p.weapons[1] = _w;
+  p.weapons[1] = _t;
 }
 
 void interact()
@@ -176,8 +172,8 @@ static inline void push_player()
     check_movement((prng(p.x[0], p.y[0]) & 1) + 0b00001001);
 }
 
-void adjust_position(const uint8_t terrain_type, const uint8_t old_x,
-                     const uint8_t old_y)
+void adjust_position(const uint8_t terrain_type, const pos_t old_x,
+                     const pos_t old_y)
 {
   switch (terrain_type)
   {
@@ -208,8 +204,8 @@ void check_movement(const uint8_t j)
 {
   check_interaction(joypad());
   // j = right - 1, left - 2, up - 4, down - 8
-  uint8_t _x = p.x[0];
-  uint8_t _y = p.y[0];
+  pos_t _x = p.x[0];
+  pos_t _y = p.y[0];
   if (j & J_RIGHT)
     _x++;
   if (j & J_LEFT)
@@ -220,8 +216,8 @@ void check_movement(const uint8_t j)
     _y++;
   if (p.x[0] != _x || p.y[0] != _y)
   {
-    const uint8_t old_x = p.x[1];
-    const uint8_t old_y = p.y[1];
+    const pos_t old_x = p.x[1];
+    const pos_t old_y = p.y[1];
     p.x[1] = p.x[0];
     p.x[0] = _x;
     // makes diagonal movement possible

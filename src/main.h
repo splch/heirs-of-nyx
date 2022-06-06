@@ -8,8 +8,8 @@
 #include <time.h>
 
 // --- CONFIG --- //
-#define SENSITIVITY 6 // CLOCKS_PER_SEC * t(s), so this is 60 * .1(s) = 6
-#define START_POSITION 0
+#define SENSITIVITY 0 // CLOCKS_PER_SEC * t(s), so this is 60 * .1(s) = 6
+#define START_POSITION 32768
 // -------------- //
 
 // --- GB VALUES --- //
@@ -27,18 +27,21 @@
 #define true 1
 #define false 0
 
+#define pos_t uint16_t
+
 extern struct Player
 {
-  uint8_t x[2];
-  uint8_t y[2];
+  pos_t x[2];
+  pos_t y[2];
   uint16_t steps;
   uint8_t hearts;
   int8_t weapons[2];
-  uint8_t gold;
-  uint8_t maps;
+  uint16_t gold;
+  uint16_t maps;
 } p;
 
 extern uint8_t map[SCREEN_WIDTH][SCREEN_HEIGHT];
+extern uint8_t sprites[SCREEN_WIDTH][SCREEN_HEIGHT];
 extern uint16_t arr_4kb[256]; // for used items and decompression
 extern clock_t delay_time;
 

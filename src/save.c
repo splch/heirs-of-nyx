@@ -3,23 +3,23 @@
 
 // check if save data exists
 static bool *has_save = (bool *)0xa000;    // pointer to memory address
-static uint16_t *vals = (int16_t *)0xa001; // 16 bit for p.steps
+static uint16_t *vals = (int16_t *)0xa001; // 16 bit for 2^16 x 2^16 map
 
 void load_save_data()
 {
   if (has_save[0] == true) // needs true since any non-zero is true
   {
     // starting position for map generation
-    p.x[0] = p.x[1] = (uint8_t)vals[0];
-    p.y[0] = p.y[1] = (uint8_t)vals[1];
+    p.x[0] = p.x[1] = vals[0];
+    p.y[0] = p.y[1] = vals[1];
 
     // player item initialization
     p.steps = vals[2];
     p.hearts = vals[3];
     p.weapons[0] = (int8_t)vals[4];
     p.weapons[1] = (int8_t)vals[5];
-    p.gold = (uint8_t)vals[6];
-    p.maps = (uint8_t)vals[7];
+    p.gold = vals[6];
+    p.maps = vals[7];
 
     // item history data
     for (uint8_t i = 0; i < 255; i++)
