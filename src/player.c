@@ -41,14 +41,14 @@ void show_menu()
 {
   // display map to erase previous menus
   HIDE_SPRITES; // menu is open
-  const pos_t x = p.x[0] - START_POSITION;
-  const pos_t y = p.y[0] - START_POSITION;
+  const int16_t x = p.x[0] - START_POSITION;
+  const int16_t y = p.y[0] - START_POSITION;
 
   printf("\ngold:\t%u", p.gold);
   printf("\nmaps:\t%u", p.maps);
   printf("\nweapons:\t%d\t%d", p.weapons[0], p.weapons[1]);
 
-  printf("\n\nposition:\t(%u, %u)", x, y);
+  printf("\n\nposition:\t(%d, %d)", x, y);
   printf("\nsteps:\t%u", p.steps);
 
   printf("\n\npress any key to continue...");
@@ -129,6 +129,7 @@ void interact()
         remove_item(x + p.x[0], y + p.y[0]);
         // (item - BACKGROUND_COUNT) is the terrain tile
         map[pos_x][pos_y] = item - BACKGROUND_COUNT;
+        save_data(); // save data on item pickup
         display_map();
         return; // only pick up one item per interaction
       }
