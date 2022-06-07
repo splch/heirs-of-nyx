@@ -191,11 +191,21 @@ void adjust_position(const uint8_t terrain_type, const pos_t old_x,
     break;
   case 12: // mountain
   case 12 + BACKGROUND_COUNT:
-    // revert to previous position
-    p.x[0] = old_x;
-    p.y[0] = old_y;
-    p.steps--;
-    generate_map_sides();
+    // if START_POSITION is a mountain
+    if (p.x[0] == p.x[1] && p.y[0] == p.y[1])
+    {
+      p.x[0] = p.x[1] = p.y[0] = p.y[1] = prng(p.x[0], p.y[0]); // move randomly
+      generate_map();
+      adjust_position(get_terrain('n'), p.x[1], p.y[1]);
+    }
+    else
+    {
+      // revert to previous position
+      p.x[0] = old_x;
+      p.y[0] = old_y;
+      p.steps--;
+      generate_map_sides();
+    }
     display_map();
     break;
   }
