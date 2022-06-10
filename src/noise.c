@@ -7,7 +7,7 @@ pos_t prng(pos_t x, pos_t y)
   y ^= x << 3;
   x ^= y >> 5;
   y ^= x << 7;
-  return (x + y) * 3;
+  return ((x + y) * 5) ^ 0b1010101010101010;
 }
 
 static pos_t smooth_noise(pos_t x, pos_t y)
