@@ -9,7 +9,7 @@
 
 // --- CONFIG --- //
 #define SENSITIVITY 0 // CLOCKS_PER_SEC * t(s), so this is 60 * .1(s) = 6
-#define START_POSITION 16383
+#define START_POSITION 0
 // -------------- //
 
 // --- GB VALUES --- //
