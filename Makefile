@@ -11,7 +11,7 @@ LCCFLAGS_sms    =
 LCCFLAGS_gg     =
 
 LCCFLAGS += $(LCCFLAGS_$(EXT)) # This adds the current platform specific LCC Flags
-LCCFLAGS += -Wm-yn"PIRATEFOLLY"
+LCCFLAGS += -Wm-yn"SKULLDUGGER"
 LCCFLAGS += -Wm-yo2 # simple 32KB (2 x 16KB ROM banks) game
 LCCFLAGS += -Wm-ya1 # 1 RAM bank for saving
 LCCFLAGS += -Wf--opt-code-size -Wf--max-allocs-per-node200000 -Wf--peep-asm -Wf--peep-return # Optimization flags
@@ -23,7 +23,7 @@ LCCFLAGS += -Wl-j # Creates .map files
 # LCCFLAGS += -v # Uncomment for lcc verbose output
 
 # You can set the name of the ROM file here
-PROJECTNAME = Pirates\ Folly
+PROJECTNAME = Skullduggery
 
 # EXT?   = gb # Only sets extension to default (game boy .gb) if not populated
 SRCDIR = src

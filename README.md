@@ -1,4 +1,4 @@
-# Pirate's Folly
+# Skullduggery
 
 Pirates once circled the world's waters, commanding the seas and seizing its bounty. But the tides of fortune shifted when they began hunting for Greek treasure. Hidden within the island of Crete, Pandora's infamous box lurked, but it appeared pure and tempting like a small case of jewels. The pirates greedily opened this box, and Pandora's evils poured across the land.
 
@@ -30,7 +30,7 @@ WRAM           0xC000 -> 0xCFFF   4096    792    19%   3304    80% |_▓██�
 
 ## Installation
 
-1. To play the gamae, move the release or `build/gb/Pirates Folly.gb` ROM into your emulator / flash cart.
+1. To play the gamae, move the release or `build/gb/Skullduggery.gb` ROM into your emulator / flash cart.
 
 2. To build it from source, follow [GBDK's guide](https://github.com/gbdk-2020/gbdk-2020#build-instructions).
 
@@ -42,7 +42,7 @@ Once the environment has been built, run:
 make gb
 ```
 
-There should now be a new `Pirates Folly.gb` file in the `build/gb/` directory.
+There should now be a new `Skullduggery.gb` file in the `build/gb/` directory.
 
 Alternatively, you can upload the ROM to an emulator site like @Juchi's [GameBoy emulator](https://juchi.github.io/gameboy.js/) and run it. To use `Emulicious.jar`, install the Java runtime (`openjdk-*-jre`) and run `java -jar Emulicious.jar`.
 
@@ -69,7 +69,7 @@ Features:
 
 This game uses [xorshift](https://wikipedia.org/wiki/Xorshift) noise to generate its landscapes. The algorithm is based on [Hugo Elias'](https://web.archive.org/web/20160303203643/http://freespace.virgin.net/hugo.elias/models/m_perlin.htm) tutorial.
 
-Here is an example of the [map array](https://github.com/splch/pirates-folly/blob/master/tools/noise.pdf) generated. Using unsigned 16-bit integers, (x, y), as seeds means that there are 2^16 x 2^16 tiles of landscape. The map is so large, in fact, that walking from one end to the other takes over 3 hours.
+Here is an example of the [map array](https://github.com/splch/skullduggery/blob/master/tools/noise.pdf) generated. Using unsigned 16-bit integers, (x, y), as seeds means that there are 2^16 x 2^16 tiles of landscape. The map is so large, in fact, that walking from one end to the other takes over 3 hours.
 
 I'm using a global function found in `noise.c`, so much like No Man's Sky, everyone can see the same world; however, the starting positions can be varied. Additionally, everything from enemies to items are spawned via the same algorithm. This is useful since optimizing `noise.c` further will lead to an entirely faster game.
 
