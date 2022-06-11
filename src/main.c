@@ -37,7 +37,7 @@ static inline void init()
   DISPLAY_ON; // turn on the display
 
   // --- loading text --- //
-  printf("\n\tWelcome to\n\tSkullduggery");
+  printf("\n\tWelcome to\n\tHeirs of Nyx");
   // -------------------- //
 
   // generate terrain

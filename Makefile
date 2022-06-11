@@ -3,15 +3,15 @@ LCC=$(GBDK_HOME)/bin/lcc
 TARGETS=gb gbc pocket megaduck # sms gg
 
 # https://gbdk-2020.github.io/gbdk-2020/docs/api/docs_toolchain_settings.html
-LCCFLAGS_gb     = -Wl-yt0x03 -Wm-yc -Wm-ys -Wm-yj # Set an MBC for banking
-LCCFLAGS_gbc    = -Wl-yt0x03 -Wm-yc -Wm-ys -Wm-yj # Same as .gb with: -Wm-yc (gb & gbc) or Wm-yC (gbc exclusive)
-LCCFLAGS_pocket = -Wl-yt0x03 # Usually the same as required for .gb
-LCCFLAGS_duck   = -Wl-yt0x03 # Usually the same as required for .gb
+LCCFLAGS_gb     = -Wl-yt0x1B -Wm-yc -Wm-ys -Wm-yj # Set an MBC for banking
+LCCFLAGS_gbc    = -Wl-yt0x1B -Wm-yc -Wm-ys -Wm-yj # Same as .gb with: -Wm-yc (gb & gbc) or Wm-yC (gbc exclusive)
+LCCFLAGS_pocket = -Wl-yt0x1B # Usually the same as required for .gb
+LCCFLAGS_duck   = -Wl-yt0x1B # Usually the same as required for .gb
 LCCFLAGS_sms    =
 LCCFLAGS_gg     =
 
 LCCFLAGS += $(LCCFLAGS_$(EXT)) # This adds the current platform specific LCC Flags
-LCCFLAGS += -Wm-yn"SKULLDUGGER"
+LCCFLAGS += -Wm-yn"HEIRSOFNYX"
 LCCFLAGS += -Wm-yo2 # simple 32KB (2 x 16KB ROM banks) game
 LCCFLAGS += -Wm-ya1 # 1 RAM bank for saving
 LCCFLAGS += -Wf--opt-code-size -Wf--max-allocs-per-node200000 -Wf--peep-asm -Wf--peep-return # Optimization flags
@@ -23,7 +23,7 @@ LCCFLAGS += -Wl-j # Creates .map files
 # LCCFLAGS += -v # Uncomment for lcc verbose output
 
 # You can set the name of the ROM file here
-PROJECTNAME = Skullduggery
+PROJECTNAME = Heirs\ of\ Nyx
 
 # EXT?   = gb # Only sets extension to default (game boy .gb) if not populated
 SRCDIR = src

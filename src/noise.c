@@ -2,7 +2,7 @@
 
 pos_t prng(pos_t x, pos_t y)
 {
-  // https://github.com/splch/Skullduggery/blob/master/tools/noise.pdf
+  // /tools/noise.pdf
   x ^= y >> 1;
   y ^= x << 3;
   x ^= y >> 5;
