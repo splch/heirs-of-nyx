@@ -71,16 +71,12 @@ static inline bool is_removed(pos_t x, pos_t y)
 {
   // returns true if item has been picked up at (x, y)
   // force uint8_t because of arr_4KB size
-  // printf("(%d, %d)", x, y);
-  // wait();
   return arr_4KB[(uint8_t)x] == (uint8_t)y; // TODO: fix item pickup
 }
 
 void remove_item(pos_t x, pos_t y)
 {
   // item has been picked up at (x, y)
-  // printf("(%d, %d)", x, y);
-  // wait();
   arr_4KB[(uint8_t)x] = (uint8_t)y;
 }
 

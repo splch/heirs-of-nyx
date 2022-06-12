@@ -129,7 +129,7 @@ void interact()
       const uint8_t item = map[pos_x][pos_y];
       if (item >= FONT_MEMORY + BACKGROUND_COUNT)
       {
-        remove_item(p.x[0], p.y[0]); // TODO: fix coordinates
+        remove_item(p.x[0] + x + 1, p.y[0] + y + 2); // +1 and +2 are round-off errors
         // (item - BACKGROUND_COUNT) is the terrain tile
         map[pos_x][pos_y] = item - BACKGROUND_COUNT;
         display_map();
