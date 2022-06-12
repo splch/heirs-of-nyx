@@ -14,7 +14,8 @@
 
 // --- GB VALUES --- //
 #define FONT_MEMORY 102 // prevents writing over font memory
-#define BACKGROUND_COUNT 16
+#define METATILES 4
+#define BACKGROUND_COUNT METATILES * 4
 #define SCREEN_WIDTH DEVICE_SCREEN_WIDTH / 2 // metatiles are 16x16
 #define SCREEN_HEIGHT DEVICE_SCREEN_HEIGHT / 2
 #define CENTER_X SCREEN_WIDTH / 2
@@ -27,7 +28,8 @@
 #define true 1
 #define false 0
 
-#define pos_t uint16_t
+#define pos_t uint16_t // sets type for map generation
+#define MAX 65535      // match with pos_t
 
 extern struct Player
 {
@@ -42,7 +44,7 @@ extern struct Player
 
 extern uint8_t map[SCREEN_WIDTH][SCREEN_HEIGHT];
 extern uint8_t sprites[SCREEN_WIDTH][SCREEN_HEIGHT];
-extern uint16_t arr_4kb[256]; // for used items and decompression
+extern uint16_t arr_4KB[256]; // for used items and decompression
 extern clock_t delay_time;
 
 #endif

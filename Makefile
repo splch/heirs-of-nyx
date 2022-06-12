@@ -19,8 +19,8 @@ LCCFLAGS += -Wl-l"res/hUGEDriver.lib" # hugedriver library for music
 
 # Debugging flags
 LCCFLAGS += -Wl-j # Creates .map files
+LCCFLAGS += -v # Uncomment for lcc verbose output
 # LCCFLAGS += -debug # Uncomment to enable debug output
-# LCCFLAGS += -v # Uncomment for lcc verbose output
 
 # You can set the name of the ROM file here
 PROJECTNAME = Heirs\ of\ Nyx

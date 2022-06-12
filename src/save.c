@@ -2,8 +2,8 @@
 #include "map.h"
 
 // check if save data exists
-static bool *has_save = (bool *)0xa000;    // pointer to memory address
-static uint16_t *vals = (int16_t *)0xa001; // 16 bit for 2^16 x 2^16 map
+static bool *has_save = (bool *)0xA000;    // pointer to memory address
+static uint16_t *vals = (int16_t *)0xA001; // 16 bit for 2^16 x 2^16 map
 
 void load_save_data()
 {
@@ -23,7 +23,7 @@ void load_save_data()
 
     // item history data
     for (uint8_t i = 0; i < 255; i++)
-      arr_4kb[i] = vals[i + 8];
+      arr_4KB[i] = vals[i + 8];
   }
   else
   {
@@ -53,7 +53,7 @@ void save_data()
 
   // save item history
   for (uint8_t i = 8; i < 255; i++)
-    vals[i] = arr_4kb[i - 8];
+    vals[i] = arr_4KB[i - 8];
 
   // save is now true
   has_save[0] = true;

@@ -1,21 +1,38 @@
 #include "main.h"
 #include "noise.h"
 
-uint16_t arr_4kb[256];
+uint16_t arr_4KB[256];
 uint8_t map[SCREEN_WIDTH][SCREEN_HEIGHT];
 uint8_t sprites[SCREEN_WIDTH][SCREEN_HEIGHT];
 
 static uint8_t closest(const pos_t value)
 {
-  // TODO: set automatic ratios by max pos_t value
-  if (value < 5000)
+  if (MAX / 13 > value)
     return 4 + FONT_MEMORY; // water
-  else if (value < 15000)
+  else if (MAX / 4 > value)
     return 0 + FONT_MEMORY; // grass
-  else if (value < 20000)
+  else if (MAX / 3 > value)
     return 8 + FONT_MEMORY; // trees
   else
     return 12 + FONT_MEMORY; // mountains
+}
+
+static uint8_t generate_item(pos_t x, pos_t y)
+{
+  // return item at (x, y)
+  // TODO: use same variables as closest
+  const pos_t _n = prng(x, y);
+  const pos_t inc = MAX / 100;
+  if (inc > _n)
+    return 4 + FONT_MEMORY; // map on water
+  if (MAX / 13 + inc > _n && MAX / 13 < _n)
+    return 0 + FONT_MEMORY; // gun on grass
+  if (MAX / 4 + inc > _n && MAX / 4 < _n)
+    return 8 + FONT_MEMORY; // sword in trees
+  if (MAX / 3 + inc > _n && MAX / 3 < _n)
+    return 12 + FONT_MEMORY; // gold on mountains
+  else
+    return 255; // no item
 }
 
 static inline uint8_t terrain(pos_t x, pos_t y)
@@ -30,7 +47,6 @@ uint8_t get_terrain(const int8_t direction)
   // n - none, r - right, l - left, u - up, d - down
   switch (direction)
   {
-  // these "magic numbers" are from `interact()`
   case 'n':
     return map[CENTER_X - 1][CENTER_Y - 2] - FONT_MEMORY;
   case 'r':
@@ -52,36 +68,17 @@ static uint8_t generate_sprite(pos_t x, pos_t y)
   return 255;
 }
 
-static uint8_t generate_item(pos_t x, pos_t y)
-{
-  // return item at (x, y)
-  const pos_t _n = prng(x, y);
-  switch (_n)
-  {
-    // TODO: use variables for cases
-  case 0:
-    return 4 + FONT_MEMORY; // map on water
-  case 5000:
-    return 0 + FONT_MEMORY; // gun on grass
-  case 15000:
-    return 8 + FONT_MEMORY; // sword in trees
-  case 20000:
-    return 12 + FONT_MEMORY; // gold on mountains
-  default:
-    return 255; // no item
-  }
-}
-
-static inline bool is_removed(const pos_t x, const pos_t y)
+static inline bool is_removed(pos_t x, pos_t y)
 {
   // returns true if item has been picked up at (x, y)
-  return arr_4kb[x] == y - 4;
+  // force uint8_t because of arr_4KB size
+  return arr_4KB[(uint8_t)x] == (uint8_t)y; // TODO: fix item pickup
 }
 
 void remove_item(const pos_t x, const pos_t y)
 {
   // item has been picked up at (x, y)
-  arr_4kb[x] = y;
+  arr_4KB[(uint8_t)x] = (uint8_t)y;
 }
 
 static inline void shift_array_right()

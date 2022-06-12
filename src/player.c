@@ -9,6 +9,13 @@ void check_movement(const uint8_t);
 
 clock_t delay_time;
 
+void wait()
+{
+  delay(33 * SENSITIVITY + 1); // (100 / 6) * 2 comes from macro definition
+  wait_vbl_done();             // put system in low power mode
+  waitpad(0b11111111);
+}
+
 void load_sprite(char *name)
 {
   if (strcmp(name, "player") == 0)
@@ -53,27 +60,24 @@ void show_menu()
 
   printf("\n\npress any key to continue...");
 
-  save_data();                 // save data on menu press (temp)
-  delay(33 * SENSITIVITY + 1); // (100 / 6) * 2 comes from macro definition
-  wait_vbl_done();             // put system in low power mode
-  waitpad(0b11111111);
+  save_data(); // save data on menu press (temp)
+  wait();
   display_map();
   SHOW_SPRITES; // menu is closed
 }
 
 static inline void treasure_search()
 {
-  for (uint16_t x = 0; x < p.maps; x++)
+  // search a grid around the start position
+  for (uint8_t x = 0; x < 5; x++)
   {
-    for (uint16_t y = 0; y < p.maps; y++)
+    for (uint8_t y = 0; y < 5; y++)
     {
-      const pos_t noise = prng(x, y);
-      if (noise == 255)
+      const uint8_t noise = (uint8_t)prng(START_POSITION + x, START_POSITION + y);
+      if (noise < p.maps)
       {
-        // 255 is the "magic number" for the treasure
-        // this is the only place where the treasure is generated
-        printf("treasure found at (%u, %u)", x, y);
-        waitpad(0b11111111);
+        printf("treasure found at (%d, %d)", x - START_POSITION, y - START_POSITION);
+        wait();
         return;
       }
     }
@@ -125,13 +129,13 @@ void interact()
       const uint8_t item = map[pos_x][pos_y];
       if (item >= FONT_MEMORY + BACKGROUND_COUNT)
       {
-        add_inventory(item - FONT_MEMORY);
         remove_item(x + p.x[0], y + p.y[0]);
         // (item - BACKGROUND_COUNT) is the terrain tile
         map[pos_x][pos_y] = item - BACKGROUND_COUNT;
-        save_data(); // save data on item pickup
         display_map();
-        return; // only pick up one item per interaction
+        add_inventory(item - FONT_MEMORY);
+        save_data(); // save data on item pickup
+        return;      // only pick up one item per interaction
       }
     }
 }
