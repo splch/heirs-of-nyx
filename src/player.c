@@ -129,7 +129,7 @@ void interact()
       const uint8_t item = map[pos_x][pos_y];
       if (item >= FONT_MEMORY + BACKGROUND_COUNT)
       {
-        remove_item(x + p.x[0], y + p.y[0]);
+        remove_item(p.x[0], p.y[0]); // TODO: fix coordinates
         // (item - BACKGROUND_COUNT) is the terrain tile
         map[pos_x][pos_y] = item - BACKGROUND_COUNT;
         display_map();
@@ -193,9 +193,9 @@ void adjust_position(const uint8_t terrain_type, const pos_t old_x,
     display_map();
     push_player();
     break;
-  case 12: // mountain
+  case 12: // hill
   case 12 + BACKGROUND_COUNT:
-    // if START_POSITION is a mountain
+    // if START_POSITION is a hill
     if (p.steps == 0)
     {
       p.x[0] = p.x[1] = p.y[0] = p.y[1] = prng(p.x[0], p.y[0]); // move randomly

@@ -10,6 +10,16 @@
 // --- CONFIG --- //
 #define SENSITIVITY 0 // CLOCKS_PER_SEC * t(s), so this is 60 * .1(s) = 6
 #define START_POSITION 0
+
+// map data type
+#define pos_t uint16_t // sets type for map generation
+#define MAX 65535      // match with pos_t
+
+// terrain ratios
+#define WATER MAX / 13
+#define GRASS MAX / 4
+#define TREES MAX / 3
+#define HILLS MAX
 // -------------- //
 
 // --- GB VALUES --- //
@@ -27,9 +37,6 @@
 #define bool uint8_t
 #define true 1
 #define false 0
-
-#define pos_t uint16_t // sets type for map generation
-#define MAX 65535      // match with pos_t
 
 extern struct Player
 {

@@ -7,30 +7,29 @@ uint8_t sprites[SCREEN_WIDTH][SCREEN_HEIGHT];
 
 static uint8_t closest(const pos_t value)
 {
-  if (MAX / 13 > value)
+  if (WATER > value)
     return 4 + FONT_MEMORY; // water
-  else if (MAX / 4 > value)
+  else if (GRASS > value)
     return 0 + FONT_MEMORY; // grass
-  else if (MAX / 3 > value)
+  else if (TREES > value)
     return 8 + FONT_MEMORY; // trees
   else
-    return 12 + FONT_MEMORY; // mountains
+    return 12 + FONT_MEMORY; // hills
 }
 
 static uint8_t generate_item(pos_t x, pos_t y)
 {
   // return item at (x, y)
-  // TODO: use same variables as closest
   const pos_t _n = prng(x, y);
   const pos_t inc = MAX / 100;
   if (inc > _n)
     return 4 + FONT_MEMORY; // map on water
-  if (MAX / 13 + inc > _n && MAX / 13 < _n)
+  if (WATER + inc > _n && WATER < _n)
     return 0 + FONT_MEMORY; // gun on grass
-  if (MAX / 4 + inc > _n && MAX / 4 < _n)
+  if (GRASS + inc > _n && GRASS < _n)
     return 8 + FONT_MEMORY; // sword in trees
-  if (MAX / 3 + inc > _n && MAX / 3 < _n)
-    return 12 + FONT_MEMORY; // gold on mountains
+  if (TREES + inc > _n && TREES < _n)
+    return 12 + FONT_MEMORY; // gold on hills
   else
     return 255; // no item
 }
@@ -72,12 +71,16 @@ static inline bool is_removed(pos_t x, pos_t y)
 {
   // returns true if item has been picked up at (x, y)
   // force uint8_t because of arr_4KB size
+  // printf("(%d, %d)", x, y);
+  // wait();
   return arr_4KB[(uint8_t)x] == (uint8_t)y; // TODO: fix item pickup
 }
 
-void remove_item(const pos_t x, const pos_t y)
+void remove_item(pos_t x, pos_t y)
 {
   // item has been picked up at (x, y)
+  // printf("(%d, %d)", x, y);
+  // wait();
   arr_4KB[(uint8_t)x] = (uint8_t)y;
 }
 
@@ -132,9 +135,9 @@ static void generate_side(const int8_t side)
     for (uint8_t y = 0; y < SCREEN_HEIGHT; y++)
     {
       // _x and _y came from some logic and a lot of trial and error...
-      _x = SCREEN_WIDTH - CENTER_X + p.x[0] - 1;
+      _x = p.x[0] + SCREEN_WIDTH - CENTER_X;
       // use old y since generating r/l (no y change yet)
-      _y = y + p.y[1] - CENTER_Y;
+      _y = p.y[1] + y - CENTER_Y - 2;
       const uint8_t _t = terrain(_x, _y);
       const uint8_t _i = generate_item(_x, _y);
       // set either a terrain tile or item tile
@@ -146,8 +149,8 @@ static void generate_side(const int8_t side)
   case 'l':
     for (uint8_t y = 0; y < SCREEN_HEIGHT; y++)
     {
-      _x = p.x[0] - CENTER_X;
-      _y = y + p.y[1] - CENTER_Y;
+      _x = p.x[0] - CENTER_X + 1;
+      _y = p.y[1] + y - CENTER_Y - 2;
       const uint8_t _t = terrain(_x, _y);
       const uint8_t _i = generate_item(_x, _y);
       map[0][y] =
@@ -158,8 +161,8 @@ static void generate_side(const int8_t side)
     for (uint8_t x = 0; x < SCREEN_WIDTH; x++)
     {
       // use current x since r/l might have already been updated
-      _x = x + p.x[0] - CENTER_X;
-      _y = p.y[0] - CENTER_Y;
+      _x = p.x[0] + x - CENTER_X + 1;
+      _y = p.y[0] - CENTER_Y - 2;
       const uint8_t _t = terrain(_x, _y);
       const uint8_t _i = generate_item(_x, _y);
       map[x][0] =
@@ -169,8 +172,8 @@ static void generate_side(const int8_t side)
   case 'b':
     for (uint8_t x = 0; x < SCREEN_WIDTH; x++)
     {
-      _x = x + p.x[0] - CENTER_X;
-      _y = SCREEN_HEIGHT - CENTER_Y + p.y[0] - 1;
+      _x = p.x[0] + x - CENTER_X + 1;
+      _y = p.y[0] + SCREEN_HEIGHT - CENTER_Y - 3;
       const uint8_t _t = terrain(_x, _y);
       const uint8_t _i = generate_item(_x, _y);
       map[x][SCREEN_HEIGHT - 1] =
@@ -244,6 +247,5 @@ void display_map()
       set_bkg_tile_xy(2 * x + 1, 2 * y + 1, map[x][y] + 3);
     }
   }
-
   wait_vbl_done(); // wait due to recursion
 }

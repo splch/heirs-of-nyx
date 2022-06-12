@@ -42,7 +42,7 @@ static inline void init()
 
   // generate terrain
   generate_map();
-  adjust_position(get_terrain('n'), p.x[1], p.y[1]); // if player loads on water or mountain
+  adjust_position(get_terrain('n'), p.x[1], p.y[1]); // if player loads on water or hills
   // display terrain
   display_map();
   SHOW_SPRITES; // show player
