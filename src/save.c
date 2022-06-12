@@ -23,7 +23,7 @@ void load_save_data()
 
     // item history data
     for (uint8_t i = 0; i < 255; i++)
-      arr_4KB[i] = vals[i + 8];
+      arr[i] = vals[i + 8];
   }
   else
   {
@@ -53,7 +53,7 @@ void save_data()
 
   // save item history
   for (uint8_t i = 8; i < 255; i++)
-    vals[i] = arr_4KB[i - 8];
+    vals[i] = arr[i - 8];
 
   // save is now true
   has_save[0] = true;

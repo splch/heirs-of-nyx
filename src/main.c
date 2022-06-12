@@ -53,14 +53,13 @@ static inline void init()
 
 static inline void check_input()
 {
-  const uint8_t j = joypad();
   // delay input by SENSITIVITY
-  if (clock() - delay_time > SENSITIVITY && j)
+  if (clock() - delay_time > SENSITIVITY && joypad())
   {
     // non-movement press
-    check_interaction(j);
+    check_interaction(joypad());
     // movement press
-    check_movement(j);
+    check_movement(joypad());
     // reset delay
     delay_time = clock();
   }

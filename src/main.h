@@ -51,7 +51,8 @@ extern struct Player
 
 extern uint8_t map[SCREEN_WIDTH][SCREEN_HEIGHT];
 extern uint8_t sprites[SCREEN_WIDTH][SCREEN_HEIGHT];
-extern uint16_t arr_4KB[256]; // for used items and decompression
+#define ARR_SIZE 256
+extern uint16_t arr[ARR_SIZE]; // for used items and decompression
 extern clock_t delay_time;
 
 #endif

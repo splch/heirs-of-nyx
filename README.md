@@ -22,7 +22,7 @@ Travel through vast terrains, searching for ancient evils while defeating pirate
 Bank           Range             Size   Used   Used%  Free   Free% 
 ----------     ----------------  -----  -----  -----  -----  -----
 ROM            0x0000 -> 0x3FFF  16384  16002    97%    382     2% |░███████████████████████████|
-ROM_0          0x4000 -> 0x7FFF  16384  10717    65%   5667    34% |██████████████████░_________|
+ROM_0          0x4000 -> 0x7FFF  16384  10818    66%   5566    33% |██████████████████░_________|
 WRAM           0xC000 -> 0xCFFF   4096    918    22%   3178    77% |_▓█████░____________________|
 ```
 
@@ -30,7 +30,7 @@ WRAM           0xC000 -> 0xCFFF   4096    918    22%   3178    77% |_▓██�
 
 ## Installation
 
-1. To play the gamae, move the release or `build/gb/Heirs of Nyx.gb` ROM into your emulator / flash cart.
+1. To play the game, move the release or `build/gb/Heirs of Nyx.gb` ROM into your emulator / flash cart.
 
 2. To build it from source, follow [GBDK's guide](https://github.com/gbdk-2020/gbdk-2020#build-instructions).
 

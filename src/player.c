@@ -58,6 +58,8 @@ void show_menu()
   printf("\n\nposition:\t(%d, %d)", x, y);
   printf("\nsteps:\t%u", p.steps);
 
+  printf("\n\nrandom:\t%u", prng(p.x[0], p.y[0]));
+
   printf("\n\npress any key to continue...");
 
   save_data(); // save data on menu press (temp)
@@ -217,7 +219,7 @@ void adjust_position(const uint8_t terrain_type, const pos_t old_x,
 
 void check_movement(const uint8_t j)
 {
-  check_interaction(joypad());
+  check_interaction(joypad()); // interact when water is pushing
   // j = right - 1, left - 2, up - 4, down - 8
   pos_t _x = p.x[0];
   pos_t _y = p.y[0];

@@ -48,8 +48,8 @@ void init_tiles()
     SPRITES_8x16;
     // decompress background and sprite data
     // and load them into memory
-    set_bkg_data(FONT_MEMORY, gb_decompress(landscape, arr_4KB) >> 4, arr_4KB);
-    set_sprite_data(0, gb_decompress(player_sprite, arr_4KB) >> 4, arr_4KB);
+    set_bkg_data(FONT_MEMORY, gb_decompress(landscape, arr) >> 4, arr);
+    set_sprite_data(0, gb_decompress(player_sprite, arr) >> 4, arr);
 }
 
 void init_sprites()

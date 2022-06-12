@@ -1,7 +1,7 @@
 #include "main.h"
 #include "noise.h"
 
-uint16_t arr_4KB[256];
+uint16_t arr[ARR_SIZE];
 uint8_t map[SCREEN_WIDTH][SCREEN_HEIGHT];
 uint8_t sprites[SCREEN_WIDTH][SCREEN_HEIGHT];
 
@@ -21,13 +21,13 @@ static uint8_t generate_item(pos_t x, pos_t y)
 {
   // return item at (x, y)
   const pos_t _n = prng(x, y);
-  const pos_t inc = MAX / 100;
+  const pos_t inc = 100; // spawn items within a range of inc
   if (inc > _n)
-    return 4 + FONT_MEMORY; // map on water
+    return 8 + FONT_MEMORY; // map on water
   if (WATER + inc > _n && WATER < _n)
     return 0 + FONT_MEMORY; // gun on grass
   if (GRASS + inc > _n && GRASS < _n)
-    return 8 + FONT_MEMORY; // sword in trees
+    return 4 + FONT_MEMORY; // sword in trees
   if (TREES + inc > _n && TREES < _n)
     return 12 + FONT_MEMORY; // gold on hills
   else
@@ -70,14 +70,14 @@ static uint8_t generate_sprite(pos_t x, pos_t y)
 static inline bool is_removed(pos_t x, pos_t y)
 {
   // returns true if item has been picked up at (x, y)
-  // force uint8_t because of arr_4KB size
-  return arr_4KB[(uint8_t)x] == (uint8_t)y; // TODO: fix item pickup
+  // force uint8_t because of ARR_SIZE
+  return arr[(uint8_t)x] == (uint8_t)y;
 }
 
 void remove_item(pos_t x, pos_t y)
 {
   // item has been picked up at (x, y)
-  arr_4KB[(uint8_t)x] = (uint8_t)y;
+  arr[(uint8_t)x] = (uint8_t)y;
 }
 
 static inline void shift_array_right()
