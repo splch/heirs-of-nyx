@@ -3,10 +3,10 @@
 pos_t prng(pos_t x, pos_t y)
 {
   // /tools/noise.pdf
-  x ^= y >> 1;
-  y ^= x << 3;
-  x ^= y >> 5;
-  y ^= x << 7;
+  y ^= x >> 1;
+  x ^= y << 3;
+  y ^= x >> 5;
+  x ^= y << 7;
   return ((x + y) * 3) ^ 0b0101010100010100;
 }
 
