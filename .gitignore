@@ -3,7 +3,7 @@
 .obj/*
 
 build/*/*.ihx
-# build/*/*.map # useful when analyzing rom
+build/*/*.map # useful when analyzing rom
 build/*/*.noi
 build/*/*.sav
 build/*/*.sym
@@ -11,3 +11,5 @@ build/*/*.sym
 .vscode/settings.json
 
 tools/
+
+.DS_Store
