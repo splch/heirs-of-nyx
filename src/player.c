@@ -174,9 +174,9 @@ static inline void push_player()
   if (down_terrain == 4 || down_terrain == 4 + BACKGROUND_COUNT ||
       current_terrain == 4 || current_terrain == 4 + BACKGROUND_COUNT)
     // check_movement will recursively call if the user is still on water
-    // left (00000010), right (00000001), down (00001000)
-    // randomly push down right or left
-    check_movement((prng(p.x[0], p.y[0]) & 1) + 0b00001001);
+    // right (00000001), up (00000100), down (00001000)
+    // randomly push right and up or down
+    check_movement((prng(p.x[0], p.y[0]) & 0b00001100) | 0b00000001);
 }
 
 void adjust_position(const uint8_t terrain_type, const pos_t old_x,
