@@ -7,5 +7,6 @@ void init_palette();
 void init_tiles();
 void init_sprites();
 void init_sound();
+void init_splash();
 
 #endif

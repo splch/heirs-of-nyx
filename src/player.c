@@ -48,8 +48,8 @@ void show_menu()
 {
   // display map to erase previous menus
   HIDE_SPRITES; // menu is open
-  const int16_t x = p.x[0] - START_POSITION;
-  const int16_t y = p.y[0] - START_POSITION;
+  const int16_t x = p.x[0];
+  const int16_t y = p.y[0];
 
   printf("\ngold:\t%u", p.gold);
   printf("\nmaps:\t%u", p.maps);
@@ -198,21 +198,21 @@ void adjust_position(const uint8_t terrain_type, const pos_t old_x,
   case 12: // hill
   case 12 + BACKGROUND_COUNT:
     // if START_POSITION is a hill
-    if (p.steps == 0)
-    {
-      p.x[0] = p.x[1] = p.y[0] = p.y[1] = prng(p.x[0], p.y[0]); // move randomly
-      generate_map();
-      adjust_position(get_terrain('n'), p.x[1], p.y[1]);
-    }
-    else
+    if (p.steps > 0)
     {
       // revert to previous position
       p.x[0] = old_x;
       p.y[0] = old_y;
       p.steps--;
       generate_map_sides();
+      display_map();
     }
-    display_map();
+    else
+    {
+      p.x[0] = p.x[1] = p.y[0] = p.y[1] = prng(p.x[0], p.y[0]); // move randomly
+      generate_map();
+      adjust_position(get_terrain('n'), p.x[1], p.y[1]);
+    }
     break;
   }
 }

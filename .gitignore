@@ -3,7 +3,7 @@
 .obj/*
 
 build/*/*.ihx
-build/*/*.map # useful when analyzing rom
+build/*/*.map
 build/*/*.noi
 build/*/*.sav
 build/*/*.sym

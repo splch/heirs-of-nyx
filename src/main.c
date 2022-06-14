@@ -20,6 +20,7 @@ void main()
 
 static inline void init()
 {
+  DISPLAY_OFF; // prevent visual bugs
   // initialize game
   init_sgb();
   init_font();
@@ -34,17 +35,23 @@ static inline void init()
   // load and initialize save data
   load_save_data();
 
-  DISPLAY_ON; // turn on the display
+  // --- splash screen --- //
+  init_splash();
+  display_map();
 
-  // --- loading text --- //
-  printf("\n\tWelcome to\n\tHeirs of Nyx");
+  DISPLAY_ON;
+  waitpad(J_START);
+  printf("loading world...");
   // -------------------- //
 
   // generate terrain
   generate_map();
   adjust_position(get_terrain('n'), p.x[1], p.y[1]); // if player loads on water or hills
+
   // display terrain
   display_map();
+
+  // wait until start button is pressed
   SHOW_SPRITES; // show player
 
   // start delay time

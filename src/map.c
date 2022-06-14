@@ -7,14 +7,14 @@ uint8_t sprites[SCREEN_WIDTH][SCREEN_HEIGHT];
 
 static uint8_t closest(const pos_t value)
 {
-  if (WATER > value)
-    return 4 + FONT_MEMORY; // water
-  else if (GRASS > value)
-    return 0 + FONT_MEMORY; // grass
-  else if (TREES > value)
-    return 8 + FONT_MEMORY; // trees
+  if (WATER_RANGE > value)
+    return WATER;
+  else if (GRASS_RANGE > value)
+    return GRASS;
+  else if (TREES_RANGE > value)
+    return TREES;
   else
-    return 12 + FONT_MEMORY; // hills
+    return HILLS;
 }
 
 static uint8_t generate_item(pos_t x, pos_t y)
@@ -23,13 +23,13 @@ static uint8_t generate_item(pos_t x, pos_t y)
   const pos_t _n = prng(x, y);
   const pos_t inc = 100; // spawn items within a range of inc
   if (inc > _n)
-    return 8 + FONT_MEMORY; // map on water
-  if (WATER + inc > _n && WATER < _n)
-    return 0 + FONT_MEMORY; // gun on grass
-  if (GRASS + inc > _n && GRASS < _n)
-    return 4 + FONT_MEMORY; // sword in trees
-  if (TREES + inc > _n && TREES < _n)
-    return 12 + FONT_MEMORY; // gold on hills
+    return WATER; // map on water
+  if (WATER_RANGE + inc > _n && WATER_RANGE < _n)
+    return GRASS; // gun on grass
+  if (GRASS_RANGE + inc > _n && GRASS_RANGE < _n)
+    return TREES; // sword in trees
+  if (TREES_RANGE + inc > _n && TREES_RANGE < _n)
+    return HILLS; // gold on hills
   else
     return 255; // no item
 }
@@ -185,8 +185,8 @@ void generate_map()
   for (uint8_t x = 0; x < SCREEN_WIDTH; x++)
     for (uint8_t y = 0; y < SCREEN_HEIGHT; y++)
     {
-      const pos_t _x = x + p.x[0] - CENTER_X;
-      const pos_t _y = y + p.y[0] - CENTER_Y;
+      const pos_t _x = p.x[0] + x - CENTER_X + 1;
+      const pos_t _y = p.y[0] + y - CENTER_Y - 2;
       const uint8_t _t = terrain(_x, _y);
       const uint8_t _i = generate_item(_x, _y);
       map[x][y] =

@@ -14,7 +14,7 @@ LCCFLAGS += $(LCCFLAGS_$(EXT)) # This adds the current platform specific LCC Fla
 LCCFLAGS += -Wm-yn"HEIRSOFNYX"
 LCCFLAGS += -Wm-yo2 # simple 32KB (2 x 16KB ROM banks) game
 LCCFLAGS += -Wm-ya1 # 1 RAM bank for saving
-# LCCFLAGS += -Wm-yp0x014c=0x00 # rom mask version $00
+LCCFLAGS += -Wm-yp0x014C=0x00 # rom mask version $00
 LCCFLAGS += -Wf--opt-code-size -Wf-SO3 -Wf--max-allocs-per-node200000 -Wf--peep-asm -Wf--peep-return # Optimization flags
 LCCFLAGS += -Wl-l"res/hUGEDriver.lib" # hugedriver library for music
 
