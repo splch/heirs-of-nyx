@@ -22,7 +22,7 @@ Travel through vast terrains, searching for ancient evils while defeating pirate
 Bank           Range             Size   Used   Used%  Free   Free% 
 ----------     ----------------  -----  -----  -----  -----  -----
 ROM            0x0000 -> 0x3FFF  16384  16002    97%    382     2% |░███████████████████████████|
-ROM_0          0x4000 -> 0x7FFF  16384  10818    66%   5566    33% |██████████████████░_________|
+ROM_0          0x4000 -> 0x7FFF  16384  12124    73%   4260    26% |████████████████████▒_______|
 WRAM           0xC000 -> 0xCFFF   4096    918    22%   3178    77% |_▓█████░____________________|
 ```
 

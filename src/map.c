@@ -17,29 +17,23 @@ static uint8_t closest(const pos_t value)
     return HILLS;
 }
 
-static uint8_t generate_item(pos_t x, pos_t y)
+static inline bool spawn_item(pos_t num)
 {
   // return item at (x, y)
-  const pos_t _n = prng(x, y);
-  const pos_t inc = 100; // spawn items within a range of inc
   // TODO: fix item matching bug
-  if (inc > _n)
-    return GRASS; // map on grass
-  if (WATER_RANGE + inc > _n && WATER_RANGE < _n)
-    return HILLS; // gun on hills
-  if (GRASS_RANGE + inc > _n && GRASS_RANGE < _n)
-    return WATER; // sword on water
-  if (TREES_RANGE + inc > _n && TREES_RANGE < _n)
-    return TREES; // gold on trees
-  else
-    return 255; // no item
+  return num % 128 == 1; // >1% chance of items
 }
 
-static inline uint8_t terrain(pos_t x, pos_t y)
+static uint8_t spawn_sprite(pos_t num)
+{
+  // return sprite at (x, y)
+  return num % 64 == 1; // ~1% chance of sprites
+}
+
+static inline uint8_t terrain(pos_t x, pos_t y, pos_t *num)
 {
   // return type of terrain at (x, y)
-  const pos_t value = interpolate_noise(x, y);
-  return closest(value);
+  return closest(interpolate_noise(x, y, num));
 }
 
 uint8_t get_terrain(const int8_t direction)
@@ -58,13 +52,6 @@ uint8_t get_terrain(const int8_t direction)
   case 'd':
     return map[CENTER_X - 1][CENTER_Y - 1] - FONT_MEMORY;
   }
-  return 255;
-}
-
-static uint8_t generate_sprite(pos_t x, pos_t y)
-{
-  // return sprite at (x, y)
-  const pos_t _n = prng(x, y);
   return 255;
 }
 
@@ -126,6 +113,7 @@ static void generate_side(const int8_t side)
   // r - right, l - left, t - top, b - bottom
   pos_t _x;
   pos_t _y;
+  pos_t num;
   switch (side)
   {
   case 'r':
@@ -135,12 +123,13 @@ static void generate_side(const int8_t side)
       _x = p.x[0] + SCREEN_WIDTH - CENTER_X;
       // use old y since generating r/l (no y change yet)
       _y = p.y[1] + y - CENTER_Y - 2;
-      const uint8_t _t = terrain(_x, _y);
-      const uint8_t _i = generate_item(_x, _y);
+      const uint8_t _t = terrain(_x, _y, &num); // num is now prng(_x, _y)
+      const bool _i = spawn_item(num);
+      const uint8_t _s = spawn_sprite(num);
       // set either a terrain tile or item tile
       // terrain associated item tiles are stored at terrain + BACKGROUND_COUNT
-      map[SCREEN_WIDTH - 1][y] =
-          (_i == _t && !is_removed(_x, _y)) ? _i + BACKGROUND_COUNT : _t;
+      map[SCREEN_WIDTH - 1][y] = (_i && !is_removed(_x, _y)) ? _t + BACKGROUND_COUNT : _t;
+      sprites[SCREEN_WIDTH - 1][y] = (_s && !is_removed(_x, _y)) ? _t : 255;
     }
     break;
   case 'l':
@@ -148,10 +137,11 @@ static void generate_side(const int8_t side)
     {
       _x = p.x[0] - CENTER_X + 1;
       _y = p.y[1] + y - CENTER_Y - 2;
-      const uint8_t _t = terrain(_x, _y);
-      const uint8_t _i = generate_item(_x, _y);
-      map[0][y] =
-          (_i == _t && !is_removed(_x, _y)) ? _i + BACKGROUND_COUNT : _t;
+      const uint8_t _t = terrain(_x, _y, &num);
+      const bool _i = spawn_item(num);
+      const uint8_t _s = spawn_sprite(num);
+      map[0][y] = (_i && !is_removed(_x, _y)) ? _t + BACKGROUND_COUNT : _t;
+      sprites[0][y] = (_s && !is_removed(_x, _y)) ? _t : 255;
     }
     break;
   case 't':
@@ -160,10 +150,11 @@ static void generate_side(const int8_t side)
       // use current x since r/l might have already been updated
       _x = p.x[0] + x - CENTER_X + 1;
       _y = p.y[0] - CENTER_Y - 2;
-      const uint8_t _t = terrain(_x, _y);
-      const uint8_t _i = generate_item(_x, _y);
-      map[x][0] =
-          (_i == _t && !is_removed(_x, _y)) ? _i + BACKGROUND_COUNT : _t;
+      const uint8_t _t = terrain(_x, _y, &num);
+      const bool _i = spawn_item(num);
+      const uint8_t _s = spawn_sprite(num);
+      map[x][0] = (_i && !is_removed(_x, _y)) ? _t + BACKGROUND_COUNT : _t;
+      sprites[x][0] = (_s && !is_removed(_x, _y)) ? _t : 255;
     }
     break;
   case 'b':
@@ -171,10 +162,11 @@ static void generate_side(const int8_t side)
     {
       _x = p.x[0] + x - CENTER_X + 1;
       _y = p.y[0] + SCREEN_HEIGHT - CENTER_Y - 3;
-      const uint8_t _t = terrain(_x, _y);
-      const uint8_t _i = generate_item(_x, _y);
-      map[x][SCREEN_HEIGHT - 1] =
-          (_i == _t && !is_removed(_x, _y)) ? _i + BACKGROUND_COUNT : _t;
+      const uint8_t _t = terrain(_x, _y, &num);
+      const bool _i = spawn_item(num);
+      const uint8_t _s = spawn_sprite(num);
+      map[x][SCREEN_HEIGHT - 1] = (_i && !is_removed(_x, _y)) ? _t + BACKGROUND_COUNT : _t;
+      sprites[x][SCREEN_HEIGHT - 1] = (_s && !is_removed(_x, _y)) ? _t : 255;
     }
     break;
   }
@@ -186,15 +178,14 @@ void generate_map()
   for (uint8_t x = 0; x < SCREEN_WIDTH; x++)
     for (uint8_t y = 0; y < SCREEN_HEIGHT; y++)
     {
+      pos_t num;
       const pos_t _x = p.x[0] + x - CENTER_X + 1;
       const pos_t _y = p.y[0] + y - CENTER_Y - 2;
-      const uint8_t _t = terrain(_x, _y);
-      const uint8_t _i = generate_item(_x, _y);
-      map[x][y] =
-          (_i == _t && !is_removed(_x, _y)) ? _i + BACKGROUND_COUNT : _t;
-      const uint8_t _s = generate_sprite(_x, _y);
-      sprites[x][y] =
-          (_s == _t) ? _s : 255;
+      const uint8_t _t = terrain(_x, _y, &num);
+      const bool _i = spawn_item(num);
+      const uint8_t _s = spawn_sprite(num);
+      sprites[x][y] = (_s && !is_removed(_x, _y)) ? _t : 255;
+      map[x][y] = (_i && !is_removed(_x, _y)) ? _t + BACKGROUND_COUNT : _t;
     }
 }
 
@@ -237,7 +228,7 @@ void display_map()
   {
     for (uint8_t y = 0; y < SCREEN_HEIGHT; y++)
     {
-      // sets a 16x16 metatile
+      // sets a 16x16 metatile for terrain
       set_bkg_tile_xy(2 * x, 2 * y, map[x][y]);
       set_bkg_tile_xy(2 * x, 2 * y + 1, map[x][y] + 1);
       set_bkg_tile_xy(2 * x + 1, 2 * y, map[x][y] + 2);
