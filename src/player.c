@@ -48,8 +48,8 @@ void show_menu()
 {
   // display map to erase previous menus
   HIDE_SPRITES; // menu is open
-  const int16_t x = p.x[0];
-  const int16_t y = p.y[0];
+  const int16_t x = p.x[0] - START_POSITION;
+  const int16_t y = p.y[0] - START_POSITION;
 
   printf("\ngold:\t%u", p.gold);
   printf("\nmaps:\t%u", p.maps);

@@ -2,13 +2,15 @@
 #include "main.h"
 #include "map.h"
 #include "player.h"
-#include "save.h"
 
 struct Player p;
 
 void main()
 {
-  init();
+  // prepare hardware
+  init_hardware();
+  // prepare game on START
+  init_game();
 
   // main game loop
   while (true)
@@ -18,40 +20,28 @@ void main()
   }
 }
 
-static inline void init()
+static inline void init_hardware()
 {
-  DISPLAY_OFF; // prevent visual bugs
-  // initialize game
-  init_sgb();
-  init_font();
-  init_palette();
-  init_tiles();
-  init_sprites();
-  init_sound();
+  DISPLAY_OFF;    // prevent visual bugs
+  init_sgb();     // display sgb border
+  init_font();    // load font for printf
+  init_palette(); // set colors for cgb
+  init_tiles();   // decompress tiles
+  init_sprites(); // decompress sprites
+  init_sound();   // begin playing music
+  init_ram();     // load save data
+  init_splash();  // load splash screen into map
+  DISPLAY_ON;     // game is ready!
+}
 
-  // initialize game logic
-  ENABLE_RAM; // for loading save data
-
-  // load and initialize save data
-  load_save_data();
-
-  // --- splash screen --- //
-  init_splash();
-  display_map();
-
-  DISPLAY_ON;
-  waitpad(J_START);
-  printf("loading world...");
-  // -------------------- //
-
+static inline void init_game()
+{
   // generate terrain
   generate_map();
   adjust_position(get_terrain('n'), p.x[1], p.y[1]); // if player loads on water or hills
 
   // display terrain
   display_map();
-
-  // wait until start button is pressed
   SHOW_SPRITES; // show player
 
   // start delay time

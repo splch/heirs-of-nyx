@@ -3,7 +3,9 @@
 #include <gbdk/gbdecompress.h>
 #include <gbdk/metasprites.h>
 #include "main.h"
+#include "map.h"
 #include "player.h"
+#include "save.h"
 #include "sgb_border.h"
 #include "../res/border_data.h"
 #include "../res/hUGEDriver.h"
@@ -80,6 +82,12 @@ void init_sound()
     // #endif
 }
 
+void init_ram()
+{
+    ENABLE_RAM; // for r/w ram address
+    load_save_data();
+}
+
 void init_splash()
 {
     uint8_t t_map[SCREEN_WIDTH][SCREEN_HEIGHT] = {
@@ -95,4 +103,7 @@ void init_splash()
         {HILLS, TREES, TREES, GRASS, GRASS, TREES, HILLS, HILLS, HILLS},
     };
     memcpy(&map, &t_map, sizeof(map));
+    display_map();
+    waitpad(J_START);
+    printf("loading world...");
 }
