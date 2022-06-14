@@ -105,5 +105,4 @@ void init_splash()
     memcpy(&map, &t_map, sizeof(map));
     display_map();
     waitpad(J_START);
-    printf("loading world...");
 }

@@ -22,14 +22,15 @@ static uint8_t generate_item(pos_t x, pos_t y)
   // return item at (x, y)
   const pos_t _n = prng(x, y);
   const pos_t inc = 100; // spawn items within a range of inc
+  // TODO: fix item matching bug
   if (inc > _n)
-    return WATER; // map on water
+    return GRASS; // map on grass
   if (WATER_RANGE + inc > _n && WATER_RANGE < _n)
-    return GRASS; // gun on grass
+    return HILLS; // gun on hills
   if (GRASS_RANGE + inc > _n && GRASS_RANGE < _n)
-    return TREES; // sword in trees
+    return WATER; // sword on water
   if (TREES_RANGE + inc > _n && TREES_RANGE < _n)
-    return HILLS; // gold on hills
+    return TREES; // gold on trees
   else
     return 255; // no item
 }

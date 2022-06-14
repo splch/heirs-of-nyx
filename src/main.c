@@ -36,6 +36,8 @@ static inline void init_hardware()
 
 static inline void init_game()
 {
+  printf("loading world...");
+
   // generate terrain
   generate_map();
   adjust_position(get_terrain('n'), p.x[1], p.y[1]); // if player loads on water or hills
