@@ -225,6 +225,8 @@ void generate_map_sides()
 
 void display_map()
 {
+  reset_sprites(); // prevent a trail of sprites
+
   for (uint8_t x = 0; x < SCREEN_WIDTH; x++)
   {
     for (uint8_t y = 0; y < SCREEN_HEIGHT; y++)

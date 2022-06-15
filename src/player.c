@@ -43,7 +43,16 @@ void position_sprite(char *name, uint8_t x, uint8_t y)
   if (strcmp(name, "cat") == 0)
   {
     move_sprite(sprite_count != 2 ? sprite_count - 2 : 8, x, y);
-    move_sprite(sprite_count != 2 ? sprite_count - 1 : 8, x + 8, y);
+    move_sprite(sprite_count != 2 ? sprite_count - 1 : 9, x + 8, y);
+  }
+}
+
+void reset_sprites()
+{
+  for (uint8_t i = 2; i < 10; i += 2)
+  {
+    move_sprite(i, 0, 0);
+    move_sprite(i + 1, 0, 0);
   }
 }
 
