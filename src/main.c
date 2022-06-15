@@ -5,6 +5,10 @@
 
 struct Player p;
 
+static inline void init_hardware();
+static inline void init_game();
+static inline void check_input();
+
 void main()
 {
   // prepare hardware

@@ -1,5 +1,6 @@
 #include "main.h"
 #include "noise.h"
+#include "player.h"
 
 uint16_t arr[ARR_SIZE];
 uint8_t map[SCREEN_WIDTH][SCREEN_HEIGHT];
@@ -21,13 +22,13 @@ static inline bool spawn_item(pos_t num)
 {
   // return item at (x, y)
   // TODO: fix item matching bug
-  return num % 128 == 1; // >1% chance of items
+  return num % 256 == 1; // >1% chance of items
 }
 
 static uint8_t spawn_sprite(pos_t num)
 {
   // return sprite at (x, y)
-  return num % 64 == 1; // ~1% chance of sprites
+  return num % 128 == 1; // ~1% chance of sprites
 }
 
 static inline uint8_t terrain(pos_t x, pos_t y, pos_t *num)
@@ -52,7 +53,7 @@ uint8_t get_terrain(const int8_t direction)
   case 'd':
     return map[CENTER_X - 1][CENTER_Y - 1] - FONT_MEMORY;
   }
-  return 255;
+  return EMPTY;
 }
 
 static inline bool is_removed(pos_t x, pos_t y)
@@ -110,7 +111,7 @@ static inline void shift_array_down()
 
 static void generate_side(const int8_t side)
 {
-  // r - right, l - left, t - top, b - bottom
+  // r = right, l = left, t = top, b = bottom
   pos_t _x;
   pos_t _y;
   pos_t num;
@@ -129,7 +130,7 @@ static void generate_side(const int8_t side)
       // set either a terrain tile or item tile
       // terrain associated item tiles are stored at terrain + BACKGROUND_COUNT
       map[SCREEN_WIDTH - 1][y] = (_i && !is_removed(_x, _y)) ? _t + BACKGROUND_COUNT : _t;
-      sprites[SCREEN_WIDTH - 1][y] = (_s && !is_removed(_x, _y)) ? _t : 255;
+      sprites[SCREEN_WIDTH - 1][y] = (_s && !is_removed(_x, _y)) ? _t : EMPTY;
     }
     break;
   case 'l':
@@ -141,7 +142,7 @@ static void generate_side(const int8_t side)
       const bool _i = spawn_item(num);
       const uint8_t _s = spawn_sprite(num);
       map[0][y] = (_i && !is_removed(_x, _y)) ? _t + BACKGROUND_COUNT : _t;
-      sprites[0][y] = (_s && !is_removed(_x, _y)) ? _t : 255;
+      sprites[0][y] = (_s && !is_removed(_x, _y)) ? _t : EMPTY;
     }
     break;
   case 't':
@@ -154,7 +155,7 @@ static void generate_side(const int8_t side)
       const bool _i = spawn_item(num);
       const uint8_t _s = spawn_sprite(num);
       map[x][0] = (_i && !is_removed(_x, _y)) ? _t + BACKGROUND_COUNT : _t;
-      sprites[x][0] = (_s && !is_removed(_x, _y)) ? _t : 255;
+      sprites[x][0] = (_s && !is_removed(_x, _y)) ? _t : EMPTY;
     }
     break;
   case 'b':
@@ -166,7 +167,7 @@ static void generate_side(const int8_t side)
       const bool _i = spawn_item(num);
       const uint8_t _s = spawn_sprite(num);
       map[x][SCREEN_HEIGHT - 1] = (_i && !is_removed(_x, _y)) ? _t + BACKGROUND_COUNT : _t;
-      sprites[x][SCREEN_HEIGHT - 1] = (_s && !is_removed(_x, _y)) ? _t : 255;
+      sprites[x][SCREEN_HEIGHT - 1] = (_s && !is_removed(_x, _y)) ? _t : EMPTY;
     }
     break;
   }
@@ -184,7 +185,7 @@ void generate_map()
       const uint8_t _t = terrain(_x, _y, &num);
       const bool _i = spawn_item(num);
       const uint8_t _s = spawn_sprite(num);
-      sprites[x][y] = (_s && !is_removed(_x, _y)) ? _t : 255;
+      sprites[x][y] = (_s && !is_removed(_x, _y)) ? _t : EMPTY;
       map[x][y] = (_i && !is_removed(_x, _y)) ? _t + BACKGROUND_COUNT : _t;
     }
 }
@@ -233,6 +234,13 @@ void display_map()
       set_bkg_tile_xy(2 * x, 2 * y + 1, map[x][y] + 1);
       set_bkg_tile_xy(2 * x + 1, 2 * y, map[x][y] + 2);
       set_bkg_tile_xy(2 * x + 1, 2 * y + 1, map[x][y] + 3);
+
+      // sets a 16x16 metasprite
+      if (sprites[x][y] != EMPTY)
+      {
+        load_sprite("cat");
+        position_sprite("cat", 16 * x, 16 * y);
+      }
     }
   }
   wait_vbl_done(); // wait due to recursion

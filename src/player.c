@@ -8,6 +8,7 @@
 void check_movement(const uint8_t);
 
 clock_t delay_time;
+uint8_t sprite_count = 2;
 
 void wait()
 {
@@ -25,9 +26,11 @@ void load_sprite(char *name)
   }
   else if (strcmp(name, "cat") == 0)
   {
-    set_sprite_tile(2, 5);
-    set_sprite_tile(3, 7);
+    set_sprite_tile(sprite_count++, 5);
+    set_sprite_tile(sprite_count++, 7);
   }
+  if (sprite_count == 10) // limit to 10 sprites total
+    sprite_count = 2;     // don't overwrite player
 }
 
 void position_sprite(char *name, uint8_t x, uint8_t y)
@@ -39,8 +42,8 @@ void position_sprite(char *name, uint8_t x, uint8_t y)
   }
   if (strcmp(name, "cat") == 0)
   {
-    move_sprite(2, x, y);
-    move_sprite(3, x + 8, y);
+    move_sprite(sprite_count != 2 ? sprite_count - 2 : 8, x, y);
+    move_sprite(sprite_count != 2 ? sprite_count - 1 : 8, x + 8, y);
   }
 }
 
@@ -70,15 +73,17 @@ void show_menu()
 
 static inline void treasure_search()
 {
-  // search a grid around the start position
-  for (uint8_t x = 0; x < 5; x++)
+  // search a grid around the player
+  for (int8_t x = -5; x < 5; x++)
   {
-    for (uint8_t y = 0; y < 5; y++)
+    for (int8_t y = -5; y < 5; y++)
     {
-      const uint8_t noise = (uint8_t)prng(START_POSITION + x, START_POSITION + y);
+      const uint8_t noise = (uint8_t)prng(p.x[1] + x, p.y[1] + y);
       if (noise < p.maps)
       {
-        printf("treasure found at (%d, %d)", x - START_POSITION, y - START_POSITION);
+        printf("treasure found at (%d, %d)",
+               p.x[0] + x - START_POSITION,
+               p.y[0] + y - START_POSITION);
         wait();
         return;
       }

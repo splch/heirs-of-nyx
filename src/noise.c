@@ -18,8 +18,8 @@ static pos_t smooth_noise(pos_t x, pos_t y, pos_t *num)
                         4; // divide by 16
   const pos_t sides =
       (prng(x - 1, y) + prng(x + 1, y) + prng(x, y - 1) + prng(x, y + 1)) >>
-      3; // divide by 8
-  *num = prng(x, y);
+      3;                           // divide by 8
+  *num = prng(x, y);               // store random number for item and sprite generation
   const pos_t center = *num >> 2;  // divide by 4
   return corners + sides + center; // average noise at center
 }

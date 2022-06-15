@@ -29,6 +29,7 @@
 #define GRASS 0 + FONT_MEMORY
 #define TREES 8 + FONT_MEMORY
 #define HILLS 12 + FONT_MEMORY
+#define EMPTY 255
 #define METATILES 4
 #define BACKGROUND_COUNT METATILES * 4
 #define SCREEN_WIDTH DEVICE_SCREEN_WIDTH / 2 // metatiles are 16x16
@@ -56,6 +57,7 @@ extern struct Player
 
 extern uint8_t map[SCREEN_WIDTH][SCREEN_HEIGHT];
 extern uint8_t sprites[SCREEN_WIDTH][SCREEN_HEIGHT];
+extern uint8_t sprite_count;
 #define ARR_SIZE 256
 extern uint16_t arr[ARR_SIZE]; // for used items and decompression
 extern clock_t delay_time;
