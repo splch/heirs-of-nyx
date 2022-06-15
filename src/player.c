@@ -8,7 +8,7 @@
 void check_movement(const uint8_t);
 
 clock_t delay_time;
-uint8_t sprite_count = 2;
+extern uint8_t sprite_count = 2;
 
 void wait()
 {

@@ -61,6 +61,7 @@ extern uint8_t sprite_count;
 #define SPRITE_MAX 10
 #define ARR_SIZE 256
 extern uint16_t arr[ARR_SIZE]; // for used items and decompression
+extern uint16_t prngs[6];      // for the 6/9 repeated prng tiles
 extern clock_t delay_time;
 
 #endif

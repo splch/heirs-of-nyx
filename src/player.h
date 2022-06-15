@@ -3,6 +3,7 @@
 
 void load_sprite(char *);
 void position_sprite(char *, uint8_t, uint8_t);
+void reset_sprites();
 void show_menu();
 void change_item();
 void interact();
