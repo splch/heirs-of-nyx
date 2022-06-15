@@ -85,7 +85,7 @@ static inline void shift_array_left()
     for (uint8_t y = 0; y < SCREEN_HEIGHT; y++)
     {
       map[x][y] = map[x + 1][y];
-      sprites[x][y] = map[x + 1][y];
+      sprites[x][y] = sprites[x + 1][y];
     }
 }
 
@@ -185,8 +185,8 @@ void generate_map()
       const uint8_t _t = terrain(_x, _y, &num);
       const bool _i = spawn_item(num);
       const uint8_t _s = spawn_sprite(num);
-      sprites[x][y] = (_s && !is_removed(_x, _y)) ? _t : EMPTY;
       map[x][y] = (_i && !is_removed(_x, _y)) ? _t + BACKGROUND_COUNT : _t;
+      sprites[x][y] = (_s && !is_removed(_x, _y)) ? _t : EMPTY;
     }
 }
 
