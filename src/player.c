@@ -234,7 +234,7 @@ void adjust_position(const uint8_t terrain_type, const pos_t old_x,
 void check_movement(const uint8_t j)
 {
   check_interaction(joypad()); // interact when water is pushing
-  // j = right - 1, left - 2, up - 4, down - 8
+  // j : right = 1, left = 2, up = 4, down = 8
   pos_t _x = p.x[0];
   pos_t _y = p.y[0];
   if (j & J_RIGHT)

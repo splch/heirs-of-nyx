@@ -241,7 +241,7 @@ void display_map()
       if (sprites[x][y] != EMPTY)
       {
         load_sprite("cat");
-        position_sprite("cat", 16 * x, 16 * y);
+        position_sprite("cat", 16 * x + 8, 16 * y + 16);
       }
     }
   }
