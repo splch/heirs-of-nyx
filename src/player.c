@@ -29,8 +29,8 @@ void load_sprite(char *name)
     set_sprite_tile(sprite_count++, 5);
     set_sprite_tile(sprite_count++, 7);
   }
-  if (sprite_count == 10) // limit to 10 sprites total
-    sprite_count = 2;     // don't overwrite player
+  if (sprite_count == SPRITE_MAX) // limit sprite totals
+    sprite_count = 2;             // don't overwrite player
 }
 
 void position_sprite(char *name, uint8_t x, uint8_t y)
@@ -42,14 +42,14 @@ void position_sprite(char *name, uint8_t x, uint8_t y)
   }
   if (strcmp(name, "cat") == 0)
   {
-    move_sprite(sprite_count != 2 ? sprite_count - 2 : 8, x, y);
-    move_sprite(sprite_count != 2 ? sprite_count - 1 : 9, x + 8, y);
+    move_sprite((sprite_count != 2 ? sprite_count : SPRITE_MAX) - 2, x, y);
+    move_sprite((sprite_count != 2 ? sprite_count : SPRITE_MAX) - 1, x + 8, y);
   }
 }
 
 void reset_sprites()
 {
-  for (uint8_t i = 2; i < 10; i += 2)
+  for (uint8_t i = 2; i < SPRITE_MAX; i += 2)
   {
     move_sprite(i, 0, 0);
     move_sprite(i + 1, 0, 0);
