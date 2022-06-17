@@ -7,7 +7,7 @@ static uint16_t *vals = (int16_t *)0xA001; // 16 bit for 2^16 x 2^16 map
 
 void load_save_data()
 {
-  if (has_save[0] == true) // needs true since any non-zero is true
+  if (has_save[0] == true) // needs true since any non-zero satisfies the condition
   {
     // starting position for map generation
     p.x[0] = p.x[1] = vals[0];
@@ -34,6 +34,10 @@ void load_save_data()
     p.steps = p.gold = p.maps = 0;
     p.hearts = 3;
     p.weapons[0] = p.weapons[1] = -1;
+
+    // initialize item history to 0
+    for (uint8_t i = 0; i < 255; i++)
+      arr[i] = 0;
   }
 }
 

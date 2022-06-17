@@ -14,7 +14,7 @@ void wait()
 {
   delay(33 * SENSITIVITY + 1); // (100 / 6) * 2 comes from macro definition
   wait_vbl_done();             // put system in low power mode
-  waitpad(0b11111111);
+  waitpad(0b11111111);         // accept any input to continue
 }
 
 void load_sprite(char *name)
@@ -56,7 +56,7 @@ void reset_sprites()
   }
 }
 
-void show_menu()
+static inline void show_menu()
 {
   // display map to erase previous menus
   HIDE_SPRITES; // menu is open
@@ -88,7 +88,7 @@ static inline void treasure_search()
     for (int8_t y = -5; y < 5; y++)
     {
       const uint8_t noise = (uint8_t)prng(p.x[1] + x, p.y[1] + y);
-      if (noise < p.maps)
+      if (noise < p.maps / 2)
       {
         printf("treasure found at (%d, %d)",
                p.x[0] + x - START_POSITION,
@@ -123,7 +123,7 @@ static inline void add_inventory(uint8_t item)
   }
 }
 
-void change_item()
+static inline void change_item()
 {
   // switch primary with secondary weapons
   const int8_t _t = p.weapons[0];
@@ -131,7 +131,7 @@ void change_item()
   p.weapons[1] = _t;
 }
 
-void interact()
+static inline void interact()
 {
   // -1 <= x - 1 <= 1
   // -1 <= y - 2 <= 1
@@ -156,7 +156,7 @@ void interact()
     }
 }
 
-void attack()
+static inline void attack()
 {
   switch (p.weapons[0])
   {

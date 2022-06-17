@@ -25,7 +25,7 @@ static inline bool spawn_item(pos_t num)
   return num % 256 == 1; // >1% chance of items
 }
 
-static uint8_t spawn_sprite(pos_t num)
+static inline uint8_t spawn_sprite(pos_t num)
 {
   // return sprite at (x, y)
   return num % 128 == 1; // ~1% chance of sprites
@@ -192,6 +192,7 @@ void generate_map()
 
 void generate_map_sides()
 {
+  // get x and y directions
   const int8_t diff_x = p.x[1] - p.x[0];
   const int8_t diff_y = p.y[1] - p.y[0];
   if (diff_x < 0)
@@ -218,7 +219,7 @@ void generate_map_sides()
     shift_array_up();
     generate_side('b');
   }
-  // makes difference 0 so next step has difference of 1
+  // prevents walking through hills
   p.x[1] = p.x[0];
   p.y[1] = p.y[0];
 }
