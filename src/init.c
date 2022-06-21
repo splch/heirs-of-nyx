@@ -81,7 +81,6 @@ void init_sound()
 
 void init_ram()
 {
-    ENABLE_RAM; // for r/w ram address
     load_save_data();
 }
 

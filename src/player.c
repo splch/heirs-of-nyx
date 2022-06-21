@@ -87,12 +87,12 @@ static inline void treasure_search()
   {
     for (int8_t y = -5; y < 5; y++)
     {
-      const uint8_t noise = (uint8_t)prng(p.x[1] + x, p.y[1] + y);
-      if (noise < p.maps / 2)
+      const uint8_t noise = (uint8_t)prng(p.x[0] + x, p.y[0] + y);
+      if (noise > p.maps / 3)
       {
-        printf("treasure found at (%d, %d)",
-               p.x[0] + x - START_POSITION,
-               p.y[0] + y - START_POSITION);
+        const uint16_t tx = p.x[0] + x - START_POSITION;
+        const uint16_t ty = p.y[0] + y - START_POSITION;
+        printf("treasure found at (%d, %d)", tx, ty);
         wait();
         return;
       }

@@ -7,6 +7,8 @@ static uint16_t *vals = (int16_t *)0xA001; // 16 bit for 2^16 x 2^16 map
 
 void load_save_data()
 {
+  ENABLE_RAM_MBC5; // for r/w ram address
+
   if (has_save[0] == true) // needs true since any non-zero satisfies the condition
   {
     // starting position for map generation
@@ -43,6 +45,8 @@ void load_save_data()
 
 void save_data()
 {
+  ENABLE_RAM_MBC5; // TODO: find out what's disabling RAM
+
   // save position
   vals[0] = p.x[0];
   vals[1] = p.y[0];
